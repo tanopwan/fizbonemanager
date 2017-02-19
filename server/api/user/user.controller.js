@@ -9,7 +9,7 @@ const me = function(req, res) {
 	return User.findOne({ _id: userId }).exec()
 	.then(user => {
 		if(!user) {
-			return res.status(401).end();
+			return res.status(500).end();
 		}
 		res.json(user);
 	})
@@ -20,7 +20,7 @@ const index = function(req, res) {
 	return User.find().exec()
 	.then(user => {
 		if(!user) {
-			return res.status(401).end();
+			return res.status(500).end();
 		}
 		res.json(user);
 	})

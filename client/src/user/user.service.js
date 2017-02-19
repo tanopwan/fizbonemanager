@@ -20,7 +20,6 @@ export default {
 				userAsync = new Promise(function(resolve, reject) {
 					Vue.http.get('/api/users/me').then(function(response) {
 						let me = Object.assign({}, response.body);
-						console.log(me);
 						resolve(me);
 					}).catch(function(response) {
 						reject(response);

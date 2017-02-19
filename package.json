@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "clean": "rimraf dist",
-    "build": "npm run clean NODE_ENV=production webpack -p",
+    "build": "npm run clean && NODE_ENV=production webpack -p",
     "serve": "npm run build && PORT=8080 NODE_ENV=production node server/index.js",
     "dev": "DOMAIN=http://localhost PORT=3080 NODE_ENV=development nodemon server/index.js"
   },
@@ -36,6 +36,7 @@
     "passport-facebook": "^2.1.1",
     "promise": "^7.1.1",
     "vue": "^2.1.10",
-    "vue-resource": "^1.1.1"
+    "vue-resource": "^1.1.1",
+    "vue-router": "^2.2.1"
   }
 }

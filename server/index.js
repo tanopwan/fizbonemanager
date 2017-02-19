@@ -13,14 +13,15 @@ if (process.env.NODE_ENV !== 'production') {
 	app.use(webpackMiddleware(webpack(webpackConfig)));
 	app.use(express.static('dist'));
 	app.use(express.static('assets'));
+	app.use(express.static('server/views'))
 }
 else {
 	console.log(`Running on Production mode`);
-	app.set('appPath', path.join(config.root, 'dist'));
-	app.use(express.static(app.get('appPath')));
+	app.set('distPath', path.join(config.root, 'dist'));
+	app.use(express.static(app.get('distPath')));
 	app.use(express.static(path.join(config.root, 'assets')));
 	app.route('/', (req, res) => {
-		res.sendFile(path.resolve(`${app.get('appPath')}/index.html`));
+		res.sendFile(path.resolve(`${app.get('distPath')}/index.html`));
 	});
 }
 

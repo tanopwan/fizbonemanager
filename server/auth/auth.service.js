@@ -40,9 +40,9 @@ module.exports = {
 			return;
 		}
 		else {
-			return res.status(401).send({
+			return res.status(403).send({
 				success: false,
-				message: 'Not Allowed'
+				message: 'Not Allowed, Admin only'
 			});
 		}
 	}
