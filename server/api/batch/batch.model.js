@@ -7,8 +7,8 @@ mongoose.Promise = require('bluebird');
 
 const BatchSchema = new Schema({
 	quantity: Number,
-	factoryRef: String,
-	productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' }
+	batchRef: String,
+	productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
 {

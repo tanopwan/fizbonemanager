@@ -10,7 +10,7 @@ const ProductSchema = new Schema({
 	description: String
 },
 {
-  timestamps: true
+	timestamps: true
 });
 
 const Product = mongoose.model('Product', ProductSchema);

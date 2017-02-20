@@ -13,10 +13,19 @@
 			</div>
 		</div>
 		<div class="block full">
-			<div v-for="product in products">
-				<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
-				{{ product.name }}
+			<div class="block-title">
+				<h2>
+					All Products
+				</h2>
 			</div>
+			<template v-for="product in products">
+				<h4 class="sub-header">
+					{{ product.name }}
+				</h4>
+				<div>
+					<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
+				</div>
+			</template>
 		</div>
 	</div>
 </template>

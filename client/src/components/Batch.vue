@@ -1,6 +1,131 @@
 <template>
-	<div>Batch</div>
+	<div class="row"><div class="col-xs-6">
+		<div class="block">
+			<div class="row form-group">
+				<div class="col-sm-6">
+					<input type="text" v-model="quantity" class="form-control" placeholder="จำนวน">
+				</div>
+				<div class="col-sm-6">
+					<select id="example-select2" class="select-select2" style="width: 100%;" data-placeholder="Choose one..">
+						<option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+						<option v-for="product in products" :value="product._id">{{ product.name }}</option>
+					</select>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-sm-12">
+					<div class="input-group">
+						<input type="text" class="form-control input-group-addon input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+						<span class="input-group-addon"><i class="fa fa-hashtag"></i></span>
+						<input type="text" class="form-control" v-model="batchRef" placeholder="Batch Ref.">
+						<span class="input-group-btn">
+							<button type="button" @click="addBatch" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="block full">
+			<div class="block-title">
+				<h2>
+					All Batches
+				</h2>
+			</div>
+			<template v-for="batch in batches">
+				<div>
+					<div class="pull-right">
+						<button class="btn btn-danger" @click="deleteBatch(batch._id)"><i class="fa fa-minus"></i></button>
+					</div>
+					<h4 class="sub-header">
+						{{ batch.batchRef }} <small>{{ getProductById(batch.productId).name }}</small>
+					</h4>
+				</div>
+				<div>
+					จำนวน {{ batch.quantity }}
+				</div>
+			</div>
+		</div>
+	</div></div>
 </template>
 
 <script>
+import moment from 'moment'
+
+export default {
+	data() {
+		return {
+			batchRef: '',
+			quantity: 0,
+			batches: [],
+			products: [],
+			batchRefPrefix: ''
+		};
+	},
+	methods: {
+		getProductById(id) {
+			let foundProduct = null;
+			this.products.forEach(product => {
+				if (product._id === id) {
+					foundProduct = product;
+				}
+			});
+			return foundProduct;
+		},
+		addBatch() {
+			let body = {
+				batchRef: `${this.batchRefPrefix}_${this.batchRef}`,
+				productId: $('.select-select2').val(),
+				quantity: this.quantity
+			}
+			this.$http.post('/api/batches', body).then(response => {
+				this.batches.push(response.body);
+			}, response => {
+				// TODO
+				console.log(response);
+			});
+		},
+		deleteBatch(id) {
+			this.$http.delete('/api/batches/' + id).then(response => {
+				let index = -1;
+				this.batches.forEach((batch, idx) => {
+					if (batch._id === id) {
+						index = idx;
+					}
+				});
+				if (index !== -1) {
+					this.batches.splice(index, 1);
+				}
+			}, response => {
+				console.log(response);
+			});
+		},
+		getBatches() {
+			this.$http.get('/api/batches').then(response => {
+				this.batches = response.body;
+			}, response => {
+				console.log(response);
+			});
+		},
+		getProducts() {
+			this.$http.get('/api/products').then(response => {
+				this.products = response.body;
+			}, response => {
+				console.log(response);
+			});
+		}
+	},
+	created() {
+		this.getProducts();
+		this.getBatches();
+	},
+	mounted() {
+		$('.select-select2').select2();
+		$('.input-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
+			$(this).datepicker('hide');
+			this.batchRefPrefix = $(this).val();
+		});
+		this.batchRefPrefix = $('.input-datepicker').val();
+	}
+}
+
 </script>

@@ -4,7 +4,7 @@ const Product = require('./product.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
-var ObjectId = mongoose.Types.ObjectId;
+const ObjectId = mongoose.Types.ObjectId;
 
 const view = function(req, res) {
 	let productId = req.params.id;
