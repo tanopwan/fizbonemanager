@@ -1,5 +1,5 @@
 <template>
-	<div class="row"><div class="col-xs-6">
+	<div class="row"><div class="col-xs-12">
 		<div class="block">
 			<div class="row form-group">
 				<div class="col-sm-6">
@@ -27,13 +27,14 @@
 		</div>
 		<div class="block full">
 			<div class="block-title">
-				<h2>
-					All Batches
-				</h2>
+				<h4>
+					All Batches <small> Total: {{ batches.length }}</small>
+				</h4>
 			</div>
 			<template v-for="batch in batches">
 				<div>
 					<div class="pull-right">
+						{{ batch._id }}
 						<button class="btn btn-danger" @click="deleteBatch(batch._id)"><i class="fa fa-minus"></i></button>
 					</div>
 					<h4 class="sub-header">

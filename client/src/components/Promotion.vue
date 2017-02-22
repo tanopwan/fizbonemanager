@@ -36,16 +36,21 @@
 		<div class="row">
 			<div class="col-xs-12">
 				<div class="block full">
-					<h4 class="sub-header">All promotions <small> Total: {{ promotions.length }}</small></h4>
+					<div class="block-title">
+						<h4>
+							All Promotions <small> Total: {{ promotions.length }}</small>
+						</h4>
+					</div>
 					<div class="row">
 						<div class="col-xs-12">
 							<template v-for="promotion in promotions">
 								<div>
 									<div class="pull-right">
+										{{ promotion._id }}
 										<button class="btn btn-danger" @click="deletePromotion(promotion._id)"><i class="fa fa-minus"></i></button>
 									</div>
 									<h4 class="sub-header">
-										{{ promotion.name }} <small> <code>{{ promotion.batchId }}</code></small>
+										{{ promotion.name }} <small> Batch: {{ promotion.batchId }}</small>
 									</h4>
 								</div>
 								<div>

@@ -23,7 +23,7 @@ const view = function(req, res) {
 const create = function(req, res) {
 	let userId = new ObjectId(req.decoded._doc._id);
 	let productData = Object.assign({ createdBy: userId }, req.body);
-	console.log(productData);
+
 	return Product.create(productData)
 	.then(product => {
 		if(!product) {

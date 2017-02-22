@@ -1,6 +1,7 @@
 'use strict';
 
 const Batch = require('./batch.model');
+const Promotion = require('../promotion/promotion.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
@@ -48,7 +49,13 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let batchId = new ObjectId(req.params.id);
 
-	return Batch.findOne({ _id: batchId }).remove().exec()
+	Promotion.findOne({ batchId }).exec()
+	.then(batch => {
+		if (batch) {
+			return res.status(400).json({ message: "Please remove Promotions associated with this Batch" });
+		}
+		return Batch.findOne({ _id: batchId }).remove().exec()
+	})
 	.then(result => {
 		res.json(result);
 	})

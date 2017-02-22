@@ -1,6 +1,7 @@
 'use strict';
 
 const Promotion = require('./promotion.model');
+const Sale = require('../sale/sale.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
@@ -47,7 +48,13 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let promotionId = new ObjectId(req.params.id);
 
-	return Promotion.findOne({ _id: promotionId }).remove().exec()
+	Sale.findOne({ promotionId }).exec()
+	.then(sale => {
+		if (sale) {
+			return res.status(400).json({ message: "Please remove Sales associated with this Promotion" });
+		}
+		return Promotion.findOne({ _id: promotionId }).remove().exec()
+	})
 	.then(result => {
 		res.json(result);
 	})

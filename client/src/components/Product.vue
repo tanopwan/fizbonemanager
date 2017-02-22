@@ -14,9 +14,9 @@
 		</div>
 		<div class="block full">
 			<div class="block-title">
-				<h2>
-					All Products
-				</h2>
+				<h4>
+					All Products <small> Total: {{ products.length }}</small>
+				</h4>
 			</div>
 			<template v-for="product in products">
 				<div>
