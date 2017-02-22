@@ -1,6 +1,7 @@
 'use strict';
 
 const Product = require('./product.model');
+const Batch = require('../batch/batch.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
@@ -26,7 +27,7 @@ const create = function(req, res) {
 	return Product.create(productData)
 	.then(product => {
 		if(!product) {
-			return res.status(401).end();
+			return res.status(404).end();
 		}
 		res.json(product);
 	})
@@ -37,7 +38,7 @@ const index = function(req, res) {
 	return Product.find().exec()
 	.then(product => {
 		if(!product) {
-			return res.status(401).end();
+			return res.status(404).end();
 		}
 		res.json(product);
 	})
@@ -47,7 +48,13 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let productId = new ObjectId(req.params.id);
 
-	return Product.findOne({ _id: productId }).remove().exec()
+	Batch.findOne({ productId }).exec()
+	.then(product => {
+		if(product) {
+			return res.status(400).json({ message: "Please remove Batches associated with this Product"});
+		}
+		return Product.findOne({ _id: productId }).remove().exec();
+	})
 	.then(result => {
 		res.json(result);
 	})

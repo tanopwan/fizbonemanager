@@ -32,9 +32,15 @@
 									</router-link>
                                 </li>
 								<li>
-									<router-link to="/sell">
+									<router-link to="/promotion">
 										<i class="gi gi-inbox sidebar-nav-icon"></i>
-										<span class="sidebar-nav-mini-hide">Sell</span>
+										<span class="sidebar-nav-mini-hide">Promotion</span>
+									</router-link>
+                                </li>
+								<li>
+									<router-link to="/sale">
+										<i class="gi gi-inbox sidebar-nav-icon"></i>
+										<span class="sidebar-nav-mini-hide">Sale</span>
 									</router-link>
                                 </li>
                             </ul>
@@ -107,7 +113,6 @@ export default {
 			this.name = data.name;
 		}).catch(data => {
 			this.isLoggedIn = false;
-			window.location.href = "/login";
 		});
 	},
 	methods: {
@@ -116,7 +121,7 @@ export default {
 			UserService.logout((isLoggedIn) => {
 				this.isLoggedIn = isLoggedIn;
 				if (this.isLoggedIn === false) {
-					window.location.href = "/login";
+					location.href = '/login';
 				}
 			});
 			return false;

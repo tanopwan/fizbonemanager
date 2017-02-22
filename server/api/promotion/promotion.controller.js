@@ -1,20 +1,20 @@
 'use strict';
 
-const Batch = require('./batch.model');
+const Promotion = require('./promotion.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
 const view = function(req, res) {
-	let batchId = req.params.id;
+	let promotionId = req.params.id;
 
-	return Batch.findOne({ _id: batchId }).exec()
-	.then(batch => {
-		if(!batch) {
+	return Promotion.findOne({ _id: promotionId }).exec()
+	.then(promotion => {
+		if(!promotion) {
 			return res.status(404).end();
 		}
-		res.json(batch);
+		res.json(promotion);
 	})
 	.catch(err => res.status(500).json(err));
 }
@@ -22,33 +22,32 @@ const view = function(req, res) {
 const create = function(req, res) {
 	let userId = new ObjectId(req.decoded._doc._id);
 
-	let batchData = Object.assign({ createdBy: userId }, req.body);
-	return Batch.create(batchData)
-	.then(batch => {
-		if(!batch) {
+	let promotionData = Object.assign({ createdBy: userId }, req.body)
+	return Promotion.create(promotionData)
+	.then(promotion => {
+		if(!promotion) {
 			return res.status(404).end();
 		}
-		res.status = 201;
-		res.json(batch);
+		res.json(promotion);
 	})
 	.catch(err => res.status(500).json(err));
 }
 
 const index = function(req, res) {
-	return Batch.find().exec()
-	.then(batch => {
-		if(!batch) {
+	return Promotion.find().exec()
+	.then(promotion => {
+		if(!promotion) {
 			return res.status(404).end();
 		}
-		res.json(batch);
+		res.json(promotion);
 	})
 	.catch(err => res.status(500).json(err));
 }
 
 const destroy = function(req, res) {
-	let batchId = new ObjectId(req.params.id);
+	let promotionId = new ObjectId(req.params.id);
 
-	return Batch.findOne({ _id: batchId }).remove().exec()
+	return Promotion.findOne({ _id: promotionId }).remove().exec()
 	.then(result => {
 		res.json(result);
 	})

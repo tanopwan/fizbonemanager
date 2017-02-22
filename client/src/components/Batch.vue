@@ -16,7 +16,7 @@
 				<div class="col-sm-12">
 					<div class="input-group">
 						<input type="text" class="form-control input-group-addon input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
-						<span class="input-group-addon"><i class="fa fa-hashtag"></i></span>
+						<span class="input-group-addon"><i class="fa fa-window-minimize"></i></span>
 						<input type="text" class="form-control" v-model="batchRef" placeholder="Batch Ref.">
 						<span class="input-group-btn">
 							<button type="button" @click="addBatch" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import { EventBus } from '../bus';
 
 export default {
 	data() {
@@ -98,25 +98,15 @@ export default {
 			}, response => {
 				console.log(response);
 			});
-		},
-		getBatches() {
-			this.$http.get('/api/batches').then(response => {
-				this.batches = response.body;
-			}, response => {
-				console.log(response);
-			});
-		},
-		getProducts() {
-			this.$http.get('/api/products').then(response => {
-				this.products = response.body;
-			}, response => {
-				console.log(response);
-			});
 		}
 	},
 	created() {
-		this.getProducts();
-		this.getBatches();
+		EventBus.getProducts()
+			.then(response => this.products = response.body)
+			.catch(response => console.log(response));
+		EventBus.getBatches()
+			.then(response => this.batches = response.body)
+			.catch(response => console.log(response));
 	},
 	mounted() {
 		$('.select-select2').select2();

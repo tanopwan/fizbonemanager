@@ -19,11 +19,14 @@
 				</h2>
 			</div>
 			<template v-for="product in products">
-				<h4 class="sub-header">
-					{{ product.name }}
-				</h4>
 				<div>
-					<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
+					<div class="pull-right">
+						{{ product._id }}
+						<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
+					</div>
+					<h4 class="sub-header">
+						{{ product.name }}
+					</h4>
 				</div>
 			</template>
 		</div>
@@ -31,49 +34,47 @@
 </template>
 
 <script>
-	export default {
-		data() {
-			return {
-				productName: '',
-				products: []
-			};
+
+import { EventBus } from '../bus';
+
+export default {
+	data() {
+		return {
+			productName: '',
+			products: []
+		};
+	},
+	methods: {
+		addProduct() {
+			this.$http.post('/api/products', { name: this.productName }).then(response => {
+				this.products.push(response.body);
+			}, response => {
+				// TODO
+				console.log(response);
+			});
 		},
-		methods: {
-			addProduct() {
-				this.$http.post('/api/products', { name: this.productName }).then(response => {
-					this.products.push(response.body);
-				}, response => {
-					// TODO
-					console.log(response);
-				});
-			},
-			deleteProduct(id) {
-				this.$http.delete('/api/products/' + id).then(response => {
-					let index = -1;
-					this.products.forEach((product, idx) => {
-						if (product._id === id) {
-							index = idx;
-						}
-					});
-					if (index !== -1) {
-						this.products.splice(index, 1);
+		deleteProduct(id) {
+			this.$http.delete('/api/products/' + id).then(response => {
+				let index = -1;
+				this.products.forEach((product, idx) => {
+					if (product._id === id) {
+						index = idx;
 					}
-				}, response => {
-					console.log(response);
 				});
-			},
-			getProducts() {
-				this.$http.get('/api/products').then(response => {
-					this.products = response.body;
-				}, response => {
-					console.log(response);
-				});
-			}
-		},
-		created() {
-			this.getProducts();
+				if (index !== -1) {
+					this.products.splice(index, 1);
+				}
+			}, response => {
+				console.log(response);
+			});
 		}
+	},
+	created() {
+		EventBus.getProducts()
+			.then(response => this.products = response.body)
+			.catch(response => console.log(response));
 	}
+}
 </script>
 
 <style>

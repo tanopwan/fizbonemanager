@@ -8,6 +8,7 @@ module.exports = function(app) {
 	app.use('/api/users', require('./api/user'));
 	app.use('/api/products', require('./api/product'));
 	app.use('/api/batches', require('./api/batch'));
+	app.use('/api/promotions', require('./api/promotion'));
 	app.use('/login', function(req, res) {
 		res.sendFile(path.resolve(`${__dirname}/views/login.html`));
 	});
