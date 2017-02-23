@@ -9,6 +9,7 @@ Vue.http.interceptors.push((request, next) => {
 	request.headers.set('x-access-token', localStorage.getItem('session'));
 	request.headers.set('Accept', 'application/json');
 	next(function(response) {
+		//console.log(request.url + ' ' + JSON.stringify(response.body));
 		if (response.status === 401) {
 			console.log("You need to login => redirect");
 			location.href = '/login';

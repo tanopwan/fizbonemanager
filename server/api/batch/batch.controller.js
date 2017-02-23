@@ -2,6 +2,7 @@
 
 const Batch = require('./batch.model');
 const Promotion = require('../promotion/promotion.model');
+const Sale = require('../sale/sale.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
@@ -50,8 +51,8 @@ const destroy = function(req, res) {
 	let batchId = new ObjectId(req.params.id);
 
 	Promotion.findOne({ batchId }).exec()
-	.then(batch => {
-		if (batch) {
+	.then(promotion => {
+		if (promotion) {
 			return res.status(400).json({ message: "Please remove Promotions associated with this Batch" });
 		}
 		return Batch.findOne({ _id: batchId }).remove().exec()
@@ -62,9 +63,50 @@ const destroy = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const stock = function(req, res) {
+	let batchId = new ObjectId(req.params.id);
+	let batchDoc = null;
+	Batch.findOne({ _id: batchId }).exec()
+	.then(batch => {
+		if(!batch) {
+			return res.status(404).json({ message: 'Batch not found' });
+		}
+		batchDoc = batch;
+		return Promotion.find({ batchId }).select(['_id']).exec();
+	})
+	.then(promotions => {
+		return Sale.find({ promotionId: { $in: promotions }}).populate('promotionId');
+	})
+	.then(sales => {
+		let totalQuantity = 0;
+		let totalAmount = 0;
+		sales.forEach(sale => {
+			totalQuantity += sale.quantity;
+			totalAmount += sale.quantity * sale.promotionId.price;
+		});
+		let inStock = batchDoc.quantity - totalQuantity;
+		batchDoc.isInStock = inStock > 0 ? true : false;
+
+		res.json({
+			totalQuantity,
+			totalAmount,
+			inStock,
+			sales
+		});
+		return batchDoc.save();
+	})
+	.then(result => console.log(result))
+	.catch(err => res.status(500).json(err));
+}
+
+/*stock({ params: { id: '58ab09186e5ea828f4571981' } }, {json: (result) => {
+	console.log(result);
+}});*/
+
 module.exports = {
 	view,
 	create,
 	index,
-	destroy
+	destroy,
+	stock
 };

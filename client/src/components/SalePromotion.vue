@@ -1,6 +1,14 @@
 <template>
 	<div>
-		<div v-for="(promotion, index) in promotions" class="col-sm-4">
+		<div class="col-xs-12">
+			<div class="row col-xs-4">
+				<div class="block full">
+					<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+				</div>
+			</div>
+		</div>
+
+		<div v-for="(promotion, index) in promotions" class="col-xs-4">
 			<a href="javascript:void(0)" class="widget">
 			<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
 				<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>
@@ -20,7 +28,7 @@
 						<span class="input-group-addon">รายละเอียด</span>
 						<input type="text" class="form-control" v-model="promotion.description"></input>
 						<span class="input-group-btn">
-							<button @click="addSale(promotion)" type="button" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+							<button @click="addSaleInternal(promotion)" type="button" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
 						</span>
 					</div>
 				</div>
@@ -30,6 +38,7 @@
 			</div>
 			</a>
 		</div>
+
 	</div>
 </template>
 
@@ -37,6 +46,7 @@
 import { EventBus } from '../bus';
 
 export default {
+	props: ['addSale'],
 	data() {
 		return {
 			bgClasses: [
@@ -46,30 +56,33 @@ export default {
 				'themed-background-info',
 				'themed-background-danger'
 			],
-			promotions: []
+			promotions: [],
+			saleDate: new Date()
 		}
 	},
 	methods: {
-		addSale(sale) {
+		addSaleInternal(sale) {
 			let data = {
-				promotionRef: sale.name,
+				promotionId: sale._id,
 				quantity: sale.quantity,
 				price: sale.price,
-				description: sale.description
+				description: sale.description,
+				saleDate: this.saleDate
 			}
-			EventBus.addSale(data)
-				.then(response => {
-				this.sales.push(response.body);
-			}, response => {
-				// TODO
-				console.log(response);
-			});
+			this.addSale(data);
 		}
 	},
 	created() {
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
 			.catch(response => console.log(response));
+	},
+	mounted() {
+		let vm = this;
+		$('.input-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
+			$(this).datepicker('hide');
+			vm.saleDate = $(this).val();
+		});
 	}
 }
 </script>

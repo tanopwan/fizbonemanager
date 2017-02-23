@@ -28,13 +28,22 @@ const create = function(req, res) {
 		if(!sale) {
 			return res.status(404).end();
 		}
+		return Sale.populate(sale, { path: 'promotionId'});
+	})
+	.then(sale => {
+		if(!sale) {
+			return res.status(404).end();
+		}
 		res.json(sale);
 	})
-	.catch(err => res.status(500).json(err));
+	.catch(err => {
+		console.log(err);
+		res.status(500).json(err);
+	});
 }
 
 const index = function(req, res) {
-	return Sale.find().exec()
+	return Sale.find().populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();

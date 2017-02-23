@@ -1,7 +1,7 @@
 'use strict';
 
 const express = require('express');
-const ctrl = require('./sell.controller');
+const ctrl = require('./sale.controller');
 const auth = require('../../auth');
 
 var router = express.Router();

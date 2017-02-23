@@ -1,42 +1,42 @@
 <template>
 	<div>
 		<div class="row">
-			<sale-promotion></sale-promotion>
+			<sale-promotion :addSale="addSale"></sale-promotion>
 		</div>
 		<div class="block full">
 			<div class="block-title">
-				<h2>
-					All Sales
-				</h2>
+				<h4>
+					All Sales <small> Total: {{ sales.length }}</small>
+				</h4>
 			</div>
-			<template v-for="sale in sales">
-				<table class="table table-striped table-borderless table-vcenter">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th class="hidden-xs">Email</th>
-                            <th class="hidden-sm hidden-xs">Status</th>
-                            <th style="width: 80px;" class="text-center"><i class="fa fa-flash"></i></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><strong>User1</strong></td>
-                            <td class="hidden-xs">user1@example.com</td>
-                            <td class="hidden-sm hidden-xs"><a href="javascript:void(0)" class="label label-warning">Pending..</a></td>
-                            <td class="text-center">
-                                <a href="javascript:void(0)" data-toggle="tooltip" title="" class="btn btn-effect-ripple btn-xs btn-success" style="overflow: hidden; position: relative;" data-original-title="Edit User"><i class="fa fa-pencil"></i></a>
-                                <a href="javascript:void(0)" data-toggle="tooltip" title="" class="btn btn-effect-ripple btn-xs btn-danger" style="overflow: hidden; position: relative;" data-original-title="Delete User"><i class="fa fa-times"></i></a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-			</template>
+			<table class="table table-striped table-borderless table-vcenter">
+                <thead>
+                    <tr>
+                        <th class="text-center">Promotion</th>
+						<th class="text-center">Date</th>
+                        <th class="text-center">Quantity</th>
+						<th class="text-center">Price</th>
+						<th class="text-center">Total</th>
+						<th class="text-center hidden-sm hidden-xs">Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="sale in computedSales">
+						<td>{{ sale.promotionName }}</td>
+						<td>{{ sale.stringDate }}</td>
+                        <th class="text-center">{{ sale.quantity }}</th>
+                        <th class="text-center">{{ sale.price }}</th>
+						<th class="text-center">{{ sale.total }}</th>
+                        <td class="hidden-sm hidden-xs">{{ sale.description }}</td>
+                    </tr>
+                </tbody>
+            </table>
 		</div>
 	</div>
 </template>
 
 <script>
+import moment from 'moment';
 import { EventBus } from '../bus';
 import salePromotion from './SalePromotion.vue';
 
@@ -48,16 +48,18 @@ export default {
 			sales: [],
 		};
 	},
+	computed: {
+		computedSales: function() {
+			this.sales.forEach(sale => {
+				sale.promotionName = sale.promotionId.name;
+				sale.price = sale.promotionId.price / 100;
+				sale.total = sale.promotionId.price * sale.quantity / 100;
+				sale.stringDate = moment(sale.saleDate).format('ll');
+			})
+			return this.sales;
+		}
+	},
 	methods: {
-		addSale(promotion) {
-			/*this.$http.post('/api/sales', { description: this.description }).then(response => {
-				this.sales.push(response.body);
-			}, response => {
-				// TODO
-				console.log(response);
-			});*/
-			console.log(promotion);
-		},
 		deleteSale(id) {
 			this.$http.delete('/api/sales/' + id).then(response => {
 				let index = -1;
@@ -72,11 +74,22 @@ export default {
 			}, response => {
 				console.log(response);
 			});
+		},
+		addSale(data) {
+			EventBus.addSale(data).then(response => {
+				this.sales.push(response.body);
+			}, response => {
+				// TODO
+				console.log(response);
+			});
 		}
 	},
 	created() {
 		EventBus.getBatches()
 			.then(response => this.batches = response.body)
+			.catch(response => console.log(response));
+		EventBus.getSales()
+			.then(response => this.sales = response.body)
 			.catch(response => console.log(response));
 	},
 	components: {

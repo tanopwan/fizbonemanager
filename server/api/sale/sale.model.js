@@ -7,7 +7,9 @@ mongoose.Promise = require('bluebird');
 
 const SaleSchema = new Schema({
 	quantity: Number,
-	PromotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' }
+	description: String,
+	saleDate: Date,
+	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
 {

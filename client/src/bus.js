@@ -20,7 +20,7 @@ export const EventBus = new Vue({
 		getPromotions() {
 			return this.$http.get(this.promotionURL);
 		},
-		addSales(data) {
+		addSale(data) {
 			return this.$http.post(this.saleURL, data);
 		}
 	}
