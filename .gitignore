@@ -1,3 +1,5 @@
 node_modules
 dist
 assets
+client/src/js/pages
+client/src/js/plugins
