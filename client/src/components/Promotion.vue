@@ -22,7 +22,7 @@
 						<div class="col-sm-12">
 							<div class="input-group">
 								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
-								<span class="input-group-addon"><i class="fa fa-hashtag"></i></span>
+								<span class="input-group-addon">&#x0E3F;</span>
 								<input type="text" class="form-control" v-model="addPromotions[index].name" placeholder="Name">
 								<span class="input-group-btn">
 									<button type="button" @click="addPromotion(index)" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
@@ -54,7 +54,7 @@
 									</h4>
 								</div>
 								<div>
-									ราคา {{ promotion.price }}
+									&#x0E3F; {{ promotion.price / 100 }}
 								</div>
 							</template>
 						</div>

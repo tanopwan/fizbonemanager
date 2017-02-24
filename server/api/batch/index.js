@@ -13,6 +13,6 @@ router.use(auth.verifyMiddleware);
 router.get('/', ctrl.index);
 router.post('/', ctrl.create);
 router.delete('/:id', auth.hasRoleAdmin, ctrl.destroy);
-router.get('/stock', ctrl.stock);
+router.get('/stock/:id', ctrl.stock);
 
 module.exports = router;

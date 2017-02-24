@@ -1,52 +1,63 @@
 <template>
-	<div class="row"><div class="col-xs-12">
-		<div class="block">
-			<div class="row form-group">
-				<div class="col-sm-6">
-					<input type="text" v-model="quantity" class="form-control" placeholder="จำนวน">
-				</div>
-				<div class="col-sm-6">
-					<select id="example-select2" class="select-select2" style="width: 100%;" data-placeholder="Choose one..">
-						<option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-						<option v-for="product in products" :value="product._id">{{ product.name }}</option>
-					</select>
-				</div>
-			</div>
-			<div class="row form-group">
-				<div class="col-sm-12">
-					<div class="input-group">
-						<input type="text" class="form-control input-group-addon input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
-						<span class="input-group-addon"><i class="fa fa-window-minimize"></i></span>
-						<input type="text" class="form-control" v-model="batchRef" placeholder="Batch Ref.">
-						<span class="input-group-btn">
-							<button type="button" @click="addBatch" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
-						</span>
+	<div>
+		<div class="row">
+			<div class="col-md-6 col-sm-12">
+				<div class="block">
+					<div class="row form-group">
+						<div class="col-sm-6">
+							<div class="input-group">
+								<span class="input-group-addon">จำนวน</span>
+								<input type="text" v-model="quantity" class="form-control" placeholder="จำนวน">
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<select id="example-select2" class="select-select2" style="width: 100%;" data-placeholder="Choose Product..">
+								<option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
+								<option v-for="product in products" :value="product._id">{{ product.name }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="row form-group">
+						<div class="col-sm-12">
+							<div class="input-group">
+								<input type="text" class="form-control input-group-addon input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+								<span class="input-group-addon"><i class="fa fa-window-minimize"></i></span>
+								<input type="text" class="form-control" v-model="batchRef" placeholder="Batch Ref.">
+								<span class="input-group-btn">
+									<button type="button" @click="addBatch" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+								</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="block full">
-			<div class="block-title">
-				<h4>
-					All Batches <small> Total: {{ batches.length }}</small>
-				</h4>
-			</div>
-			<template v-for="batch in batches">
-				<div>
-					<div class="pull-right">
-						{{ batch._id }}
-						<button class="btn btn-danger" @click="deleteBatch(batch._id)"><i class="fa fa-minus"></i></button>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="block full">
+					<div class="block-title">
+						<h4>
+							All Batches <small> Total: {{ batches.length }}</small>
+						</h4>
 					</div>
-					<h4 class="sub-header">
-						{{ batch.batchRef }} <small>{{ getProductById(batch.productId).name }}</small>
-					</h4>
-				</div>
-				<div>
-					จำนวน {{ batch.quantity }}
+					<template v-for="batch in batches">
+						<div>
+							<div class="pull-right">
+								{{ batch._id }}
+								<button class="btn btn-danger" @click="deleteBatch(batch._id)"><i class="fa fa-minus"></i></button>
+							</div>
+							<h4 class="sub-header">
+								{{ batch.batchRef }} <small>{{ getProductById(batch.productId).name }}</small>
+							</h4>
+						</div>
+						<div>
+							จำนวน {{ batch.quantity }}
+						</div>
+					</template>
 				</div>
 			</div>
 		</div>
-	</div></div>
+	</div>
 </template>
 
 <script>
@@ -103,11 +114,11 @@ export default {
 	},
 	created() {
 		EventBus.getProducts()
-			.then(response => this.products = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.products = response.body)
+		.catch(response => console.log(response));
 		EventBus.getBatches()
-			.then(response => this.batches = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.batches = response.body)
+		.catch(response => console.log(response));
 	},
 	mounted() {
 		$('.select-select2').select2();

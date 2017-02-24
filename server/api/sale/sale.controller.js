@@ -63,9 +63,39 @@ const destroy = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const summary = function(req, res) {
+	Sale.aggregate([
+		{
+			"$lookup": {
+		        "from": "promotions",
+		        "localField": "promotionId",
+		        "foreignField": "_id",
+		        "as": "promotion"
+		    }
+		},
+		{
+			"$unwind": '$promotion'
+		},
+		{
+			$group: {
+				_id: { month: { $month: "$saleDate"}, year: { $year: "$saleDate" } },
+				totalQuantity: { $sum: "$quantity" },
+				totalAmount: { $sum: { $multiply: [ "$promotion.price", "$quantity" ] } },
+				transaction: { $sum: 1 },
+				promotions: { $addToSet: "$promotion.name" }
+			}
+		}
+	]).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
 	index,
-	destroy
+	destroy,
+	summary
 };

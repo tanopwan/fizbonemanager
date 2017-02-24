@@ -1,34 +1,40 @@
 <template>
 	<div>
-		<div class="block">
-			<div class="row form-group">
-				<div class="col-md-6">
-					<div class="input-group">
-						<input type="text" v-model="productName" class="form-control" placeholder="Product Name">
-						<span class="input-group-btn">
-							<button type="button" @click="addProduct" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
-						</span>
+		<div class="row">
+			<div class="col-md-6">
+				<div class="block">
+					<div class="form-group">
+						<div class="input-group">
+							<input type="text" v-model="productName" class="form-control" placeholder="Product Name">
+							<span class="input-group-btn">
+								<button type="button" @click="addProduct" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="block full">
-			<div class="block-title">
-				<h4>
-					All Products <small> Total: {{ products.length }}</small>
-				</h4>
-			</div>
-			<template v-for="product in products">
-				<div>
-					<div class="pull-right">
-						{{ product._id }}
-						<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
+		<div class="row">
+			<div class="col-md-12">
+				<div class="block full">
+					<div class="block-title">
+						<h4>
+							All Products <small> Total: {{ products.length }}</small>
+						</h4>
 					</div>
-					<h4 class="sub-header">
-						{{ product.name }}
-					</h4>
+					<template v-for="product in products">
+						<div>
+							<div class="pull-right">
+								{{ product._id }}
+								<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
+							</div>
+							<h4 class="sub-header">
+								{{ product.name }}
+							</h4>
+						</div>
+					</template>
 				</div>
-			</template>
+			</div>
 		</div>
 	</div>
 </template>
@@ -71,8 +77,8 @@ export default {
 	},
 	created() {
 		EventBus.getProducts()
-			.then(response => this.products = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.products = response.body)
+		.catch(response => console.log(response));
 	}
 }
 </script>

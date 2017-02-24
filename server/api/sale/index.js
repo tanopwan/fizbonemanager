@@ -6,6 +6,7 @@ const auth = require('../../auth');
 
 var router = express.Router();
 
+router.get('/summary', ctrl.summary);
 router.get('/:id', ctrl.view);
 
 router.use(auth.verifyMiddleware);
