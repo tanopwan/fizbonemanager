@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="row">
-			<sale-promotion :addSale="addSale"></sale-promotion>
+			<sale-promotion :addSale="addSale" :batchStocks="batchStocks"></sale-promotion>
 		</div>
 		<div class="block full">
 			<div class="block-title">
@@ -15,8 +15,8 @@
 						<th class="text-center hidden-sm hidden-xs">Promotion</th>
 						<th class="text-center">Date</th>
 						<th class="text-center">Quantity</th>
-						<th class="text-center">Price</th>
-						<th class="text-center">Total</th>
+						<th class="text-center">Price (&#x0E3F;)</th>
+						<th class="text-center">Total (&#x0E3F;)</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 					</tr>
 				</thead>
@@ -46,6 +46,7 @@ export default {
 			description: '',
 			batches: [],
 			sales: [],
+			batchStocks: []
 		};
 	},
 	computed: {
@@ -85,19 +86,22 @@ export default {
 		addSale(data) {
 			EventBus.addSale(data).then(response => {
 				this.sales.push(response.body);
-			}, response => {
-				// TODO
-				console.log(response);
-			});
+				return EventBus.getBatchStock();
+			})
+			.then(response => this.batchStocks = response.body)
+			.catch(response => console.log(response));
 		}
 	},
 	created() {
 		EventBus.getBatches()
-		.then(response => this.batches = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.batches = response.body)
+			.catch(response => console.log(response));
 		EventBus.getSales()
-		.then(response => this.sales = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.sales = response.body)
+			.catch(response => console.log(response));
+		EventBus.getBatchStock()
+			.then(response => this.batchStocks = response.body)
+			.catch(response => console.log(response));
 	},
 	components: {
 		salePromotion

@@ -15,7 +15,7 @@
 					<span class="pull-right"><i class="fa fa-ticket"></i> {{ promotion.batchRef }}</span>
 				</div>
 				<div class="widget-content themed-background-muted text-center">
-					<div class="form-group">
+					<div class="form-group" :class="{ 'has-error': promotion.error }">
 						<div class="input-group">
 							<span class="input-group-addon">จำนวน</span>
 							<input type="number" class="form-control" v-model="promotion.quantity"></input>
@@ -28,16 +28,14 @@
 							<span class="input-group-addon">รายละเอียด</span>
 							<input type="text" class="form-control" v-model="promotion.description"></input>
 							<span class="input-group-btn">
-								<button @click="addSaleInternal(promotion)" type="button" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+								<button @click="addSaleInternal(promotion, getAvaliableStock(promotion.batchId))" type="button" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
 							</span>
 						</div>
 					</div>
 				</div>
 				<div class="widget-content text-center">
-					<h2 class="widget-heading text-dark">{{ promotion.price / 100 }} x {{ promotion.quantity }} = {{ promotion.price*promotion.quantity / 100 }}</h2>
-				</div>
-				<div class="widget-content text-center">
-					<h2 class="widget-heading text-dark">Stocks</h2>
+					<h3 class="widget-heading text-dark">{{ promotion.price / 100 }} x {{ promotion.quantity }} = &#x0E3F;{{ promotion.price*promotion.quantity / 100 }}</h3>
+					{{ getAvaliableStock(promotion.batchId) }} Avaliables
 				</div>
 			</a>
 		</div>
@@ -49,7 +47,7 @@
 import { EventBus } from '../bus';
 
 export default {
-	props: ['addSale'],
+	props: ['addSale', 'batchStocks'],
 	data() {
 		return {
 			bgClasses: [
@@ -64,7 +62,7 @@ export default {
 		}
 	},
 	methods: {
-		addSaleInternal(sale) {
+		addSaleInternal(sale, stock) {
 			let data = {
 				promotionId: sale._id,
 				quantity: sale.quantity,
@@ -72,13 +70,33 @@ export default {
 				description: sale.description,
 				saleDate: this.saleDate
 			}
+
+			if (data.quantity > stock) {
+				console.log("Over stocks!");
+				this.$set(sale, 'error', true);
+				return false;
+			}
+			this.$set(sale, 'error', false);
 			this.addSale(data);
+		},
+		getBatchStock(batchId) {
+			let batch = null;
+			this.batchStocks.forEach(batchStock => {
+				if (batchStock._id === batchId) {
+					batch = batchStock;
+				}
+			});
+			return batch;
+		},
+		getAvaliableStock(batchId) {
+			let batch = this.getBatchStock(batchId);
+			return batch ? batch.totalStock - batch.totalQuantity : -1;
 		}
 	},
 	created() {
 		EventBus.getPromotions()
-		.then(response => this.promotions = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.promotions = response.body)
+			.catch(response => console.log(response));
 	},
 	mounted() {
 		let vm = this;

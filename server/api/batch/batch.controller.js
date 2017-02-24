@@ -110,10 +110,26 @@ const stock = function(req, res) {
 		    }
 		},
 		{
+			$unwind: '$promotion'
+		},
+		{
+			$lookup: {
+		        "from": "batches",
+		        "localField": "promotion.batchId",
+		        "foreignField": "_id",
+		        "as": "batch"
+		    }
+		},
+		{
+			$unwind: '$batch'
+		},
+		{
 			$group: {
 				_id: '$promotion.batchId',
-				totalAmount: { $sum: "$quantity" },
-				transaction: { $sum: 1 }
+				batchName: { $first: '$batch.batchRef' },
+				totalQuantity: { $sum: '$quantity' },
+				transaction: { $sum: 1 },
+				totalStock: { $first: '$batch.quantity' }
 			}
 		}
 	]).exec()
