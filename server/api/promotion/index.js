@@ -7,10 +7,10 @@ const auth = require('../../auth');
 var router = express.Router();
 
 router.get('/:id', ctrl.view);
+router.get('/', ctrl.index);
 
 router.use(auth.verifyMiddleware);
 
-router.get('/', ctrl.index);
 router.post('/', ctrl.create);
 router.delete('/:id', auth.hasRoleAdmin, ctrl.destroy);
 

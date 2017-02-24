@@ -41,25 +41,20 @@
 				</a>
 			</div>
 		</div>
-		<div class="block">
-			<div class="row">
-				<div class="col-xs-3">
-					<div class="block-section">
-						<div class="pie-chart block-section easyPieChart" data-percent="25" data-size="109" data-line-width="2" data-bar-color="#de815c" data-track-color="#ebeef2" style="width: 109px; height: 109px; line-height: 109px;">
-							<span><i class="fa fa-database text-danger"></i></span>
-							<canvas width="218" height="218" style="width: 109px; height: 109px;"></canvas>
-						</div>
+		<div class="row">
+			<div class="col-xs-4">
+				<div class="widget">
+					<div class="widget-content border-bottom">
+						<span class="pull-right text-muted">% completed</span>
+						Batches
 					</div>
-					<h4 class="text-center"><i class="fa fa-ticket text-muted"></i> Tickets</h4>
-				</div>
-				<div class="col-xs-3">
-					<div class="block-section">
-						<div class="pie-chart block-section easyPieChart" data-percent="25" data-size="109" data-line-width="2" data-bar-color="#de815c" data-track-color="#ebeef2" style="width: 109px; height: 109px; line-height: 109px;">
-							<span><i class="fa fa-database text-danger"></i></span>
-							<canvas width="218" height="218" style="width: 109px; height: 109px;"></canvas>
+					<a href="javascript:void(0)" class="widget-content themed-background-muted text-right clearfix"
+						v-for="batchStock in batchStocks">
+						<h2 class="widget-heading h3 text-muted">{{ batchStock.batchName }} <small>{{ batchStock.width.toFixed(2) }}%</small></h2>
+						<div class="progress progress-striped progress-mini active">
+							<div class="progress-bar progress-bar-success" role="progressbar" v-bind:style="{ width: batchStock.width + '%' }"></div>
 						</div>
-					</div>
-					<h4 class="text-center"><i class="fa fa-ticket text-muted"></i> Tickets</h4>
+					</a>
 				</div>
 			</div>
 		</div>
@@ -73,7 +68,8 @@ import { EventBus } from '../bus';
 export default {
 	data() {
 		return {
-			saleSummaries: [{}]
+			saleSummaries: [{}],
+			batchStocks: []
 		};
 	},
 	computed: {
@@ -91,6 +87,17 @@ export default {
 		EventBus.getSaleSummary()
 		.then(response => {
 			this.saleSummaries = response.body;
+		})
+		.catch(response => console.log(response));
+		EventBus.getBatchStock()
+		.then(response => {
+			this.batchStocks = response.body;
+			this.batchStocks.forEach((batchStock, index) => {
+				console.log(batchStock);
+				let width = (batchStock.totalQuantity / batchStock.totalStock) * 100;
+				this.$set(this.batchStocks[index], 'width', width);
+			});
+			console.log(this.batchStocks);
 		})
 		.catch(response => console.log(response));
 	},

@@ -35,7 +35,7 @@ const create = function(req, res) {
 }
 
 const index = function(req, res) {
-	return Promotion.find().exec()
+	return Promotion.find().populate('batchId').exec()
 	.then(promotion => {
 		if(!promotion) {
 			return res.status(404).end();

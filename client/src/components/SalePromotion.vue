@@ -12,7 +12,7 @@
 			<a href="javascript:void(0)" class="widget">
 				<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
 					<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>
-					<span class="pull-right"><i class="fa fa-ticket"></i> {{ promotion.batchRef }}</span>
+					<span class="pull-right"><i class="fa fa-ticket"></i></span>
 				</div>
 				<div class="widget-content themed-background-muted text-center">
 					<div class="form-group" :class="{ 'has-error': promotion.error }">
@@ -88,9 +88,12 @@ export default {
 			});
 			return batch;
 		},
-		getAvaliableStock(batchId) {
-			let batch = this.getBatchStock(batchId);
-			return batch ? batch.totalStock - batch.totalQuantity : -1;
+		getAvaliableStock(batch) {
+			let stock = batch.quantity;
+			let batchSummary = this.getBatchStock(batch._id);
+			console.log(batchSummary);
+			let totalQuantity = batchSummary ? batchSummary.totalQuantity : 0;
+			return stock - totalQuantity;
 		}
 	},
 	created() {
