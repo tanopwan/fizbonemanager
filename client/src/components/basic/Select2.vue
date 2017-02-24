@@ -13,7 +13,7 @@ export default {
 		$(this.$el)
 		.val(this.value)
 		// init select2
-		.select2({ data: this.options })
+		.select2({ data: this.options, allowClear: true })
 		// emit event on change.
 		.on('change', function () {
 			vm.$emit('input', this.value)
@@ -26,7 +26,7 @@ export default {
 		},
 		options: function (options) {
 			// update options
-			$(this.$el).select2({ data: options });
+			$(this.$el).select2({ data: options, allowClear: true });
 		}
 	},
 	destroyed: function () {

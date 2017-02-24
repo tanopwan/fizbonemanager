@@ -22,7 +22,7 @@ const view = function(req, res) {
 const create = function(req, res) {
 	let userId = new ObjectId(req.decoded._doc._id);
 
-	let saleData = Object.assign({ createdBy: userId }, req.body)
+	let saleData = Object.assign({ createdBy: userId, isDeleted: false }, req.body)
 	return Sale.create(saleData)
 	.then(sale => {
 		if(!sale) {
@@ -43,7 +43,7 @@ const create = function(req, res) {
 }
 
 const index = function(req, res) {
-	return Sale.find().populate('promotionId').exec()
+	return Sale.find({ isDeleted: false }).populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
@@ -56,7 +56,7 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let saleId = new ObjectId(req.params.id);
 
-	return Sale.findOne({ _id: saleId }).remove().exec()
+	return Sale.findOneAndUpdate({ _id: saleId }, { $set: { isDeleted: true }}).exec()
 	.then(result => {
 		res.json(result);
 	})

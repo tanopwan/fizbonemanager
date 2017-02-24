@@ -103,6 +103,7 @@ export default {
 	},
 	mounted() {
 		let vm = this;
+		$('.select-select2').select2();
 		$('.input-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
 			$(this).datepicker('hide');
 			vm.saleDate = $(this).val();

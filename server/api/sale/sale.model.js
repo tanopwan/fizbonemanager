@@ -9,6 +9,7 @@ const SaleSchema = new Schema({
 	quantity: Number,
 	description: String,
 	saleDate: Date,
+	isDeleted: { type: Boolean, default: false },
 	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
