@@ -12,7 +12,7 @@
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center">Promotion</th>
+						<th class="text-center hidden-sm hidden-xs">Promotion</th>
 						<th class="text-center">Date</th>
 						<th class="text-center">Quantity</th>
 						<th class="text-center">Price</th>
