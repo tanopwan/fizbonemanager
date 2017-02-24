@@ -22,7 +22,7 @@
                 </thead>
                 <tbody>
                     <tr v-for="sale in computedSales">
-						<td>{{ sale.promotionName }}</td>
+						<td class="hidden-sm hidden-xs">{{ sale.promotionName }}</td>
 						<td>{{ sale.stringDate }}</td>
                         <th class="text-center">{{ sale.quantity }}</th>
                         <th class="text-center">{{ sale.price }}</th>

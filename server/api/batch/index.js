@@ -6,6 +6,7 @@ const auth = require('../../auth');
 
 var router = express.Router();
 
+router.get('/stock', ctrl.stock);
 router.get('/:id', ctrl.view);
 
 router.use(auth.verifyMiddleware);
@@ -13,6 +14,5 @@ router.use(auth.verifyMiddleware);
 router.get('/', ctrl.index);
 router.post('/', ctrl.create);
 router.delete('/:id', auth.hasRoleAdmin, ctrl.destroy);
-router.get('/stock/:id', ctrl.stock);
 
 module.exports = router;

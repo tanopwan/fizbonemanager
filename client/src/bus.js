@@ -24,7 +24,7 @@ export const EventBus = new Vue({
 			return this.$http.post(this.saleURL, data);
 		},
 		getBatchStock(id) {
-			return this.$http.get(`${this.batchURL}/stock/${id}`);
+			return this.$http.get(`${this.batchURL}/stock`);
 		},
 		getSaleSummary() {
 			return this.$http.get(`${this.saleURL}/summary`);

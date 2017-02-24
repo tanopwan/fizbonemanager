@@ -63,7 +63,7 @@ const destroy = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
-const stock = function(req, res) {
+const stock2 = function(req, res) {
 	let batchId = new ObjectId(req.params.id);
 	let batchDoc = null;
 	Batch.findOne({ _id: batchId }).exec()
@@ -99,13 +99,37 @@ const stock = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const stock = function(req, res) {
+	Sale.aggregate([
+		{
+			$lookup: {
+		        "from": "promotions",
+		        "localField": "promotionId",
+		        "foreignField": "_id",
+		        "as": "promotion"
+		    }
+		},
+		{
+			$group: {
+				_id: '$promotion.batchId',
+				totalAmount: { $sum: "$quantity" },
+				transaction: { $sum: 1 }
+			}
+		}
+	]).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 const summary = function(req, res) {
 	Sale.aggregate({
 		$group:
 		{
 			_id: '$promotionId',
 			totalAmount: { $sum: "$quantity" },
-			count: { $sum: 1 }
+			transaction: { $sum: 1 }
 		}
 	}).exec()
 	.then(result => {
