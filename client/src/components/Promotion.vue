@@ -50,7 +50,7 @@
 										<button class="btn btn-danger" @click="deletePromotion(promotion._id)"><i class="fa fa-minus"></i></button>
 									</div>
 									<h4 class="sub-header">
-										{{ promotion.name }} <small> Batch: {{ promotion.batchId }}</small>
+										{{ promotion.name }} <small> Batch: {{ promotion.batchId._id }}</small>
 									</h4>
 								</div>
 								<div>
