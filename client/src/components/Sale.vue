@@ -20,8 +20,8 @@
 							<ul class="pagination pagination-sm">
 								<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
 								<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
-								<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">This week</a></li>
-								<li :class="{ active : thisMonthFilter }"><a href="javascript:void(0)" @click="thisMonthClick">This month</a></li>
+								<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
+								<li :class="{ active : thisMonthFilter }"><a href="javascript:void(0)" @click="thisMonthClick">30 days</a></li>
 							</ul>
 						</th>
 						<th class="text-center">Quantity</th>
@@ -91,6 +91,28 @@ export default {
 					return true; // All
 				}
 				return sale.promotionName === this.selectedFilterPromotion;
+			}).filter(sale => {
+				if (this.allFilter) {
+					return true;
+				} else if (this.todayFilter) {
+					if (moment(sale.saleDate).isSame(new Date(), "day") &&
+						moment(sale.saleDate).isSame(new Date(), "month") &&
+						moment(sale.saleDate).isSame(new Date(), "year")) {
+						return true;
+					}
+					return false;
+				} else if (this.thisWeekFilter) {
+					if (moment(sale.saleDate).isBetween(moment().subtract(6, 'days').startOf('day'), moment().endOf('day'))) {
+						return true;
+					}
+					return false;
+				} else if (this.thisMonthFilter) {
+					if (moment(sale.saleDate).isBetween(moment().subtract(30, 'days').startOf('day'), moment().endOf('day'))) {
+						return true;
+					}
+					return false;
+				}
+				return true;
 			});
 		},
 		promotionOptions: function() {
