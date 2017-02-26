@@ -6,7 +6,28 @@
 					Search <small> ค้นหา...</small>
 				</h4>
 			</div>
-
+			<form class="form-horizontal">
+				<div class="row">
+					<div class="col-xs-6">
+						<div class="form-group">
+							<label class="col-xs-3 control-label">Filter Promotion</label>
+							<div class="col-xs-9">
+								<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
+								</select2>
+							</div>
+						</div>
+					</div>
+					<div class="col-xs-6">
+						<label class="col-xs-3 control-label">Filter Date</label>
+						<ul class="pagination pagination-sm" style="margin-top: 3px;">
+							<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
+							<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
+							<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
+							<li :class="{ active : thisMonthFilter }"><a href="javascript:void(0)" @click="thisMonthClick">30 days</a></li>
+						</ul>
+					</div>
+				</div>
+			</form>
 		</div>
 		<div class="block full">
 			<div class="block-title">
@@ -17,18 +38,8 @@
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center hidden-sm hidden-xs">
-							<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
-							</select2>
-						</th>
-						<th class="text-center">
-							<ul class="pagination pagination-sm">
-								<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
-								<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
-								<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
-								<li :class="{ active : thisMonthFilter }"><a href="javascript:void(0)" @click="thisMonthClick">30 days</a></li>
-							</ul>
-						</th>
+						<th class="text-center hidden-sm hidden-xs">Promotion</th>
+						<th class="text-center">Date</th>
 						<th class="text-center">Quantity</th>
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)</th>
@@ -71,8 +82,7 @@ export default {
 			thisWeekFilter: false,
 			thisMonthFilter: false,
 			promotions: [],
-			selectedFilterPromotion: '',
-			allFilter: true
+			selectedFilterPromotion: ''
 		};
 	},
 	computed: {
@@ -100,8 +110,8 @@ export default {
 					return true;
 				} else if (this.todayFilter) {
 					if (moment(sale.saleDate).isSame(new Date(), "day") &&
-						moment(sale.saleDate).isSame(new Date(), "month") &&
-						moment(sale.saleDate).isSame(new Date(), "year")) {
+					moment(sale.saleDate).isSame(new Date(), "month") &&
+					moment(sale.saleDate).isSame(new Date(), "year")) {
 						return true;
 					}
 					return false;
@@ -170,14 +180,14 @@ export default {
 	},
 	created() {
 		EventBus.getBatches()
-			.then(response => this.batches = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.batches = response.body)
+		.catch(response => console.log(response));
 		EventBus.getSales()
-			.then(response => this.sales = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.sales = response.body)
+		.catch(response => console.log(response));
 		EventBus.getPromotions()
-			.then(response => this.promotions = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.promotions = response.body)
+		.catch(response => console.log(response));
 	},
 	components: {
 		salePromotion,
