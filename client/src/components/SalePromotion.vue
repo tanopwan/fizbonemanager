@@ -1,56 +1,59 @@
 <template>
 	<div>
-		<div class="row">
-			<div class="col-xs-12 col-sm-6 col-md-4">
-				<div class="block full">
-					<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+		<div class="block full">
+			<div class="row">
+				<div class="col-xs-12 col-sm-6 col-md-4">
+					<div class="input-group">
+						<span class="input-group-addon">Custom Date</span>
+						<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+					</div>
 				</div>
 			</div>
 		</div>
-
-		<div v-for="(promotion, index) in activePromotions" class="col-xs-12 col-sm-6 col-md-4">
-			<a href="javascript:void(0)" class="widget">
-				<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
-					<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>
-					<span class="pull-right"><i class="fa fa-ticket"></i></span>
-				</div>
-				<div class="widget-content themed-background-muted text-center">
-					<div class="form-group" :class="{ 'has-error': promotion.error }">
-						<div class="input-group">
-							<span class="input-group-addon">จำนวน</span>
-							<input type="number" class="form-control" v-model="promotion.quantity"></input>
-							<span class="input-group-addon" @click="promotion.quantity++"><i class="fa fa-plus"></i></span>
-							<span class="input-group-addon" @click="promotion.quantity--"><i class="fa fa-minus"></i></span>
+		<div class="row">
+			<div v-for="(promotion, index) in activePromotions" class="col-xs-12 col-sm-6 col-md-4">
+				<a href="javascript:void(0)" class="widget">
+					<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
+						<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>
+						<span class="pull-right"><i class="fa fa-ticket"></i></span>
+					</div>
+					<div class="widget-content themed-background-muted text-center">
+						<div class="form-group" :class="{ 'has-error': promotion.error }">
+							<div class="input-group">
+								<span class="input-group-addon">จำนวน</span>
+								<input type="number" class="form-control" v-model="promotion.quantity"></input>
+								<span class="input-group-addon" @click="promotion.quantity++"><i class="fa fa-plus"></i></span>
+								<span class="input-group-addon" @click="promotion.quantity--"><i class="fa fa-minus"></i></span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon">รายละเอียด</span>
+								<input type="text" class="form-control" v-model="promotion.description"></input>
+								<span class="input-group-btn">
+									<button @click="addSaleInternal(promotion, getAvaliableStock(promotion.batchId))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
+								</span>
+							</div>
 						</div>
 					</div>
-					<div class="form-group">
-						<div class="input-group">
-							<span class="input-group-addon">รายละเอียด</span>
-							<input type="text" class="form-control" v-model="promotion.description"></input>
-							<span class="input-group-btn">
-								<button @click="addSaleInternal(promotion, getAvaliableStock(promotion.batchId))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
-							</span>
+					<div class="widget-content widget-content-full-top-bottom border-bottom">
+						<div class="row text-center">
+							<div class="col-xs-6 push-inner-top-bottom border-right">
+								<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ promotion.price / 100 }} x {{ promotion.quantity }} = &#x0E3F;{{ promotion.price*promotion.quantity / 100 }}</small></h3>
+							</div>
+							<div class="col-xs-6 push-inner-top-bottom">
+								<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} Avaliables</small></h3>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="widget-content widget-content-full-top-bottom border-bottom">
-					<div class="row text-center">
-						<div class="col-xs-6 push-inner-top-bottom border-right">
-							<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ promotion.price / 100 }} x {{ promotion.quantity }} = &#x0E3F;{{ promotion.price*promotion.quantity / 100 }}</small></h3>
-						</div>
-						<div class="col-xs-6 push-inner-top-bottom">
-							<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} Avaliables</small></h3>
-						</div>
+					<div class="widget-content text-center">
+						<h3 class="widget-heading text-dark">
+							{{ promotion.batchId.productId.name }}
+						</h3>
 					</div>
-				</div>
-				<div class="widget-content text-center">
-					<h3 class="widget-heading text-dark">
-						{{ promotion.batchId.productId.name }}
-					</h3>
-				</div>
-			</a>
+				</a>
+			</div>
 		</div>
-
 	</div>
 </template>
 

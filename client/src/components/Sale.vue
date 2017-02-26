@@ -1,8 +1,6 @@
 <template>
 	<div>
-		<div class="row">
-			<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions"></sale-promotion>
-		</div>
+		<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions"></sale-promotion>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
