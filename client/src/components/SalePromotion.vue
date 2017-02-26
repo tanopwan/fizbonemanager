@@ -58,7 +58,7 @@
 import { EventBus } from '../bus';
 
 export default {
-	props: ['addSale', 'batchStocks'],
+	props: ['addSale', 'batchStocks', 'promotions'],
 	data() {
 		return {
 			bgClasses: [
@@ -68,19 +68,21 @@ export default {
 				'themed-background-info',
 				'themed-background-danger'
 			],
-			promotions: [],
 			saleDate: new Date()
 		}
 	},
 	computed: {
 		activePromotions: function() {
-			return this.promotions.filter(promotion => {
-				console.log(promotion.isActive);
-				if (promotion.isActive === false) {
-					return false;
-				}
-				return true;
-			});
+			if (this.promotions) {
+				return this.promotions.filter(promotion => {
+					console.log(promotion.isActive);
+					if (promotion.isActive === false) {
+						return false;
+					}
+					return true;
+				});
+			}
+			return [];
 		}
 	},
 	methods: {
@@ -116,11 +118,6 @@ export default {
 			let totalQuantity = batchSummary ? batchSummary.totalQuantity : 0;
 			return stock - totalQuantity;
 		}
-	},
-	created() {
-		EventBus.getPromotions()
-		.then(response => this.promotions = response.body)
-		.catch(response => console.log(response));
 	},
 	mounted() {
 		let vm = this;

@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="row">
-			<sale-promotion :addSale="addSale" :batchStocks="batchStocks"></sale-promotion>
+			<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions"></sale-promotion>
 		</div>
 		<div class="block full">
 			<div class="block-title">
@@ -56,7 +56,8 @@ export default {
 			thisWeekFilter: false,
 			thisMonthFilter: false,
 			selectedFilterPromotion: '',
-			allFilter: true
+			allFilter: true,
+			promotions: []
 		};
 	},
 	computed: {
