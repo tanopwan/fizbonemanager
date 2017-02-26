@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="row">
-			<div class="col-xs-6" v-for="product, index in products">
+			<div class="col-xs-12 col-sm-6" v-for="product, index in products">
 				<div class="block full">
 					<div class="block-title">
 						<h2>{{ product.name }}</h2>

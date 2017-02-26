@@ -1,14 +1,14 @@
 <template>
 	<div>
-		<div class="col-xs-12">
-			<div class="row col-xs-4">
+		<div class="row">
+			<div class="col-xs-12 col-sm-6 col-md-4">
 				<div class="block full">
 					<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
 				</div>
 			</div>
 		</div>
 
-		<div v-for="(promotion, index) in activePromotions" class="col-xs-4">
+		<div v-for="(promotion, index) in activePromotions" class="col-xs-12 col-sm-6 col-md-4">
 			<a href="javascript:void(0)" class="widget">
 				<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
 					<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>

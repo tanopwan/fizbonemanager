@@ -8,7 +8,7 @@
 			</div>
 			<form class="form-horizontal">
 				<div class="row">
-					<div class="col-xs-6">
+					<div class="col-xs-12 col-md-6">
 						<div class="form-group">
 							<label class="col-xs-3 control-label">Filter Promotion</label>
 							<div class="col-xs-9">
@@ -17,8 +17,8 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-6">
-						<label class="col-xs-3 control-label">Filter Date</label>
+					<div class="col-xs-12 col-md-6">
+						<label class="col-xs-6 col-md-3 control-label">Filter Date</label>
 						<ul class="pagination pagination-sm" style="margin-top: 3px;">
 							<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
 							<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>

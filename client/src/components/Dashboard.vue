@@ -42,7 +42,7 @@
 			</div>
 		</div>
 		<div class="row">
-			<div class="col-xs-4">
+			<div class="col-xs-12 col-md-6 col-lg-4">
 				<div class="widget">
 					<div class="widget-content border-bottom">
 						<span class="pull-right text-muted">% completed</span>
