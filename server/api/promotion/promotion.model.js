@@ -9,6 +9,7 @@ const PromotionSchema = new Schema({
 	name: String,
 	price: Number,
 	quantity: Number,
+	isActive: { type: Boolean, default: true },
 	batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },

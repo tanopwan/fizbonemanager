@@ -46,15 +46,18 @@
 							<template v-for="promotion in promotions">
 								<div>
 									<div class="pull-right">
-										{{ promotion._id }}
+										<small>{{ promotion._id }}</small>
 										<button class="btn btn-danger" @click="deletePromotion(promotion._id)"><i class="fa fa-minus"></i></button>
 									</div>
 									<h4 class="sub-header">
-										{{ promotion.name }} <small> Batch: {{ promotion.batchId._id }}</small>
+										<a href="javascript:void(0)" @click="setIsActive(promotion._id, !promotion.isActive)" class="label" :class="[{ 'label-default': !promotion.isActive, 'label-success': promotion.isActive}]">
+											{{ promotion.isActive ? 'Active' : 'InActive' }}
+										</a> {{ promotion.name }}
 									</h4>
 								</div>
 								<div>
-									&#x0E3F; {{ promotion.price / 100 }}
+									<small> Batch: {{ promotion.batchId._id }}</small>
+									<h4>&#x0E3F; {{ promotion.price / 100 }}</h4>
 								</div>
 							</template>
 						</div>
@@ -101,6 +104,17 @@ export default {
 				if (index !== -1) {
 					this.promotions.splice(index, 1);
 				}
+			}, response => {
+				console.log(response);
+			});
+		},
+		setIsActive(id, isActive) {
+			this.$http.put(`/api/promotions/${id}/${isActive}`).then(response => {
+				this.promotions.forEach((promotion, idx) => {
+					if (promotion._id === id) {
+						promotion.isActive = isActive;
+					}
+				});
 			}, response => {
 				console.log(response);
 			});

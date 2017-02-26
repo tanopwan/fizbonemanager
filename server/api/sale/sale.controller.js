@@ -2,6 +2,7 @@
 
 const Sale = require('./sale.model');
 const config = require('../../config/environment');
+const moment = require('moment');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;

@@ -67,9 +67,21 @@ const destroy = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const setIsActive = function(req, res) {
+	let promotionId = new ObjectId(req.params.id);
+	let isActive = req.params.isActive;
+
+	return Promotion.findOneAndUpdate({ _id: promotionId }, { $set: { isActive: isActive }}).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
 	index,
-	destroy
+	destroy,
+	setIsActive
 };

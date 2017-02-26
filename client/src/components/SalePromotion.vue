@@ -8,7 +8,7 @@
 			</div>
 		</div>
 
-		<div v-for="(promotion, index) in promotions" class="col-xs-4">
+		<div v-for="(promotion, index) in activePromotions" class="col-xs-4">
 			<a href="javascript:void(0)" class="widget">
 				<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
 					<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>
@@ -70,6 +70,17 @@ export default {
 			],
 			promotions: [],
 			saleDate: new Date()
+		}
+	},
+	computed: {
+		activePromotions: function() {
+			return this.promotions.filter(promotion => {
+				console.log(promotion.isActive);
+				if (promotion.isActive === false) {
+					return false;
+				}
+				return true;
+			});
 		}
 	},
 	methods: {
