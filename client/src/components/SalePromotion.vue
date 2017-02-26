@@ -78,7 +78,6 @@ export default {
 		activePromotions: function() {
 			if (this.promotions) {
 				return this.promotions.filter(promotion => {
-					console.log(promotion.isActive);
 					if (promotion.isActive === false) {
 						return false;
 					}

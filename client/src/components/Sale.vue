@@ -81,6 +81,7 @@ export default {
 				});
 				if (index !== -1) {
 					this.sales.splice(index, 1);
+					this.updateStock();
 				}
 			}, response => {
 				console.log(response);
@@ -89,11 +90,15 @@ export default {
 		addSale(data) {
 			EventBus.addSale(data).then(response => {
 				this.sales.push(response.body);
-
-				return EventBus.getBatchStock();
+				this.updateStock();
 			})
 			.then(response => this.batchStocks = response.body)
 			.catch(response => console.log(response));
+		},
+		updateStock() {
+			EventBus.getBatchStock()
+				.then(response => this.batchStocks = response.body)
+				.catch(response => console.log(response));
 		}
 	},
 	created() {
@@ -101,7 +106,10 @@ export default {
 			.then(response => this.sales = response.body)
 			.catch(response => console.log(response));
 		EventBus.getBatchStock()
-			.then(response => this.batchStocks = response.body)
+			.then(response => {
+				this.batchStocks = response.body
+				console.log(this.batchStocks);
+			})
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
