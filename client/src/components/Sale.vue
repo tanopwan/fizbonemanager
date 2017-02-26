@@ -51,12 +51,6 @@ export default {
 			description: '',
 			sales: [],
 			batchStocks: [],
-			allFilter: false,
-			todayFilter: false,
-			thisWeekFilter: false,
-			thisMonthFilter: false,
-			selectedFilterPromotion: '',
-			allFilter: true,
 			promotions: []
 		};
 	},
@@ -75,33 +69,6 @@ export default {
 					return -1;
 				}
 				return 1;
-			}).filter(sale => {
-				if (!this.selectedFilterPromotion || this.selectedFilterPromotion.length === 0) {
-					return true; // All
-				}
-				return sale.promotionName === this.selectedFilterPromotion;
-			}).filter(sale => {
-				if (this.allFilter) {
-					return true;
-				} else if (this.todayFilter) {
-					if (moment(sale.saleDate).isSame(new Date(), "day") &&
-						moment(sale.saleDate).isSame(new Date(), "month") &&
-						moment(sale.saleDate).isSame(new Date(), "year")) {
-						return true;
-					}
-					return false;
-				} else if (this.thisWeekFilter) {
-					if (moment(sale.saleDate).isBetween(moment().subtract(6, 'days').startOf('day'), moment().endOf('day'))) {
-						return true;
-					}
-					return false;
-				} else if (this.thisMonthFilter) {
-					if (moment(sale.saleDate).isBetween(moment().subtract(30, 'days').startOf('day'), moment().endOf('day'))) {
-						return true;
-					}
-					return false;
-				}
-				return true;
 			});
 		}
 	},
