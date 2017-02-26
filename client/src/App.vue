@@ -4,9 +4,15 @@
 		<div id="main-container">
 			<header class="navbar navbar-inverse navbar-fixed-top">
 				<ul class="nav navbar-nav-custom">
+					<li>
+						<a href="javascript:void(0)" onclick="App.sidebar('toggle-sidebar');this.blur();">
+							<i class="fa fa-ellipsis-v fa-fw animation-fadeInRight" id="sidebar-toggle-mini"></i>
+							<i class="fa fa-bars fa-fw animation-fadeInRight" id="sidebar-toggle-full"></i>
+						</a>
+					</li>
 					<li class="hidden-xs animation-fadeInQuick">
-                        <a href=""><strong>Hello, {{ name }}</strong></a>
-                    </li>
+						<a href=""><strong>Hello, {{ name }}</strong></a>
+					</li>
 				</ul>
 				<!-- Right Header Navigation -->
 				<ul class="nav navbar-nav-custom pull-right">
