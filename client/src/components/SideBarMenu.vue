@@ -43,6 +43,12 @@
 							<span class="sidebar-nav-mini-hide">Sale</span>
 						</router-link>
 					</li>
+					<li>
+						<router-link to="/saleReport">
+							<i class="gi gi-inbox sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">SaleReport</span>
+						</router-link>
+					</li>
 				</ul>
 				<!-- END Sidebar Navigation -->
 			</div>

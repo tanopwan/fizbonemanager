@@ -1,7 +1,12 @@
 <template>
 	<div>
-		<div class="row">
-			<sale-promotion :addSale="addSale" :batchStocks="batchStocks"></sale-promotion>
+		<div class="block full">
+			<div class="block-title">
+				<h4>
+					Search <small> ค้นหา...</small>
+				</h4>
+			</div>
+
 		</div>
 		<div class="block full">
 			<div class="block-title">
@@ -12,8 +17,18 @@
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center hidden-sm hidden-xs">Promotion</th>
-						<th class="text-center">Date</th>
+						<th class="text-center hidden-sm hidden-xs">
+							<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
+							</select2>
+						</th>
+						<th class="text-center">
+							<ul class="pagination pagination-sm">
+								<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
+								<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
+								<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
+								<li :class="{ active : thisMonthFilter }"><a href="javascript:void(0)" @click="thisMonthClick">30 days</a></li>
+							</ul>
+						</th>
 						<th class="text-center">Quantity</th>
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)</th>
@@ -49,12 +64,13 @@ export default {
 	data() {
 		return {
 			description: '',
+			batches: [],
 			sales: [],
-			batchStocks: [],
 			allFilter: false,
 			todayFilter: false,
 			thisWeekFilter: false,
 			thisMonthFilter: false,
+			promotions: [],
 			selectedFilterPromotion: '',
 			allFilter: true
 		};
@@ -102,6 +118,13 @@ export default {
 				}
 				return true;
 			});
+		},
+		promotionOptions: function() {
+			let options = [];
+			this.promotions.forEach(promotion => {
+				options.push({ id: promotion.name, text: promotion.name });
+			})
+			return options;
 		}
 	},
 	methods: {
@@ -120,22 +143,37 @@ export default {
 				console.log(response);
 			});
 		},
-		addSale(data) {
-			EventBus.addSale(data).then(response => {
-				this.sales.push(response.body);
-
-				return EventBus.getBatchStock();
-			})
-			.then(response => this.batchStocks = response.body)
-			.catch(response => console.log(response));
+		allClick() {
+			this.allFilter = true;
+			this.todayFilter = false;
+			this.thisWeekFilter = false;
+			this.thisMonthFilter = false;
+		},
+		todayClick() {
+			this.allFilter = false;
+			this.todayFilter = true;
+			this.thisWeekFilter = false;
+			this.thisMonthFilter = false;
+		},
+		thisWeekClick() {
+			this.allFilter = false;
+			this.todayFilter = false;
+			this.thisWeekFilter = true;
+			this.thisMonthFilter = false;
+		},
+		thisMonthClick() {
+			this.allFilter = false;
+			this.todayFilter = false;
+			this.thisWeekFilter = false;
+			this.thisMonthFilter = true;
 		}
 	},
 	created() {
-		EventBus.getSales(10)
-			.then(response => this.sales = response.body)
+		EventBus.getBatches()
+			.then(response => this.batches = response.body)
 			.catch(response => console.log(response));
-		EventBus.getBatchStock()
-			.then(response => this.batchStocks = response.body)
+		EventBus.getSales()
+			.then(response => this.sales = response.body)
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)

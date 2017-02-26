@@ -28,14 +28,25 @@
 							<span class="input-group-addon">รายละเอียด</span>
 							<input type="text" class="form-control" v-model="promotion.description"></input>
 							<span class="input-group-btn">
-								<button @click="addSaleInternal(promotion, getAvaliableStock(promotion.batchId))" type="button" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+								<button @click="addSaleInternal(promotion, getAvaliableStock(promotion.batchId))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
 							</span>
 						</div>
 					</div>
 				</div>
+				<div class="widget-content widget-content-full-top-bottom border-bottom">
+					<div class="row text-center">
+						<div class="col-xs-6 push-inner-top-bottom border-right">
+							<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ promotion.price / 100 }} x {{ promotion.quantity }} = &#x0E3F;{{ promotion.price*promotion.quantity / 100 }}</small></h3>
+						</div>
+						<div class="col-xs-6 push-inner-top-bottom">
+							<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} Avaliables</small></h3>
+						</div>
+					</div>
+				</div>
 				<div class="widget-content text-center">
-					<h3 class="widget-heading text-dark">{{ promotion.price / 100 }} x {{ promotion.quantity }} = &#x0E3F;{{ promotion.price*promotion.quantity / 100 }}</h3>
-					{{ getAvaliableStock(promotion.batchId) }} Avaliables
+					<h3 class="widget-heading text-dark">
+						{{ promotion.batchId.productId.name }}
+					</h3>
 				</div>
 			</a>
 		</div>
@@ -91,15 +102,14 @@ export default {
 		getAvaliableStock(batch) {
 			let stock = batch.quantity;
 			let batchSummary = this.getBatchStock(batch._id);
-			console.log(batchSummary);
 			let totalQuantity = batchSummary ? batchSummary.totalQuantity : 0;
 			return stock - totalQuantity;
 		}
 	},
 	created() {
 		EventBus.getPromotions()
-			.then(response => this.promotions = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.promotions = response.body)
+		.catch(response => console.log(response));
 	},
 	mounted() {
 		let vm = this;

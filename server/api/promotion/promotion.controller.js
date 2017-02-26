@@ -35,7 +35,13 @@ const create = function(req, res) {
 }
 
 const index = function(req, res) {
-	return Promotion.find().populate('batchId').exec()
+	return Promotion.find().populate({
+		path: 'batchId',
+		populate: {
+			path: 'productId',
+			model: 'Product'
+		}
+	}).exec()
 	.then(promotion => {
 		if(!promotion) {
 			return res.status(404).end();

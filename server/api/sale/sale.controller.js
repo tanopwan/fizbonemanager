@@ -43,7 +43,12 @@ const create = function(req, res) {
 }
 
 const index = function(req, res) {
-	return Sale.find({ isDeleted: false }).populate('promotionId').exec()
+	let limit = 0;
+	if(req.query && !isNaN(parseInt(req.query.limit))) {
+		limit = parseInt(req.query.limit);
+	}
+
+	return Sale.find({ isDeleted: false }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();

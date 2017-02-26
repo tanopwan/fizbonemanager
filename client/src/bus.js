@@ -14,8 +14,14 @@ export const EventBus = new Vue({
 		getBatches() {
 			return this.$http.get(this.batchURL);
 		},
-		getSales() {
-			return this.$http.get(this.saleURL);
+		getSales(limit) {
+			if (isNaN(parseInt(limit))) {
+				return this.$http.get(this.saleURL);
+			}
+			else {
+				return this.$http.get(`${this.saleURL}?limit=${parseInt(limit)}`);
+			}
+
 		},
 		getPromotions() {
 			return this.$http.get(this.promotionURL);
