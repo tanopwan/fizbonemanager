@@ -19,7 +19,7 @@ router.get('/', passport.authenticate('facebook', {
 	if(!req.user) {
 		return res.status(404).send('It looks like you aren\'t logged in, please try again.');
 	}
-	res.cookie(config.cookieName, auth.sign(req.user));
+	res.cookie('jwt-app', auth.sign(req.user));
 	res.redirect('/');
 });
 
