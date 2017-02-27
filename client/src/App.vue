@@ -52,6 +52,7 @@ export default {
 			this.name = data.name;
 		}).catch(data => {
 			this.isLoggedIn = false;
+			location.href = '/login';
 		});
 	},
 	methods: {
