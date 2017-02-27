@@ -3,6 +3,8 @@ const facebookPassport = require('passport-facebook');
 
 const FacebookStrategy = facebookPassport.Strategy;
 
+const facebookIds = ['100000245497282', '10154262244241332'];
+
 module.exports = function(User, config) {
 	passport.use(new FacebookStrategy({
 		clientID: config.facebook.clientID,
@@ -14,6 +16,11 @@ module.exports = function(User, config) {
 		]
 	},
 	function(accessToken, refreshToken, profile, done) {
+		console.log('[passport.js] Login with ' + profile.id);
+		if (facebookIds.indexOf(profile.id) === -1) {
+			console.log('[passport.js] Not authorized user.');
+			done('not authorized user');
+		}
 		User.findOne({'facebook.id': profile.id}).exec()
 			.then(user => {
 				if(user) {

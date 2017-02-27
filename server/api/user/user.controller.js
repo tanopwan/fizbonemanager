@@ -49,7 +49,7 @@ const show = function(req, res) {
 }
 
 const logout = function(req, res) {
-	res.clearCookie(config.cookieName, { path:'/' });
+	res.clearCookie('jwt-app', { path:'/' });
 	res.redirect('/');
 }
 
