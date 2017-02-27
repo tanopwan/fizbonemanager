@@ -5,7 +5,7 @@ module.exports = {
 		callbackURL: `${process.env.DOMAIN}:${process.env.PORT}/api/auth/facebook/callback`
 	},
 	mongo: {
-		uri: 'mongodb://localhost/fizbonemanager_prod',
+		uri: 'mongodb://fizbonemanager:fizadmin@ds157819.mlab.com:57819/heroku_w1b98w1f',
 		options: {
             db: {
                 safe: true
