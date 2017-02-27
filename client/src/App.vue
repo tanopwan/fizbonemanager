@@ -50,7 +50,8 @@ export default {
 		UserService.getCurrentUser().then(data => {
 			this.isLoggedIn = true;
 			this.name = data.name;
-		}).catch(data => {
+		}).catch(response => {
+			console.log(response);
 			this.isLoggedIn = false;
 			location.href = '/login';
 		});
