@@ -75,7 +75,6 @@ export default {
 	data() {
 		return {
 			description: '',
-			batches: [],
 			sales: [],
 			allFilter: false,
 			todayFilter: false,
@@ -179,15 +178,12 @@ export default {
 		}
 	},
 	created() {
-		EventBus.getBatches()
-		.then(response => this.batches = response.body)
-		.catch(response => console.log(response));
 		EventBus.getSales()
-		.then(response => this.sales = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.sales = response.body)
+			.catch(response => console.log(response));
 		EventBus.getPromotions()
-		.then(response => this.promotions = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.promotions = response.body)
+			.catch(response => console.log(response));
 	},
 	components: {
 		salePromotion,

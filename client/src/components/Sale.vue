@@ -92,7 +92,6 @@ export default {
 				this.sales.push(response.body);
 				this.updateStock();
 			})
-			.then(response => this.batchStocks = response.body)
 			.catch(response => console.log(response));
 		},
 		updateStock() {
@@ -106,10 +105,7 @@ export default {
 			.then(response => this.sales = response.body)
 			.catch(response => console.log(response));
 		EventBus.getBatchStock()
-			.then(response => {
-				this.batchStocks = response.body
-				console.log(this.batchStocks);
-			})
+			.then(response => this.batchStocks = response.body)
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)

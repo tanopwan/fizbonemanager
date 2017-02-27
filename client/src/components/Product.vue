@@ -55,7 +55,6 @@ export default {
 			this.$http.post('/api/products', { name: this.productName }).then(response => {
 				this.products.push(response.body);
 			}, response => {
-				// TODO
 				console.log(response);
 			});
 		},
@@ -77,8 +76,8 @@ export default {
 	},
 	created() {
 		EventBus.getProducts()
-		.then(response => this.products = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.products = response.body)
+			.catch(response => console.log(response));
 	}
 }
 </script>

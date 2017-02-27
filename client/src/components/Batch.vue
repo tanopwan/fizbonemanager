@@ -92,7 +92,6 @@ export default {
 			this.$http.post('/api/batches', body).then(response => {
 				this.batches.push(response.body);
 			}, response => {
-				// TODO
 				console.log(response);
 			});
 		},
@@ -114,11 +113,11 @@ export default {
 	},
 	created() {
 		EventBus.getProducts()
-		.then(response => this.products = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.products = response.body)
+			.catch(response => console.log(response));
 		EventBus.getBatches()
-		.then(response => this.batches = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.batches = response.body)
+			.catch(response => console.log(response));
 	},
 	mounted() {
 		$('.select-select2').select2();
