@@ -7,19 +7,28 @@
 						<h2>{{ product.name }}</h2>
 					</div>
 					<div class="row form-group">
-						<div class="col-sm-6">
+						<div class="col-xs-12">
 							<select2 :options="batchOptions[index]" v-model="addPromotions[index].batchId" placeholder="เลือก Batch...">
 							</select2>
 						</div>
-						<div class="col-sm-6">
+					</div>
+					<div class="row form-group">
+						<div class="col-xs-6">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-sort"></i></span>
 								<input type="number" class="form-control" v-model="addPromotions[index].quantity" placeholder="จำนวนเริ่มต้น">
 							</div>
 						</div>
+						<div class="col-xs-6">
+							<div class="input-group">
+								<label class="csscheckbox csscheckbox-info">
+									<input type="checkbox" v-model="addPromotions[index].isBilled"> <span> </span> เก็บเงินทันที
+								</label>
+							</div>
+						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-sm-12">
+						<div class="col-xs-12">
 							<div class="input-group">
 								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
 								<span class="input-group-addon">&#x0E3F;</span>
@@ -87,7 +96,8 @@ export default {
 				name: this.addPromotions[index].name,
 				price: this.addPromotions[index].price,
 				batchId: this.addPromotions[index].batchId,
-				quantity: this.addPromotions[index].quantity
+				quantity: this.addPromotions[index].quantity,
+				isBilled: this.addPromotions[index].isBilled
 			};
 			this.$http.post('/api/promotions', promo).then(response => {
 				this.promotions.push(response.body);
