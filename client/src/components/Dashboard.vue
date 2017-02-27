@@ -98,15 +98,6 @@ export default {
 		.catch(response => console.log(response));
 	},
 	mounted() {
-		// Easy Pie Chart
-		$('.pie-chart').easyPieChart({
-			barColor: $(this).data('bar-color') ? $(this).data('bar-color') : '#777777',
-			trackColor: $(this).data('track-color') ? $(this).data('track-color') : '#eeeeee',
-			lineWidth: $(this).data('line-width') ? $(this).data('line-width') : 3,
-			size: $(this).data('size') ? $(this).data('size') : '80',
-			animate: 800,
-			scaleColor: false
-		});
 	}
 }
 </script>
