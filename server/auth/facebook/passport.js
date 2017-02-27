@@ -3,7 +3,7 @@ const facebookPassport = require('passport-facebook');
 
 const FacebookStrategy = facebookPassport.Strategy;
 
-const facebookIds = ['1541608015857367', '10154262244241332'];
+const authorizedEmails = ['tanopwan@hotmail.com', 't_thanapon@hotmail.com'];
 
 module.exports = function(User, config) {
 	passport.use(new FacebookStrategy({
@@ -16,8 +16,8 @@ module.exports = function(User, config) {
 		]
 	},
 	function(accessToken, refreshToken, profile, done) {
-		console.log('[passport.js] Login with ' + profile.id);
-		if (facebookIds.indexOf(profile.id) === -1) {
+		console.log('[passport.js] Login with ' + JSON.stringify(profile._json));
+		if (authorizedEmails.indexOf(profile._json.email) === -1) {
 			console.log('[passport.js] Not authorized user.');
 			done('not authorized user');
 		}
