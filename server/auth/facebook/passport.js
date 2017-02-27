@@ -3,7 +3,7 @@ const facebookPassport = require('passport-facebook');
 
 const FacebookStrategy = facebookPassport.Strategy;
 
-const facebookIds = ['100000245497282', '10154262244241332'];
+const facebookIds = ['1541608015857367', '10154262244241332'];
 
 module.exports = function(User, config) {
 	passport.use(new FacebookStrategy({
