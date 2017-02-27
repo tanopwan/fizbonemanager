@@ -1,9 +1,10 @@
 
 import Vue from 'vue';
 import Promise from 'promise';
-import config from '../../../server/config/environment'
 
 const userAsync = null;
+
+const cookieName = 'jwt-app';
 
 const getCookieByName = (name) => {
 	var value = "; " + document.cookie;
@@ -13,8 +14,8 @@ const getCookieByName = (name) => {
 
 export default {
 	getCurrentUser: function() {
-		if(getCookieByName(config.cookieName)) {
-			localStorage.setItem('session', getCookieByName(config.cookieName));
+		if(getCookieByName(cookieName)) {
+			localStorage.setItem('session', getCookieByName(cookieName));
 
 			if (!userAsync) {
 				userAsync = new Promise(function(resolve, reject) {

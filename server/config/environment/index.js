@@ -13,6 +13,5 @@ module.exports = {
 		clientID: config.facebook.clientID || 'clientID',
 		clientSecret: config.facebook.clientSecret || 'clientSecret',
 		callbackURL: config.facebook.callbackURL || `${process.env.DOMAIN || ''}/auth/facebook/callback`
-	},
-	cookieName: 'jwt-app'
+	}
 }
