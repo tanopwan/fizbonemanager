@@ -1,7 +1,7 @@
 module.exports = {
 	facebook: {
-		clientID: '',
-		clientSecret: '',
+		clientID: '426640641003931',
+		clientSecret: 'ef1210b58c4bf2cef39f32018f1fec96',
 		callbackURL: `${process.env.DOMAIN}:${process.env.PORT}/api/auth/facebook/callback`
 	},
 	mongo: {
