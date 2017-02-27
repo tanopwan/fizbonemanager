@@ -104,12 +104,10 @@ export default {
 		EventBus.getSales(10)
 			.then(response => this.sales = response.body)
 			.catch(response => console.log(response));
-		EventBus.getBatchStock()
-			.then(response => this.batchStocks = response.body)
-			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
 			.catch(response => console.log(response));
+		updateStock();
 	},
 	components: {
 		salePromotion,

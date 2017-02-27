@@ -85,20 +85,16 @@ export default {
 	},
 	created() {
 		EventBus.getSaleSummary()
-		.then(response => {
-			this.saleSummaries = response.body;
-		})
-		.catch(response => console.log(response));
+			.then(response => this.saleSummaries = response.body)
+			.catch(response => console.log(response));
 		EventBus.getBatchStock()
-		.then(response => {
-			this.batchStocks = response.body;
-			this.batchStocks.forEach((batchStock, index) => {
-				console.log(batchStock);
-				let width = (batchStock.totalQuantity / batchStock.totalStock) * 100;
-				this.$set(this.batchStocks[index], 'width', width);
-			});
-			console.log(this.batchStocks);
-		})
+			.then(response => {
+				this.batchStocks = response.body;
+				this.batchStocks.forEach((batchStock, index) => {
+					let width = (batchStock.totalQuantity / batchStock.totalStock) * 100;
+					this.$set(this.batchStocks[index], 'width', width);
+				});
+			})
 		.catch(response => console.log(response));
 	},
 	mounted() {

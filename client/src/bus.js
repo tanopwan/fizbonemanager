@@ -21,7 +21,6 @@ export const EventBus = new Vue({
 			else {
 				return this.$http.get(`${this.saleURL}?limit=${parseInt(limit)}`);
 			}
-
 		},
 		getPromotions() {
 			return this.$http.get(this.promotionURL);
