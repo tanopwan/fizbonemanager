@@ -13,6 +13,6 @@ router.use(auth.verifyMiddleware);
 
 router.put('/:id/:isActive', ctrl.setIsActive);
 router.post('/', ctrl.create);
-router.delete('/:id', auth.hasRoleAdmin, ctrl.destroy);
+router.delete('/:id', ctrl.destroy);
 
 module.exports = router;
