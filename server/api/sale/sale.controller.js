@@ -72,6 +72,9 @@ const destroy = function(req, res) {
 const summary = function(req, res) {
 	Sale.aggregate([
 		{
+			$match: { isDeleted: { $eq: false } }
+		},
+		{
 			"$lookup": {
 		        "from": "promotions",
 		        "localField": "promotionId",
