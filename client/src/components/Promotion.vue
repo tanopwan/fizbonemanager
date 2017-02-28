@@ -96,7 +96,7 @@ export default {
 				name: this.addPromotions[index].name,
 				price: this.addPromotions[index].price,
 				batchId: this.addPromotions[index].batchId,
-				quantity: this.addPromotions[index].quantity,
+				quantity: this.addPromotions[index].quantity || 1,
 				isBilled: this.addPromotions[index].isBilled
 			};
 			this.$http.post('/api/promotions', promo).then(response => {

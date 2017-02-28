@@ -107,7 +107,7 @@ export default {
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
 			.catch(response => console.log(response));
-		updateStock();
+		this.updateStock();
 	},
 	components: {
 		salePromotion,
