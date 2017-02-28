@@ -3,7 +3,7 @@ const facebookPassport = require('passport-facebook');
 
 const FacebookStrategy = facebookPassport.Strategy;
 
-const authorizedEmails = ['tanopwan@hotmail.com', 't_thanapon@hotmail.com'];
+const authorizedEmails = ['tanopwan@hotmail.com', 't_thanapon@hotmail.com', 'noolizaa@hotmail.com'];
 
 module.exports = function(User, config) {
 	passport.use(new FacebookStrategy({
