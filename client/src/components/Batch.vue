@@ -121,9 +121,10 @@ export default {
 	},
 	mounted() {
 		$('.select-select2').select2();
+		let vm = this;
 		$('.input-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
 			$(this).datepicker('hide');
-			this.batchRefPrefix = $(this).val();
+			vm.batchRefPrefix = $(this).val();
 		});
 		this.batchRefPrefix = $('.input-datepicker').val();
 	}
