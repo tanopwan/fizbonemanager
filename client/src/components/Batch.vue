@@ -40,7 +40,7 @@
 							All Batches <small> Total: {{ batches.length }}</small>
 						</h4>
 					</div>
-					<template v-for="batch in batches">
+					<template v-for="batch in sortedBatches">
 						<div>
 							<div class="pull-right">
 								{{ batch._id }}
@@ -72,6 +72,18 @@ export default {
 			products: [],
 			batchRefPrefix: ''
 		};
+	},
+	computed: {
+		sortedBatches: function() {
+			let sorted = this.batches.sort(function(s1, s2){
+				let isAfter = moment(s1.updatedAt).isAfter(s2.updatedAt);
+				if (isAfter) {
+					return -1;
+				}
+				return 1;
+			});
+			return sorted;
+		}
 	},
 	methods: {
 		getProductById(id) {
