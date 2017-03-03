@@ -52,7 +52,7 @@
 					</div>
 					<div class="row">
 						<div class="col-xs-12">
-							<template v-for="promotion in promotions">
+							<template v-for="promotion in sortedPromotions">
 								<div>
 									<div class="pull-right">
 										<small>{{ promotion._id }}</small>
@@ -65,7 +65,7 @@
 									</h4>
 								</div>
 								<div>
-									<small> Batch: {{ promotion.batchId._id }}</small>
+									<small> Batch: {{ promotion.batchId.batchRef }}</small>
 									<h4>&#x0E3F; {{ promotion.price / 100 }}</h4>
 								</div>
 							</template>
@@ -79,7 +79,8 @@
 
 <script>
 import { EventBus } from '../bus';
-import Select2 from './basic/Select2.vue'
+import Select2 from './basic/Select2.vue';
+import moment from 'moment';
 
 export default {
 	data() {
@@ -143,6 +144,16 @@ export default {
 				batchOptions.push(options);
 			});
 			return batchOptions;
+		},
+		sortedPromotions: function() {
+			let sorted = this.promotions.sort(function(s1, s2){
+				let isAfter = moment(s1.updatedAt).isAfter(s2.updatedAt);
+				if (isAfter) {
+					return -1;
+				}
+				return 1;
+			});
+			return sorted;
 		}
 	},
 	created() {
