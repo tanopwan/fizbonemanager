@@ -68,7 +68,7 @@
 <script>
 import { EventBus } from '../bus';
 
-const colors = ['#5cafde', '#5ccdde', '#454e59', '#deb25c', '#de815c']
+const colors = ['#5cafde', '#5ccdde', '#deb25c', '#de815c', '#454e59']
 
 export default {
 	data() {
@@ -85,7 +85,7 @@ export default {
 					let piecolors = [];
 					response.data.forEach((data, idx) => {
 						labels.push({ label: data.promotionName, data: data.totalQuantity });
-						piecolors.push(colors[idx % 3]);
+						piecolors.push(colors[idx % colors.length]);
 					});
 					// Pie Chart
 					$.plot($('#chart-pie'),
