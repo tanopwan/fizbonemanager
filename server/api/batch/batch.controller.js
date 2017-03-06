@@ -160,10 +160,59 @@ const summary = function(req, res) {
 	console.log(result);
 }});*/
 
+const stockById = function(req, res) {
+	let batchId = new ObjectId(req.params.id);
+
+	Sale.aggregate(
+		{
+			$match: { isDeleted: { $eq: false } }
+		},
+		{
+			$lookup: {
+				"from": "promotions",
+				"localField": "promotionId",
+				"foreignField": "_id",
+				"as": "promotion"
+			}
+		},
+		{
+			$unwind: '$promotion'
+		},
+		{
+			$lookup: {
+				"from": "batches",
+				"localField": "promotion.batchId",
+				"foreignField": "_id",
+				"as": "batch"
+			}
+		},
+		{
+			$unwind: '$batch'
+		},
+		{
+			$match: {  'batch._id': { $eq: batchId } }
+		},
+		{
+			$group: {
+				_id: '$promotion._id',
+				promotionName: { $first: '$promotion.name' },
+				totalQuantity: { $sum: '$quantity' },
+				transaction: { $sum: 1 },
+				totalStock: { $first: '$batch.quantity' }
+			}
+		}
+	).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
 	index,
 	destroy,
-	stock
+	stock,
+	stockById
 };

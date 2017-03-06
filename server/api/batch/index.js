@@ -8,6 +8,7 @@ var router = express.Router();
 
 router.get('/stock', ctrl.stock);
 router.get('/:id', ctrl.view);
+router.get('/stock/:id', ctrl.stockById);
 
 router.use(auth.verifyMiddleware);
 
