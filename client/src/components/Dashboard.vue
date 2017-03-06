@@ -68,7 +68,7 @@
 <script>
 import { EventBus } from '../bus';
 
-const colors = ['#5cafde', '#5ccdde', '#deb25c', '#de815c', '#454e59']
+const colors = ['#5cafde', '#deb25c', '#de815c', '#7fb364', '#5ccdde', '#454e59']
 
 export default {
 	data() {
