@@ -142,24 +142,6 @@ const stock = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
-const summary = function(req, res) {
-	Sale.aggregate({
-		$group:
-		{
-			_id: '$promotionId',
-			totalAmount: { $sum: "$quantity" },
-			transaction: { $sum: 1 }
-		}
-	}).exec()
-	.then(result => {
-		res.json(result);
-	})
-	.catch(err => res.status(500).json(err));
-}
-/*stock({ params: { id: '58ab09186e5ea828f4571981' } }, {json: (result) => {
-	console.log(result);
-}});*/
-
 const stockById = function(req, res) {
 	let batchId = new ObjectId(req.params.id);
 

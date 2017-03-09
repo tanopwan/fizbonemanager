@@ -45,11 +45,20 @@ const create = function(req, res) {
 
 const index = function(req, res) {
 	let limit = 0;
-	if(req.query && !isNaN(parseInt(req.query.limit))) {
-		limit = parseInt(req.query.limit);
+	let isConsignment = false;
+
+	if (req.query) {
+		if(!isNaN(parseInt(req.query.limit))) {
+			limit = parseInt(req.query.limit);
+		}
+
+		if (req.query.consignment == 'true') {
+			isConsignment = true;
+		}
 	}
 
-	return Sale.find({ isDeleted: false }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
+
+	return Sale.find({ isDeleted: false, isConsignment }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();

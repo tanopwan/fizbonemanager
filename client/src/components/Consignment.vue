@@ -72,7 +72,7 @@ export default {
 	},
 	methods: {
 		deleteConsignment(id) {
-			this.$http.delete('/api/consignments/' + id).then(response => {
+			this.$http.delete('/api/sales/' + id).then(response => {
 				let index = -1;
 				this.consignments.forEach((consignment, idx) => {
 					if (consignment._id === id) {
@@ -88,7 +88,8 @@ export default {
 			});
 		},
 		addConsignment(data) {
-			EventBus.addConsignment(data).then(response => {
+			data.isConsignment = true;
+			EventBus.addSale(data).then(response => {
 				this.consignments.push(response.body);
 				this.updateStock();
 			})

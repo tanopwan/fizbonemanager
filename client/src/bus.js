@@ -5,8 +5,7 @@ export const EventBus = new Vue({
 		productURL: '/api/products',
 		batchURL: '/api/batches',
 		saleURL: '/api/sales',
-		promotionURL: '/api/promotions',
-		consignmentURL: '/api/consignments'
+		promotionURL: '/api/promotions'
 	},
 	methods: {
 		getProducts() {
@@ -25,23 +24,17 @@ export const EventBus = new Vue({
 		},
 		getConsignments(limit) {
 			if (isNaN(parseInt(limit))) {
-				return this.$http.get(this.consignmentURL);
+				return this.$http.get(`${this.saleURL}?consignment=true`);
 			}
 			else {
-				return this.$http.get(`${this.consignmentURL}?limit=${parseInt(limit)}`);
+				return this.$http.get(`${this.saleURL}?consignment=true&limit=${parseInt(limit)}`);
 			}
 		},
 		getPromotions() {
 			return this.$http.get(this.promotionURL);
 		},
-		getConsignments() {
-			return this.$http.get(this.consignmentURL);
-		},
 		addSale(data) {
 			return this.$http.post(this.saleURL, data);
-		},
-		addConsignment(data) {
-			return this.$http.post(this.consignmentURL, data);
 		},
 		getBatchStock(id) {
 			if (id) {
