@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="false"></sale-promotion>
+		<sale-promotion :addSale="addConsignment" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="true"></sale-promotion>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
-					All Sales <small> Total: {{ sales.length }}</small>
+					All Consignment <small> Total: {{ consignments.length }}</small>
 				</h4>
 			</div>
 			<table class="table table-striped table-borderless table-vcenter">
@@ -20,15 +20,15 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="sale in computedSales">
-						<td class="hidden-sm hidden-xs">{{ sale.promotionName }}</td>
-						<td class="text-center">{{ sale.stringDate }}</td>
-						<th class="text-center">{{ sale.quantity }}</th>
-						<th class="text-center">{{ sale.price }}</th>
-						<th class="text-center">{{ sale.total }}</th>
-						<td class="hidden-sm hidden-xs">{{ sale.description }}</td>
+					<tr v-for="consignment in computedConsignments">
+						<td class="hidden-sm hidden-xs">{{ consignment.promotionName }}</td>
+						<td class="text-center">{{ consignment.stringDate }}</td>
+						<th class="text-center">{{ consignment.quantity }}</th>
+						<th class="text-center">{{ consignment.price }}</th>
+						<th class="text-center">{{ consignment.total }}</th>
+						<td class="hidden-sm hidden-xs">{{ consignment.description }}</td>
 						<th class="text-center hidden-sm hidden-xs">
-							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
+							<button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button>
 						</th>
 					</tr>
 				</tbody>
@@ -47,22 +47,22 @@ export default {
 	data() {
 		return {
 			description: '',
-			sales: [],
+			consignments: [],
 			batchStocks: [],
 			promotions: []
 		};
 	},
 	computed: {
-		computedSales: function() {
-			this.sales.forEach(sale => {
-				sale.promotionName = sale.promotionId.name;
-				sale.price = sale.promotionId.price / 100;
-				sale.total = sale.promotionId.price * sale.quantity / 100;
-				sale.stringDate = moment(sale.saleDate).format('LLL');
+		computedConsignments: function() {
+			this.consignments.forEach(consignment => {
+				consignment.promotionName = consignment.promotionId.name;
+				consignment.price = consignment.promotionId.price / 100;
+				consignment.total = consignment.promotionId.price * consignment.quantity / 100;
+				consignment.stringDate = moment(consignment.consignmentDate).format('LLL');
 			})
 
-			return this.sales.sort(function(s1, s2){
-				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
+			return this.consignments.sort(function(s1, s2){
+				let isAfter = moment(s1.consignmentDate).isAfter(s2.consignmentDate);
 				if (isAfter) {
 					return -1;
 				}
@@ -71,25 +71,25 @@ export default {
 		}
 	},
 	methods: {
-		deleteSale(id) {
-			this.$http.delete('/api/sales/' + id).then(response => {
+		deleteConsignment(id) {
+			this.$http.delete('/api/consignments/' + id).then(response => {
 				let index = -1;
-				this.sales.forEach((sale, idx) => {
-					if (sale._id === id) {
+				this.consignments.forEach((consignment, idx) => {
+					if (consignment._id === id) {
 						index = idx;
 					}
 				});
 				if (index !== -1) {
-					this.sales.splice(index, 1);
+					this.consignments.splice(index, 1);
 					this.updateStock();
 				}
 			}, response => {
 				console.log(response);
 			});
 		},
-		addSale(data) {
-			EventBus.addSale(data).then(response => {
-				this.sales.push(response.body);
+		addConsignment(data) {
+			EventBus.addConsignment(data).then(response => {
+				this.consignments.push(response.body);
 				this.updateStock();
 			})
 			.catch(response => console.log(response));
@@ -101,8 +101,8 @@ export default {
 		}
 	},
 	created() {
-		EventBus.getSales(10)
-			.then(response => this.sales = response.body)
+		EventBus.getConsignments(10)
+			.then(response => this.consignments = response.body)
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)

@@ -22,7 +22,7 @@
 						<div class="col-xs-6">
 							<div class="input-group">
 								<label class="csscheckbox csscheckbox-info">
-									<input type="checkbox" v-model="addPromotions[index].isBilled"> <span> </span> เก็บเงินทันที
+									<input type="checkbox" v-model="addPromotions[index].isBilled"> <span> </span> ขายขาด
 								</label>
 							</div>
 						</div>
@@ -59,15 +59,16 @@
 										<button class="btn btn-danger" @click="deletePromotion(promotion._id)"><i class="fa fa-minus"></i></button>
 									</div>
 									<h4 class="sub-header">
-										<a href="javascript:void(0)" @click="setIsActive(promotion._id, !promotion.isActive)" class="label" :class="[{ 'label-default': !promotion.isActive, 'label-success': promotion.isActive}]">
-											{{ promotion.isActive ? 'Active' : 'InActive' }}
-										</a> {{ promotion.name }}
+										{{ promotion.name }}
 									</h4>
 								</div>
-								<div>
+								<p>
+									<a href="javascript:void(0)" @click="setIsActive(promotion._id, !promotion.isActive)" class="label" :class="{ 'label-default': !promotion.isActive, 'label-success': promotion.isActive}">{{ promotion.isActive ? 'Active' : 'InActive' }}</a>
+									<a href="javascript:void(0)" class="label" :class="{ 'label-primary': !promotion.isBilled, 'label-info': promotion.isBilled}">{{ promotion.isBilled ? 'ขายขาด' : 'ฝากขาย' }}</a>
+
 									<small> Batch: {{ promotion.batchId.batchRef }}</small>
 									<h4>&#x0E3F; {{ promotion.price / 100 }}</h4>
-								</div>
+								</p>
 							</template>
 						</div>
 					</div>
@@ -161,7 +162,7 @@ export default {
 			.then(response => {
 				this.products = response.body
 				this.products.forEach(product => {
-					this.addPromotions.push({ productId: product._id });
+					this.addPromotions.push({ productId: product._id, isBilled: true, quantity: 1 });
 				})
 			})
 			.catch(response => console.log(response));

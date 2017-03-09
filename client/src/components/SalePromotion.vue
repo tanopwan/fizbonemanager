@@ -61,7 +61,7 @@
 import { EventBus } from '../bus';
 
 export default {
-	props: ['addSale', 'batchStocks', 'promotions'],
+	props: ['addSale', 'batchStocks', 'promotions', 'isConsignment'],
 	data() {
 		return {
 			bgClasses: [
@@ -78,7 +78,7 @@ export default {
 		activePromotions: function() {
 			if (this.promotions) {
 				return this.promotions.filter(promotion => {
-					if (promotion.isActive === false) {
+					if (promotion.isActive === false || promotion.isBilled === this.isConsignment) {
 						return false;
 					}
 					return true;
