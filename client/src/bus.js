@@ -5,7 +5,8 @@ export const EventBus = new Vue({
 		productURL: '/api/products',
 		batchURL: '/api/batches',
 		saleURL: '/api/sales',
-		promotionURL: '/api/promotions'
+		promotionURL: '/api/promotions',
+		customerURL: '/api/customers'
 	},
 	methods: {
 		getProducts() {
@@ -32,6 +33,9 @@ export const EventBus = new Vue({
 		},
 		getPromotions() {
 			return this.$http.get(this.promotionURL);
+		},
+		getCustomers() {
+			return this.$http.get(this.customerURL);
 		},
 		addSale(data) {
 			return this.$http.post(this.saleURL, data);

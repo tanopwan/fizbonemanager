@@ -29,24 +29,6 @@
 						<i class="fa fa-ellipsis-h"></i>
 					</li>
 					<li>
-						<router-link to="/product">
-							<i class="fa fa-trophy sidebar-nav-icon"></i>
-							<span class="sidebar-nav-mini-hide">Product</span>
-						</router-link>
-					</li>
-					<li>
-						<router-link to="/batch">
-							<i class="gi gi-inbox sidebar-nav-icon"></i>
-							<span class="sidebar-nav-mini-hide">Batch</span>
-						</router-link>
-					</li>
-					<li>
-						<router-link to="/promotion">
-							<i class="gi gi-inbox sidebar-nav-icon"></i>
-							<span class="sidebar-nav-mini-hide">Promotion</span>
-						</router-link>
-					</li>
-					<li>
 						<a href="#" class="sidebar-nav-menu">
 							<span class="sidebar-nav-ripple animate" style="height: 220px; width: 220px; top: -87px; left: 70px;"></span>
 							<i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
@@ -83,6 +65,33 @@
 								</router-link>
 							</li>
 						</ul>
+					</li>
+					<li class="sidebar-separator">
+						<i class="fa fa-ellipsis-h"></i>
+					</li>
+					<li>
+						<router-link to="/customer">
+							<i class="fa fa-user-secret sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Customer</span>
+						</router-link>
+					</li>
+					<li>
+						<router-link to="/product">
+							<i class="fa fa-trophy sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Product</span>
+						</router-link>
+					</li>
+					<li>
+						<router-link to="/batch">
+							<i class="gi gi-inbox sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Batch</span>
+						</router-link>
+					</li>
+					<li>
+						<router-link to="/promotion">
+							<i class="gi gi-inbox sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Promotion</span>
+						</router-link>
 					</li>
 				</ul>
 				<!-- END Sidebar Navigation -->

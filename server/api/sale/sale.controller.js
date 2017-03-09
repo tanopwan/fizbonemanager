@@ -45,7 +45,7 @@ const create = function(req, res) {
 
 const index = function(req, res) {
 	let limit = 0;
-	let isConsignment = false;
+	let isConsignment = { $in: [null, false] };
 
 	if (req.query) {
 		if(!isNaN(parseInt(req.query.limit))) {
@@ -57,8 +57,7 @@ const index = function(req, res) {
 		}
 	}
 
-
-	return Sale.find({ isDeleted: false, isConsignment }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
+	return Sale.find({ isDeleted: false, isConsignment: {$in: [null, false]} }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();

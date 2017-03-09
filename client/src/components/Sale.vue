@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="false"></sale-promotion>
+		{{ customers.length }}
+		<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="false" :customers="customers"></sale-promotion>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
@@ -49,7 +50,8 @@ export default {
 			description: '',
 			sales: [],
 			batchStocks: [],
-			promotions: []
+			promotions: [],
+			customers: []
 		};
 	},
 	computed: {
@@ -106,6 +108,9 @@ export default {
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
+			.catch(response => console.log(response));
+		EventBus.getCustomers()
+			.then(response => this.customers = response.body)
 			.catch(response => console.log(response));
 		this.updateStock();
 	},
