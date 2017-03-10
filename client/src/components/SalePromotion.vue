@@ -14,6 +14,12 @@
 						<span class="input-group-addon" @click="quantity--"><i class="fa fa-minus"></i></span>
 					</div>
 				</div>
+				<div class="row form-group">
+					<div class="col-xs-12">
+						<select2 :options="customerOptions" v-model="selectedCustomer" placeholder="เลือก ลูกค้า...">
+						</select2>
+					</div>
+				</div>
 				<div class="form-group">
 					<div class="input-group">
 						<span class="input-group-addon">รายละเอียด</span>
@@ -47,9 +53,10 @@
 <script>
 import { EventBus } from '../bus';
 import moment from 'moment';
+import Select2 from './basic/Select2.vue'
 
 export default {
-	props: ['batchStocks', 'promotion', 'isConsignment', 'index', 'onAddSale'],
+	props: ['batchStocks', 'promotion', 'isConsignment', 'index', 'onAddSale', 'customers'],
 	data() {
 		return {
 			bgClasses: [
@@ -62,7 +69,17 @@ export default {
 			saleDate: new Date(),
 			quantity: this.promotion.quantity,
 			description: '',
-			error: false
+			error: false,
+			selectedCustomer: ''
+		}
+	},
+	computed: {
+		customerOptions: function() {
+			let options = [];
+			this.customers.forEach(customer => {
+				options.push({ text: customer.name, id: customer._id });
+			})
+			return options;
 		}
 	},
 	methods: {
@@ -72,7 +89,8 @@ export default {
 				quantity: this.quantity,
 				description: this.description,
 				saleDate: this.saleDate,
-				isConsignment: this.isConsignment
+				isConsignment: this.isConsignment,
+				customerId: this.selectedCustomer
 			}
 			if (this.quantity > stock) {
 				console.log("Over stocks!");
@@ -116,6 +134,9 @@ export default {
 				vm.saleDate = changedDate;
 			}
 		});
+	},
+	components: {
+		select2: Select2
 	}
 }
 </script>

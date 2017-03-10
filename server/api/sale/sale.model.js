@@ -13,6 +13,7 @@ const SaleSchema = new Schema({
 	isConsignment: { type: Boolean, default: false },
 	isDeleted: { type: Boolean, default: false },
 	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
+	customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
 {

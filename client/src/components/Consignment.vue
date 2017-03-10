@@ -12,7 +12,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale"></sale-promotion>
+				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale" :customers="customers"></sale-promotion>
 			</div>
 		</div>
 		<div class="block full">
@@ -24,8 +24,8 @@
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center hidden-sm hidden-xs">Promotion</th>
 						<th class="text-center">Date</th>
+						<th class="text-center hidden-sm hidden-xs">Customer</th>
 						<th class="text-center">Quantity</th>
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)</th>
@@ -35,8 +35,8 @@
 				</thead>
 				<tbody>
 					<tr v-for="consignment in computedConsignments">
-						<td class="hidden-sm hidden-xs">{{ consignment.promotionName }}</td>
 						<td class="text-center">{{ consignment.stringDate }}</td>
+						<td class="hidden-sm hidden-xs">{{ consignment.customerName }}</td>
 						<th class="text-center">{{ consignment.quantity }}</th>
 						<th class="text-center">{{ consignment.price }}</th>
 						<th class="text-center">{{ consignment.total }}</th>
@@ -63,7 +63,8 @@ export default {
 			description: '',
 			consignments: [],
 			batchStocks: [],
-			promotions: []
+			promotions: [],
+			customers: []
 		};
 	},
 	computed: {
@@ -73,6 +74,7 @@ export default {
 				consignment.price = consignment.promotionId.price / 100;
 				consignment.total = consignment.promotionId.price * consignment.quantity / 100;
 				consignment.stringDate = moment(consignment.saleDate).format('LLL');
+				consignment.customerName = consignment.customerId ? consignment.customerId.name : 'ทั่วไป';
 			})
 
 			return this.consignments.sort(function(s1, s2){
@@ -128,6 +130,9 @@ export default {
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
+			.catch(response => console.log(response));
+		EventBus.getCustomers()
+			.then(response => this.customers = response.body)
 			.catch(response => console.log(response));
 		this.updateStock();
 	},

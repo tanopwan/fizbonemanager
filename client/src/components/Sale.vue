@@ -12,7 +12,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="false" :onAddSale="onAddSale"></sale-promotion>
+				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="false" :onAddSale="onAddSale" :customers="customers"></sale-promotion>
 			</div>
 		</div>
 		<div class="block full">
@@ -24,8 +24,8 @@
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center hidden-sm hidden-xs">Promotion</th>
 						<th class="text-center">Date</th>
+						<th class="text-center hidden-sm hidden-xs">Promotion</th>
 						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal }}</span></th>
@@ -35,8 +35,8 @@
 				</thead>
 				<tbody>
 					<tr v-for="sale in computedSales">
-						<td class="hidden-sm hidden-xs">{{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.stringDate }}</td>
+						<td class="hidden-sm hidden-xs">{{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.quantity }}</td>
 						<td class="text-center">{{ sale.price }}</td>
 						<td class="text-center">{{ sale.total }}</td>
