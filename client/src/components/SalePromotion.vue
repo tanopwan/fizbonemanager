@@ -89,8 +89,10 @@ export default {
 				quantity: this.quantity,
 				description: this.description,
 				saleDate: this.saleDate,
-				isConsignment: this.isConsignment,
-				customerId: this.selectedCustomer
+				isConsignment: this.isConsignment
+			}
+			if (this.selectedCustomer) {
+				data.customerId = this.selectedCustomer;
 			}
 			if (this.quantity > stock) {
 				console.log("Over stocks!");
