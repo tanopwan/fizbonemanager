@@ -1,6 +1,20 @@
 <template>
 	<div>
-		<sale-promotion :addSale="addConsignment" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="true"></sale-promotion>
+		<div>
+			<div class="block full">
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 col-md-4">
+						<div class="input-group">
+							<span class="input-group-addon">Custom Date</span>
+							<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale"></sale-promotion>
+			</div>
+		</div>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
@@ -58,16 +72,27 @@ export default {
 				consignment.promotionName = consignment.promotionId.name;
 				consignment.price = consignment.promotionId.price / 100;
 				consignment.total = consignment.promotionId.price * consignment.quantity / 100;
-				consignment.stringDate = moment(consignment.consignmentDate).format('LLL');
+				consignment.stringDate = moment(consignment.saleDate).format('LLL');
 			})
 
 			return this.consignments.sort(function(s1, s2){
-				let isAfter = moment(s1.consignmentDate).isAfter(s2.consignmentDate);
+				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
 				if (isAfter) {
 					return -1;
 				}
 				return 1;
 			});
+		},
+		activePromotions: function() {
+			if (this.promotions) {
+				return this.promotions.filter(promotion => {
+					if (promotion.isActive === false || promotion.isBilled === true) {
+						return false;
+					}
+					return true;
+				});
+			}
+			return [];
 		}
 	},
 	methods: {
@@ -87,13 +112,9 @@ export default {
 				console.log(response);
 			});
 		},
-		addConsignment(data) {
-			data.isConsignment = true;
-			EventBus.addSale(data).then(response => {
-				this.consignments.push(response.body);
-				this.updateStock();
-			})
-			.catch(response => console.log(response));
+		onAddSale(sale) {
+			this.consignments.push(sale);
+			this.updateStock();
 		},
 		updateStock() {
 			EventBus.getBatchStock()

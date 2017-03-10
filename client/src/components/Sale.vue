@@ -1,6 +1,20 @@
 <template>
 	<div>
-		<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="false" :customers="customers"></sale-promotion>
+		<div>
+			<div class="block full">
+				<div class="row">
+					<div class="col-xs-12 col-sm-6 col-md-4">
+						<div class="input-group">
+							<span class="input-group-addon">Custom Date</span>
+							<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="false" :onAddSale="onAddSale"></sale-promotion>
+			</div>
+		</div>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
@@ -69,12 +83,23 @@ export default {
 			})
 
 			return this.sales.sort(function(s1, s2){
-				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
+				let isAfter = moment(s1.createdAt).isAfter(s2.createdAt);
 				if (isAfter) {
 					return -1;
 				}
 				return 1;
 			});
+		},
+		activePromotions: function() {
+			if (this.promotions) {
+				return this.promotions.filter(promotion => {
+					if (promotion.isActive === false || promotion.isBilled === false) {
+						return false;
+					}
+					return true;
+				});
+			}
+			return [];
 		}
 	},
 	methods: {
@@ -94,29 +119,26 @@ export default {
 				console.log(response);
 			});
 		},
-		addSale(data) {
-			EventBus.addSale(data).then(response => {
-				this.sales.push(response.body);
-				this.updateStock();
-			})
-			.catch(response => console.log(response));
+		onAddSale(sale) {
+			this.sales.push(sale);
+			this.updateStock();
 		},
 		updateStock() {
 			EventBus.getBatchStock()
-				.then(response => this.batchStocks = response.body)
-				.catch(response => console.log(response));
+			.then(response => this.batchStocks = response.body)
+			.catch(response => console.log(response));
 		}
 	},
 	created() {
 		EventBus.getSales(10)
-			.then(response => this.sales = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.sales = response.body)
+		.catch(response => console.log(response));
 		EventBus.getPromotions()
-			.then(response => this.promotions = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.promotions = response.body)
+		.catch(response => console.log(response));
 		EventBus.getCustomers()
-			.then(response => this.customers = response.body)
-			.catch(response => console.log(response));
+		.then(response => this.customers = response.body)
+		.catch(response => console.log(response));
 		this.updateStock();
 	},
 	components: {

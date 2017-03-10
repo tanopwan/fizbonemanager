@@ -60,7 +60,7 @@ const index = function(req, res) {
 			}
 		}
 	}
-	return Sale.find({ isDeleted: false, isConsignment }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
+	return Sale.find({ isDeleted: false, isConsignment }).sort({'createdAt': -1}).limit(limit).populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
