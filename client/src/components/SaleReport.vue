@@ -40,9 +40,9 @@
 					<tr>
 						<th class="text-center hidden-sm hidden-xs">Promotion</th>
 						<th class="text-center">Date</th>
-						<th class="text-center">Quantity</th>
+						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
 						<th class="text-center">Price (&#x0E3F;)</th>
-						<th class="text-center">Total (&#x0E3F;)</th>
+						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal }}</span></th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
 					</tr>
@@ -81,19 +81,25 @@ export default {
 			thisWeekFilter: false,
 			thisMonthFilter: false,
 			promotions: [],
-			selectedFilterPromotion: ''
+			selectedFilterPromotion: '',
+			sumQuantity: 0,
+			sumTotal: 0
 		};
 	},
 	computed: {
 		computedSales: function() {
+			this.sumQuantity = 0;
+			this.sumTotal = 0;
 			this.sales.forEach(sale => {
 				sale.promotionName = sale.promotionId.name;
 				sale.price = sale.promotionId.price / 100;
 				sale.total = sale.promotionId.price * sale.quantity / 100;
 				sale.stringDate = moment(sale.saleDate).format('LLL');
-			})
+				this.sumQuantity += sale.quantity;
+				this.sumTotal += sale.total;
+			});
 
-			return this.sales.sort(function(s1, s2){
+			let computed = this.sales.sort(function(s1, s2){
 				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
 				if (isAfter) {
 					return -1;
@@ -127,6 +133,15 @@ export default {
 				}
 				return true;
 			});
+
+			this.sumQuantity = 0;
+			this.sumTotal = 0;
+			computed.forEach(sale => {
+				this.sumQuantity += sale.quantity;
+				this.sumTotal += sale.total;
+			});
+
+			return computed;
 		},
 		promotionOptions: function() {
 			let options = [];
