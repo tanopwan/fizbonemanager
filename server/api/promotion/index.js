@@ -11,7 +11,8 @@ router.get('/', ctrl.index);
 
 router.use(auth.verifyMiddleware);
 
-router.put('/:id/:isActive', ctrl.setIsActive);
+router.put('/:id/active/:isActive', ctrl.setIsActive);
+router.put('/:id/billed/:isBilled', ctrl.setIsBilled);
 router.post('/', ctrl.create);
 router.delete('/:id', ctrl.destroy);
 

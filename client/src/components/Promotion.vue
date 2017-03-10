@@ -64,7 +64,7 @@
 								</div>
 								<p>
 									<a href="javascript:void(0)" @click="setIsActive(promotion._id, !promotion.isActive)" class="label" :class="{ 'label-default': !promotion.isActive, 'label-success': promotion.isActive}">{{ promotion.isActive ? 'Active' : 'InActive' }}</a>
-									<a href="javascript:void(0)" class="label" :class="{ 'label-primary': !promotion.isBilled, 'label-info': promotion.isBilled}">{{ promotion.isBilled ? 'ขายขาด' : 'ฝากขาย' }}</a>
+									<a href="javascript:void(0)" @click="setIsBilled(promotion._id, !promotion.isBilled)" class="label" :class="{ 'label-primary': !promotion.isBilled, 'label-info': promotion.isBilled}">{{ promotion.isBilled ? 'ขายขาด' : 'ฝากขาย' }}</a>
 
 									<small> Batch: {{ promotion.batchId.batchRef }}</small>
 									<h4>&#x0E3F; {{ promotion.price / 100 }}</h4>
@@ -121,10 +121,21 @@ export default {
 			});
 		},
 		setIsActive(id, isActive) {
-			this.$http.put(`/api/promotions/${id}/${isActive}`).then(response => {
+			this.$http.put(`/api/promotions/${id}/active/${isActive}`).then(response => {
 				this.promotions.forEach((promotion, idx) => {
 					if (promotion._id === id) {
 						promotion.isActive = isActive;
+					}
+				});
+			}, response => {
+				console.log(response);
+			});
+		},
+		setIsBilled(id, isBilled) {
+			this.$http.put(`/api/promotions/${id}/billed/${isBilled}`).then(response => {
+				this.promotions.forEach((promotion, idx) => {
+					if (promotion._id === id) {
+						promotion.isBilled = isBilled;
 					}
 				});
 			}, response => {

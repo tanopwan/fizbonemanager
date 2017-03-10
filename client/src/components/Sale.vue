@@ -1,6 +1,5 @@
 <template>
 	<div>
-		{{ customers.length }}
 		<sale-promotion :addSale="addSale" :batchStocks="batchStocks" :promotions="promotions" :isConsignment="false" :customers="customers"></sale-promotion>
 		<div class="block full">
 			<div class="block-title">

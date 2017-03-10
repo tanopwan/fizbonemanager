@@ -45,19 +45,22 @@ const create = function(req, res) {
 
 const index = function(req, res) {
 	let limit = 0;
-	let isConsignment = { $in: [null, false] };
+	let isConsignment = { $in: [null, false, true] };
 
 	if (req.query) {
 		if(!isNaN(parseInt(req.query.limit))) {
 			limit = parseInt(req.query.limit);
 		}
-
-		if (req.query.consignment == 'true') {
-			isConsignment = true;
+		if (req.query.consignment) {
+			if (req.query.consignment.toLowerCase() === 'true') {
+				isConsignment = true;
+			}
+			else {
+				isConsignment = { $in: [null, false] };
+			}
 		}
 	}
-
-	return Sale.find({ isDeleted: false, isConsignment: {$in: [null, false]} }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
+	return Sale.find({ isDeleted: false, isConsignment }).sort({'saleDate': -1}).limit(limit).populate('promotionId').exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
