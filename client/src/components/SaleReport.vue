@@ -8,7 +8,7 @@
 			</div>
 			<form class="form-horizontal">
 				<div class="row">
-					<div class="col-xs-12 col-md-6">
+					<div class="col-xs-12 col-md-4">
 						<div class="form-group">
 							<label class="col-xs-3 control-label">Filter Promotion</label>
 							<div class="col-xs-9">
@@ -17,14 +17,20 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-12 col-md-6">
+					<div class="col-xs-12 col-md-4">
 						<label class="col-xs-6 col-md-3 control-label">Filter Date</label>
 						<ul class="pagination pagination-sm" style="margin-top: 3px;">
 							<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
 							<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
 							<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
-							<li :class="{ active : thisMonthFilter }"><a href="javascript:void(0)" @click="thisMonthClick">30 days</a></li>
+							<li :class="{ active : customFilter }"><a href="javascript:void(0)" @click="thisCustomClick">Custom</a></li>
 						</ul>
+					</div>
+					<div class="col-xs-12 col-md-4">
+						<div class="input-group">
+							<span class="input-group-addon">Custom Date</span>
+							<input type="text" id="report-datepicker" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+						</div>
 					</div>
 				</div>
 			</form>
@@ -76,10 +82,11 @@ export default {
 		return {
 			description: '',
 			sales: [],
-			allFilter: false,
+			allFilter: true,
 			todayFilter: false,
 			thisWeekFilter: false,
-			thisMonthFilter: false,
+			customFilter: false,
+			datefilter: '',
 			promotions: [],
 			selectedFilterPromotion: '',
 			sumQuantity: 0,
@@ -125,8 +132,8 @@ export default {
 						return true;
 					}
 					return false;
-				} else if (this.thisMonthFilter) {
-					if (moment(sale.saleDate).isBetween(moment().subtract(30, 'days').startOf('day'), moment().endOf('day'))) {
+				} else if (this.customFilter) {
+					if (moment(sale.saleDate).isSame(moment(this.datefilter), 'day')) {
 						return true;
 					}
 					return false;
@@ -171,25 +178,25 @@ export default {
 			this.allFilter = true;
 			this.todayFilter = false;
 			this.thisWeekFilter = false;
-			this.thisMonthFilter = false;
+			this.customFilter = false;
 		},
 		todayClick() {
 			this.allFilter = false;
 			this.todayFilter = true;
 			this.thisWeekFilter = false;
-			this.thisMonthFilter = false;
+			this.customFilter = false;
 		},
 		thisWeekClick() {
 			this.allFilter = false;
 			this.todayFilter = false;
 			this.thisWeekFilter = true;
-			this.thisMonthFilter = false;
+			this.customFilter = false;
 		},
-		thisMonthClick() {
+		thisCustomClick() {
 			this.allFilter = false;
 			this.todayFilter = false;
 			this.thisWeekFilter = false;
-			this.thisMonthFilter = true;
+			this.customFilter = true;
 		}
 	},
 	created() {
@@ -203,6 +210,15 @@ export default {
 	components: {
 		salePromotion,
 		select2: Select2
+	},
+	mounted() {
+		$('.select-select2').select2();
+		let vm = this;
+		$('#report-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
+			$(this).datepicker('hide');
+			vm.datefilter = $(this).val();
+		});
+		this.datefilter = $('#report-datepicker').val();
 	}
 }
 </script>

@@ -21,7 +21,7 @@
 							<i class="gi gi-cardio text-light-op"></i>
 						</div>
 						<h2 class="widget-heading h3">
-							<strong><span data-toggle="counter" :data-to="totalTransaction">{{ totalTransaction }}</span></strong>
+							<strong><span id="totalTransactionCounter" data-toggle="counter">{{ totalTransaction }}</span></strong>
 						</h2>
 						<span class="text-muted">TRANSACTIONS</span>
 					</div>
@@ -34,7 +34,7 @@
 							<i class="gi gi-user text-light-op"></i>
 						</div>
 						<h2 class="widget-heading h3 text-success">
-							<strong>+ <span data-toggle="counter" :data-to="totalQuantity">{{ totalQuantity }}</span></strong>
+							<strong>+ <span id="totalQuantityCounter" data-toggle="counter">{{ totalQuantity }}</span></strong>
 						</h2>
 						<span class="text-muted">SALES</span>
 					</div>
@@ -47,7 +47,7 @@
 							<i class="gi gi-wallet text-light-op"></i>
 						</div>
 						<h2 class="widget-heading h3 text-danger">
-							<strong>&#x0E3F; <span data-toggle="counter" data-to="5820">{{ totalAmount }}</span></strong>
+							<strong>&#x0E3F; <span id="totalAmountCounter" data-toggle="counter">{{ totalAmount }}</span></strong>
 						</h2>
 						<span class="text-muted">EARNINGS</span>
 					</div>
@@ -141,20 +141,32 @@ export default {
 				if (this.saleSummaries[0]._id) {
 					this.latestMonth = moment([this.saleSummaries[0]._id.year, this.saleSummaries[0]._id.month - 1]).format("MMMM of YYYY");
 				}
-			}
-			$('[data-toggle="counter"]').each(function(){
-				var $this = $(this);
 
-				$this.countTo({
-					speed: 1000,
-					refreshInterval: 25,
-					onComplete: function() {
-						if($this.data('after')) {
-							$this.html($this.html() + $this.data('after'));
-						}
+				console.log($('#totalQuantityCounter'));
+				//$('#totalQuantityCounter').context.dataset.to = this.quantity;
+				let vm = this;
+				$('[data-toggle="counter"]').each(function(){
+					var $this = $(this);
+					if (this.id === "totalTransactionCounter") {
+						$this.context.dataset.to = vm.totalTransaction;
 					}
+					else if (this.id === "totalQuantityCounter") {
+						$this.context.dataset.to = vm.totalQuantity;
+					}
+					else if (this.id === "totalAmountCounter") {
+						$this.context.dataset.to = vm.totalAmount;
+					}
+					$this.countTo({
+						speed: 1000,
+						refreshInterval: 25,
+						onComplete: function() {
+							if($this.data('after')) {
+								$this.html($this.html() + $this.data('after'));
+							}
+						}
+					});
 				});
-			});
+			}
 		})
 		.catch(response => console.log(response));
 		EventBus.getBatchStock()
