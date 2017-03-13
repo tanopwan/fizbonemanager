@@ -33,7 +33,7 @@
 			<div class="widget-content widget-content-full-top-bottom border-bottom">
 				<div class="row text-center">
 					<div class="col-xs-6 push-inner-top-bottom border-right">
-						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ promotion.price / 100 }} x {{ promotion.quantity }} = &#x0E3F;{{ promotion.price*promotion.quantity / 100 }}</small></h3>
+						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ promotion.price / 100 }} x {{ quantity }} = &#x0E3F;{{ promotion.price*quantity / 100 }}</small></h3>
 					</div>
 					<div class="col-xs-6 push-inner-top-bottom">
 						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks <br>{{promotion.batchId.batchRef}}</small></h3>
