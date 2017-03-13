@@ -101,9 +101,8 @@ const stock2 = function(req, res) {
 
 const stock = function(req, res) {
 	Sale.aggregate([
-		{
-			$match: { isDeleted: { $eq: false } }
-		},
+		{ $match: { isDeleted: { $eq: false } } },
+		{ $sort : { saleDate : 1 } },
 		{
 			$lookup: {
 		        "from": "promotions",
@@ -132,7 +131,19 @@ const stock = function(req, res) {
 				batchName: { $first: '$batch.batchRef' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
-				totalStock: { $first: '$batch.quantity' }
+				totalStock: { $first: '$batch.quantity' },
+				deliveries: {
+					$sum: {
+						$cond: [
+							{
+								$eq: ["$promotion.isNeedDelivery", false]
+							},
+							0,
+							1
+						]
+					}
+				},
+				transactions: { $push:  { saleDate: "$saleDate", quantity: "$quantity" } }
 			}
 		}
 	]).exec()

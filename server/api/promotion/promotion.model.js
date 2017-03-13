@@ -11,6 +11,7 @@ const PromotionSchema = new Schema({
 	quantity: Number,
 	isBilled: { type: Boolean, default: true },
 	isActive: { type: Boolean, default: true },
+	isNeedDelivery: { type: Boolean, default: true },
 	batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },

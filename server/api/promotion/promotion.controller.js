@@ -89,11 +89,23 @@ const setIsBilled = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const setIsNeedDelivery = function(req, res) {
+	let promotionId = new ObjectId(req.params.id);
+	let isNeedDelivery = req.params.isNeedDelivery;
+
+	return Promotion.findOneAndUpdate({ _id: promotionId }, { $set: { isNeedDelivery: isNeedDelivery }}).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
 	index,
 	destroy,
 	setIsActive,
-	setIsBilled
+	setIsBilled,
+	setIsNeedDelivery
 };
