@@ -81,7 +81,7 @@
 			<div class="widget">
 				<div class="widget-content border-bottom">
 					<span class="pull-right text-muted"><i class="fa fa-check"></i></span>
-					Weekly Sales
+					{{ dateRange }}
 				</div>
 				<div class="widget-content border-bottom themed-background-muted text-center">
 					<span id="widget-dashchart-sales"></span>
@@ -133,6 +133,7 @@ export default {
 				totalStock: 0,
 				deliveries: 0
 			},
+			dateRange: '',
 			widgetChartLineOptions: {
 				type: 'line',
 				width: '200px',
@@ -196,6 +197,7 @@ export default {
 			var points = saleTimeSeries.map(function(item) {
 			    return item['data'];
 			});
+			this.dateRange = `${moment(saleTimeSeries[0].date).format('DD MMMM YYYY')} - ${moment(saleTimeSeries[saleTimeSeries.length - 1].date).format('DD MMMM YYYY')}`;
 
 			this.refreshBatchLineChart(points.join());
 
