@@ -12,6 +12,7 @@ const PromotionSchema = new Schema({
 	isBilled: { type: Boolean, default: true },
 	isActive: { type: Boolean, default: true },
 	isNeedDelivery: { type: Boolean, default: true },
+	ieEnded: { type: Boolean, default: false },
 	batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },

@@ -126,8 +126,20 @@ const stock = function(req, res) {
 			$unwind: '$batch'
 		},
 		{
+			$lookup: {
+		        "from": "products",
+		        "localField": "batch.productId",
+		        "foreignField": "_id",
+		        "as": "product"
+		    }
+		},
+		{
+			$unwind: '$product'
+		},
+		{
 			$group: {
 				_id: '$promotion.batchId',
+				productName: { $first: '$product.name' },
 				batchName: { $first: '$batch.batchRef' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
@@ -191,7 +203,18 @@ const stockById = function(req, res) {
 				promotionName: { $first: '$promotion.name' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
-				totalStock: { $first: '$batch.quantity' }
+				totalStock: { $first: '$batch.quantity' },
+				deliveries: {
+					$sum: {
+						$cond: [
+							{
+								$eq: ["$promotion.isNeedDelivery", false]
+							},
+							0,
+							1
+						]
+					}
+				},
 			}
 		}
 	).exec()

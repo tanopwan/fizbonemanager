@@ -61,9 +61,51 @@ const destroy = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const batch = function(req, res) {
+	Batch.aggregate([
+		//{ $match: { isFinish: { $eq: false } } },
+		{ $sort : { createdAt : -1 } },
+		{
+			$lookup: {
+				"from": "products",
+				"localField": "productId",
+				"foreignField": "_id",
+				"as": "product"
+			}
+		},
+		{
+			$unwind: '$product'
+		},
+		{
+			$group: {
+				_id: '$product._id',
+				name: { $first: '$product.name' },
+				batches: { $sum: 1 },
+				finishedBatches: {
+					$sum: {
+						$cond: [
+							{
+								$eq: ["$isFinish", true]
+							},
+							1,
+							0
+						]
+					}
+				},
+				batches: { $push:  { batchRef: "$batchRef", quantity: "$quantity", isFinish: "$isFinish" } }
+			}
+		}
+	]).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
 	index,
-	destroy
+	destroy,
+	batch
 };

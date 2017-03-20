@@ -9,6 +9,7 @@ const BatchSchema = new Schema({
 	quantity: Number,
 	batchRef: String,
 	isInStock: { type: Boolean, default: false },
+	isFinish: { type: Boolean, default: false },
 	productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },

@@ -9,10 +9,10 @@ var router = express.Router();
 router.get('/stock', ctrl.stock);
 router.get('/:id', ctrl.view);
 router.get('/stock/:id', ctrl.stockById);
+router.get('/', ctrl.index);
 
 router.use(auth.verifyMiddleware);
 
-router.get('/', ctrl.index);
 router.post('/', ctrl.create);
 router.delete('/:id', ctrl.destroy);
 

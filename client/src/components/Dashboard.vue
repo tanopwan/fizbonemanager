@@ -1,5 +1,27 @@
 <template>
-	<div id="page-content" style="min-height: 454px;">
+	<div id="page-content" style="min-height: 454px;" class="inner-sidebar-right">
+		<!-- Inner Sidebar -->
+		<div id="page-content-sidebar">
+			<div class="collapse navbar-collapse remove-padding">
+
+				<!-- Labels -->
+				<div class="block-section" v-for="product in products">
+					<h4 class="inner-sidebar-header">
+						{{ product.name }}
+					</h4>
+					<ul class="nav nav-pills nav-stacked nav-icons">
+						<li v-for="batch in product.batches">
+							<a href="javascript:void(0)">
+								<i class="fa fa-fw fa-circle icon-push text-info"></i> <strong>{{ batch.batchRef }}</strong>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<!-- END Labels -->
+			</div>
+			<!-- END Collapsible Navigation -->
+		</div>
+		<!-- END Inner Sidebar -->
 		<div class="row">
 			<div class="col-xs-12 col-sm-6 col-lg-3">
 				<a href="javascript:void(0)" class="widget">
@@ -63,7 +85,7 @@
 					</div>
 					<a href="javascript:void(0)" class="widget-content themed-background-muted text-right clearfix"
 					v-for="batchStock in batchStocks" @click="selectBatch(batchStock._id)">
-					<h2 class="widget-heading h3 text-muted">{{ batchStock.batchName }} <small>{{ batchStock.width.toFixed(2) }}%</small></h2>
+					<h2 class="widget-heading h5 text-muted">{{ batchStock.productName }} - {{ batchStock.batchName }} <small>{{ batchStock.width.toFixed(2) }}%</small></h2>
 					<div class="progress progress-striped progress-mini active">
 						<div class="progress-bar progress-bar-success" role="progressbar" v-bind:style="{ width: batchStock.width + '%' }"></div>
 					</div>
@@ -72,6 +94,10 @@
 		</div>
 		<div class="col-xs-12 col-sm-4">
 			<div class="widget">
+				<div class="widget-content border-bottom">
+					<span class="pull-right text-muted">per Batch</span>
+					Promotion
+				</div>
 				<div class="widget-content border-bottom themed-background-muted">
 					<div id="chart-pie" style="height: 280px;"></div>
 				</div>
@@ -80,8 +106,8 @@
 		<div class="col-xs-12 col-sm-4">
 			<div class="widget">
 				<div class="widget-content border-bottom">
-					<span class="pull-right text-muted"><i class="fa fa-check"></i></span>
-					{{ dateRange }}
+					<span class="pull-right text-muted">{{ dateRange }}</span>
+					Batch Detail
 				</div>
 				<div class="widget-content border-bottom themed-background-muted text-center">
 					<span id="widget-dashchart-sales"></span>
@@ -110,7 +136,6 @@
 		</div>
 	</div>
 </div>
-</div>
 </template>
 
 <script>
@@ -121,6 +146,7 @@ const colors = ['#5cafde', '#deb25c', '#de815c', '#7fb364', '#5ccdde', '#454e59'
 export default {
 	data() {
 		return {
+			products: [],
 			saleSummaries: [{}],
 			batchStocks: [],
 			totalQuantity: 0,
@@ -195,22 +221,23 @@ export default {
 			});
 
 			var points = saleTimeSeries.map(function(item) {
-			    return item['data'];
+				return item['data'];
 			});
 			this.dateRange = `${moment(saleTimeSeries[0].date).format('DD MMMM YYYY')} - ${moment(saleTimeSeries[saleTimeSeries.length - 1].date).format('DD MMMM YYYY')}`;
 
 			this.refreshBatchLineChart(points.join());
 
 			EventBus.getBatchStock(id)
-				.then(response => {
-					let labels = [];
-					let piecolors = [];
-					response.data.forEach((data, idx) => {
-						labels.push({ label: data.promotionName, data: data.totalQuantity });
-						piecolors.push(colors[idx % colors.length]);
-					});
-					// Pie Chart
-					$.plot($('#chart-pie'),
+			.then(response => {
+				let labels = [];
+				let piecolors = [];
+				response.data.forEach((data, idx) => {
+					labels.push({ label: data.promotionName, data: data.totalQuantity });
+					piecolors.push(colors[idx % colors.length]);
+				});
+				// Pie Chart
+				$.plot(
+					$('#chart-pie'),
 					labels,
 					{
 						colors: piecolors,
@@ -236,51 +263,54 @@ export default {
 		}
 	},
 	created() {
+		EventBus.getProductsWithBatches()
+			.then(response => this.products = response.body)
+			.catch(response => console.log(response));
 		EventBus.getSaleSummary()
-			.then(response => {
-				this.saleSummaries = response.body;
-				if (this.saleSummaries.length > 0) {
-					this.totalQuantity = this.saleSummaries[0].totalQuantity;
-					this.totalAmount = this.saleSummaries[0].totalAmount / 100;
-					this.totalTransaction = this.saleSummaries[0].transaction;
-					if (this.saleSummaries[0]._id) {
-						this.latestMonth = moment([this.saleSummaries[0]._id.year, this.saleSummaries[0]._id.month - 1]).format("MMMM of YYYY");
-					}
-
-					let vm = this;
-					$('[data-toggle="counter"]').each(function(){
-						var $this = $(this);
-						if (this.id === "totalTransactionCounter") {
-							$this.context.dataset.to = vm.totalTransaction;
-						}
-						else if (this.id === "totalQuantityCounter") {
-							$this.context.dataset.to = vm.totalQuantity;
-						}
-						else if (this.id === "totalAmountCounter") {
-							$this.context.dataset.to = vm.totalAmount;
-						}
-						$this.countTo({
-							speed: 1000,
-							refreshInterval: 25,
-							onComplete: function() {
-								if($this.data('after')) {
-									$this.html($this.html() + $this.data('after'));
-								}
-							}
-						});
-					});
+		.then(response => {
+			this.saleSummaries = response.body;
+			if (this.saleSummaries.length > 0) {
+				this.totalQuantity = this.saleSummaries[0].totalQuantity;
+				this.totalAmount = this.saleSummaries[0].totalAmount / 100;
+				this.totalTransaction = this.saleSummaries[0].transaction;
+				if (this.saleSummaries[0]._id) {
+					this.latestMonth = moment([this.saleSummaries[0]._id.year, this.saleSummaries[0]._id.month - 1]).format("MMMM of YYYY");
 				}
-			})
-			.catch(response => console.log(response));
-		EventBus.getBatchStock()
-			.then(response => {
-				this.batchStocks = response.body;
-				this.batchStocks.forEach((batchStock, index) => {
-					let width = (batchStock.totalQuantity / batchStock.totalStock) * 100;
-					this.$set(this.batchStocks[index], 'width', width);
+
+				let vm = this;
+				$('[data-toggle="counter"]').each(function(){
+					var $this = $(this);
+					if (this.id === "totalTransactionCounter") {
+						$this.context.dataset.to = vm.totalTransaction;
+					}
+					else if (this.id === "totalQuantityCounter") {
+						$this.context.dataset.to = vm.totalQuantity;
+					}
+					else if (this.id === "totalAmountCounter") {
+						$this.context.dataset.to = vm.totalAmount;
+					}
+					$this.countTo({
+						speed: 1000,
+						refreshInterval: 25,
+						onComplete: function() {
+							if($this.data('after')) {
+								$this.html($this.html() + $this.data('after'));
+							}
+						}
+					});
 				});
-			})
-			.catch(response => console.log(response));
+			}
+		})
+		.catch(response => console.log(response));
+		EventBus.getBatchStock()
+		.then(response => {
+			this.batchStocks = response.body;
+			this.batchStocks.forEach((batchStock, index) => {
+				let width = (batchStock.totalQuantity / batchStock.totalStock) * 100;
+				this.$set(this.batchStocks[index], 'width', width);
+			});
+		})
+		.catch(response => console.log(response));
 	},
 	mounted() {
 		this.refreshBatchLineChart("0,0");

@@ -27,9 +27,7 @@
 				</ul>
 				<!-- END Right Header Navigation -->
 			</header>
-			<div id="page-content">
-				<router-view></router-view>
-			</div>
+			<router-view></router-view>
 		</div>
 	</div>
 </template>
