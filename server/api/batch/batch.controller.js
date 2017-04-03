@@ -1,6 +1,6 @@
 'use strict';
 
-const Batch = require('./batch.model');
+const Batch = require('../../model/batch.model');
 const Promotion = require('../promotion/promotion.model');
 const Sale = require('../sale/sale.model');
 const config = require('../../config/environment');

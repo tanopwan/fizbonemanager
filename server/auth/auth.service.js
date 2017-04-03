@@ -2,10 +2,10 @@
 
 const jwt = require('jsonwebtoken');
 const config = require('../config/environment');
+const User = require('../api/user/user.model');
 
 module.exports = {
 	verifyMiddleware: function(req, res, next) {
-
 		var token = req.headers['x-access-token'];
 		if (token) {
 
@@ -15,7 +15,17 @@ module.exports = {
 				} else {
 					// if everything is good, save to request for use in other routes
 					req.decoded = decoded;
-					next();
+					let user = decoded._doc;
+					return User.findOne({ _id: user._id }).exec().then(result => {
+						if (result) {
+							req.user = result;
+							return next();
+						}
+						return res.status(401).send({
+							success: false,
+							message: 'User is not registered.'
+						});
+					})
 				}
 			});
 

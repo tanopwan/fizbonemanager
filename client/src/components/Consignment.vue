@@ -30,7 +30,7 @@
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
-						<th class="text-center hidden-sm hidden-xs">Manage</th>
+						<th class="text-center">Manage</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -41,7 +41,8 @@
 						<th class="text-center">{{ consignment.price }}</th>
 						<th class="text-center">{{ consignment.total }}</th>
 						<td class="hidden-sm hidden-xs">{{ consignment.description }}</td>
-						<th class="text-center hidden-sm hidden-xs">
+						<th class="text-center">
+							<button class="btn btn-info" @click="billConsignment(consignment._id)"><i class="fa fa-money"></i></button>
 							<button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button>
 						</th>
 					</tr>
@@ -98,6 +99,9 @@ export default {
 		}
 	},
 	methods: {
+		billConsignment(id, quantity) {
+
+		},
 		deleteConsignment(id) {
 			this.$http.delete('/api/sales/' + id).then(response => {
 				let index = -1;

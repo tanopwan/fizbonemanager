@@ -25,4 +25,5 @@ else {
 	});
 }
 
+require('./graphql')(app);
 require('./routes')(app);

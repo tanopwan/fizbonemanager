@@ -1,7 +1,7 @@
 'use strict';
 
-const Product = require('./product.model');
-const Batch = require('../batch/batch.model');
+const Product = require('../../model/product.model');
+const Batch = require('../../model/batch.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');

@@ -9,8 +9,8 @@ export const EventBus = new Vue({
 		customerURL: '/api/customers'
 	},
 	methods: {
-		getProducts() {
-			return this.$http.get(this.productURL);
+		query(query) {
+			return this.$http.post('/graphql', {"query": `${query}`});
 		},
 		getProductsWithBatches() {
 			return this.$http.get(`${this.productURL}/batches`);

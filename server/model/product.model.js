@@ -6,13 +6,19 @@ const Schema = mongoose.Schema;
 mongoose.Promise = require('bluebird');
 
 const ProductSchema = new Schema({
-	name: String,
-	description: String
+	name: { type: String, unique : true, required : true },
+	description: String,
 },
 {
 	timestamps: true
 });
 
-const Product = mongoose.model('Product', ProductSchema);
+let Product = null;
+try {
+	Product = mongoose.model('Product');
+}
+catch (error) {
+	Product = mongoose.model('Product', ProductSchema);
+}
 
 module.exports = Product;

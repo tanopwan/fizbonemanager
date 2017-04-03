@@ -61,23 +61,23 @@ const index = function(req, res) {
 		}
 	}
 	return Sale.find({ isDeleted: false, isConsignment }).sort({'createdAt': -1}).limit(limit).populate(['promotionId', 'customerId']).exec()
-	.then(sale => {
-		if(!sale) {
-			return res.status(404).end();
-		}
-		res.json(sale);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(sale => {
+			if(!sale) {
+				return res.status(404).end();
+			}
+			res.json(sale);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
 const destroy = function(req, res) {
 	let saleId = new ObjectId(req.params.id);
 
 	return Sale.findOneAndUpdate({ _id: saleId }, { $set: { isDeleted: true }}).exec()
-	.then(result => {
-		res.json(result);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(result => {
+			res.json(result);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
 const summary = function(req, res) {

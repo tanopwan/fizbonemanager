@@ -14,7 +14,6 @@ module.exports = {
             db: {
                 safe: true
             }
-        },
-		jwt: 'abc'
+        }
 	}
 }

@@ -25,7 +25,7 @@
 					<template v-for="product in products">
 						<div>
 							<div class="pull-right">
-								{{ product._id }}
+								<code>productId: {{ product._id }}</code>
 								<button class="btn btn-danger" @click="deleteProduct(product._id)"><i class="fa fa-minus"></i></button>
 							</div>
 							<h4 class="sub-header">
@@ -52,31 +52,33 @@ export default {
 	},
 	methods: {
 		addProduct() {
-			this.$http.post('/api/products', { name: this.productName }).then(response => {
-				this.products.push(response.body);
-			}, response => {
-				console.log(response);
-			});
+			EventBus.query(`mutation { addProduct(name: "${ this.productName }") { product { _id, name } } }`)
+				.then(response => {
+					this.products.push(response.body.data.addProduct.product);
+				}, response => {
+					console.log(response);
+				});
 		},
 		deleteProduct(id) {
-			this.$http.delete('/api/products/' + id).then(response => {
-				let index = -1;
-				this.products.forEach((product, idx) => {
-					if (product._id === id) {
-						index = idx;
+			EventBus.query(`mutation { deleteProduct(_id: "${ id }") { ok, n } }`)
+				.then(response => {
+					let index = -1;
+					this.products.forEach((product, idx) => {
+						if (product._id === id) {
+							index = idx;
+						}
+					});
+					if (index !== -1) {
+						this.products.splice(index, 1);
 					}
+				}, response => {
+					console.log(response);
 				});
-				if (index !== -1) {
-					this.products.splice(index, 1);
-				}
-			}, response => {
-				console.log(response);
-			});
 		}
 	},
 	created() {
-		EventBus.getProducts()
-			.then(response => this.products = response.body)
+		EventBus.query("{ products { _id, name } }")
+			.then(response => this.products = response.body.data.products)
 			.catch(response => console.log(response));
 	}
 }

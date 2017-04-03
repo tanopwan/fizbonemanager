@@ -181,9 +181,9 @@ export default {
 		}
 	},
 	created() {
-		EventBus.getProducts()
+		EventBus.query("{ products { _id, name } }")
 			.then(response => {
-				this.products = response.body
+				this.products = response.body.data.products;
 				this.products.forEach(product => {
 					this.addPromotions.push({ productId: product._id, isBilled: true, quantity: 1 });
 				})
