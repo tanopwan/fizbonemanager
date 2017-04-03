@@ -84,6 +84,13 @@ export default {
 	},
 	methods: {
 		addSaleInternal(stock) {
+			let changedDate = moment(this.saleDate, "YYYY-MM-DD")
+			var iscurrentDate = changedDate.isSame(new Date(), "day");
+			if (iscurrentDate) {
+				// update time
+				this.saleDate = moment();
+			}
+
 			let data = {
 				promotionId: this.promotion._id,
 				quantity: this.quantity,
@@ -102,6 +109,8 @@ export default {
 			this.error = false;
 			EventBus.addSale(data).then(response => {
 				this.onAddSale(response.body);
+				this.quantity = this.promotion.quantity;
+				this.description = "";
 			})
 			.catch(response => console.log(response));
 		},
