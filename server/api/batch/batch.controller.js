@@ -201,6 +201,7 @@ const stockById = function(req, res) {
 			$group: {
 				_id: '$promotion._id',
 				promotionName: { $first: '$promotion.name' },
+				promotionGroup: { $first: '$promotion.group' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
 				totalStock: { $first: '$batch.quantity' },

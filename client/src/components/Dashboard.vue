@@ -231,10 +231,26 @@ export default {
 			.then(response => {
 				let labels = [];
 				let piecolors = [];
-				response.data.forEach((data, idx) => {
-					labels.push({ label: data.promotionName, data: data.totalQuantity });
-					piecolors.push(colors[idx % colors.length]);
-				});
+				let pie = response.data.reduce(function(res, obj) {
+					if (!obj.promotionGroup) {
+						obj.promotionGroup = 'None';
+					}
+					if (!(obj.promotionGroup in res))
+						res[obj.promotionGroup] = obj.totalQuantity;
+					else {
+						res[obj.promotionGroup] += obj.totalQuantity;
+					}
+					return res;
+				}, {});
+
+				for (var key in pie){
+					if (pie.hasOwnProperty(key)) {
+						labels.push({ label: key, data: pie[key] });
+						let idx = Object.keys(pie).indexOf(key);
+						piecolors.push(colors[idx % colors.length]);
+					}
+				}
+
 				// Pie Chart
 				$.plot(
 					$('#chart-pie'),

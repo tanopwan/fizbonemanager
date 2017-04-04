@@ -39,6 +39,14 @@
 							</div>
 						</div>
 					</div>
+					<div class="row form-group">
+						<div class="col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">Group Tag</span>
+								<input type="text" class="form-control" v-model="addPromotions[index].group" placeholder="'Booth', 'Online', etc.">
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -116,7 +124,8 @@ export default {
 				price: this.addPromotions[index].price,
 				batchId: this.addPromotions[index].batchId,
 				quantity: this.addPromotions[index].quantity || 1,
-				isBilled: this.addPromotions[index].isBilled
+				isBilled: this.addPromotions[index].isBilled,
+				group: this.addPromotions[index].group
 			};
 			this.$http.post('/api/promotions', promo).then(response => {
 				this.promotions.push(response.body);
