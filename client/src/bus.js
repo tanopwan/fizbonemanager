@@ -34,8 +34,11 @@ export const EventBus = new Vue({
 				return this.$http.get(`${this.saleURL}?consignment=true&limit=${parseInt(limit)}`);
 			}
 		},
-		getPromotions() {
-			return this.$http.get(this.promotionURL);
+		getPromotions(param) {
+			if (param) {
+				return this.$http.get(`${this.promotionURL}${param}`);
+			}
+			return this.$http.get(`${this.promotionURL}`);
 		},
 		getCustomers() {
 			return this.$http.get(this.customerURL);

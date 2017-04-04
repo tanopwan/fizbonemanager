@@ -35,7 +35,24 @@ const create = function(req, res) {
 }
 
 const index = function(req, res) {
-	return Promotion.find().populate({
+
+	let isEnded = { $in: [null, false] };
+
+	if (req.query) {
+		if (req.query.ended) {
+			if (req.query.ended.toLowerCase() === 'true') {
+				isEnded = true;
+			}
+			else if (req.query.ended.toLowerCase() === 'all') {
+				isEnded = { $in: [null, false, true] };
+			}
+			else {
+				isEnded = { $in: [null, false] };
+			}
+		}
+	}
+
+	return Promotion.find({ isEnded: isEnded }).populate({
 		path: 'batchId',
 		populate: {
 			path: 'productId',
@@ -89,6 +106,17 @@ const setIsBilled = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const setIsEnded = function(req, res) {
+	let promotionId = new ObjectId(req.params.id);
+	let isEnded = req.params.isEnded;
+
+	return Promotion.findOneAndUpdate({ _id: promotionId }, { $set: { isEnded: isEnded }}).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 const setIsNeedDelivery = function(req, res) {
 	let promotionId = new ObjectId(req.params.id);
 	let isNeedDelivery = req.params.isNeedDelivery;
@@ -107,5 +135,6 @@ module.exports = {
 	destroy,
 	setIsActive,
 	setIsBilled,
+	setIsEnded,
 	setIsNeedDelivery
 };

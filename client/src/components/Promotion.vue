@@ -49,6 +49,9 @@
 						<h4>
 							All Promotions <small> Total: {{ promotions.length }}</small>
 						</h4>
+						<div class="block-options pull-right">
+							<a id="toggleButton" href="javascript:void(0)" class="btn btn-effect-ripple btn-danger" @click="toggleEndedPromotion" :class="{ 'active': showEndedPromotion }"><i class="fa fa-bookmark"></i></a>
+						</div>
 					</div>
 					<div class="row">
 						<div class="col-xs-12">
@@ -65,6 +68,7 @@
 								<p>
 									<a href="javascript:void(0)" @click="setIsActive(promotion._id, !promotion.isActive)" class="label" :class="{ 'label-default': !promotion.isActive, 'label-success': promotion.isActive}">{{ promotion.isActive ? 'Active' : 'InActive' }}</a>
 									<a href="javascript:void(0)" @click="setIsBilled(promotion._id, !promotion.isBilled)" class="label" :class="{ 'label-primary': !promotion.isBilled, 'label-info': promotion.isBilled}">{{ promotion.isBilled ? 'ขายขาด' : 'ฝากขาย' }}</a>
+									<a href="javascript:void(0)" @click="setIsEnded(promotion._id, !promotion.isEnded)" class="label" :class="{ 'label-primary': !promotion.isEnded, 'label-default': promotion.isEnded}">{{ promotion.isEnded ? 'Promotion Ended' : 'On Promotion' }}</a>
 									<a href="javascript:void(0)" @click="setIsNeedDelivery(promotion._id, !promotion.isNeedDelivery)" class="label" :class="{ 'label-primary': !promotion.isNeedDelivery, 'label-info': promotion.isNeedDelivery}">{{ promotion.isNeedDelivery ? 'จัดสั่ง' : 'ไม่จัดส่ง' }}</a>
 
 									<small> Batch: {{ promotion.batchId.batchRef }}</small>
@@ -90,10 +94,22 @@ export default {
 			batches: [],
 			products: [],
 			promotions: [],
-			addPromotions: []
+			addPromotions: [],
+			showEndedPromotion: false,
+			isRetrievedAllPromotions: false
 		};
 	},
 	methods: {
+		toggleEndedPromotion() {
+			$('#toggleButton').blur();
+			this.showEndedPromotion = !this.showEndedPromotion;
+			if (this.showEndedPromotion === true && this.isRetrievedAllPromotions === false) {
+				this.isRetrievedAllPromotions = true;
+				EventBus.getPromotions("?ended=all")
+					.then(response => this.promotions = response.body)
+					.catch(response => console.log(response));
+			}
+		},
 		addPromotion(index) {
 			let promo = {
 				name: this.addPromotions[index].name,
@@ -143,6 +159,17 @@ export default {
 				console.log(response);
 			});
 		},
+		setIsEnded(id, isEnded) {
+			this.$http.put(`/api/promotions/${id}/ended/${isEnded}`).then(response => {
+				this.promotions.forEach((promotion, idx) => {
+					if (promotion._id === id) {
+						promotion.isEnded = isEnded;
+					}
+				});
+			}, response => {
+				console.log(response);
+			});
+		},
 		setIsNeedDelivery(id, isNeedDelivery) {
 			this.$http.put(`/api/promotions/${id}/needDelivery/${isNeedDelivery}`).then(response => {
 				this.promotions.forEach((promotion, idx) => {
@@ -177,7 +204,13 @@ export default {
 				}
 				return 1;
 			});
-			return sorted;
+			return sorted.filter(promotion => {
+				if (this.showEndedPromotion) {
+					return promotion.isEnded === true;
+				}
+
+				return !promotion.isEnded || promotion.isEnded === false
+			});
 		}
 	},
 	created() {
@@ -195,6 +228,10 @@ export default {
 		EventBus.getPromotions()
 			.then(response => this.promotions = response.body)
 			.catch(response => console.log(response));
+	},
+	mounted() {
+		// Initialize Tooltips
+        $('[data-toggle="tooltip"], .enable-tooltip').tooltip({container: 'body', animation: false});
 	},
 	components: {
 		'select2': Select2
