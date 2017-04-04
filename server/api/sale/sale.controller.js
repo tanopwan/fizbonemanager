@@ -85,6 +85,7 @@ const summary = function(req, res) {
 		{
 			$match: { isDeleted: { $eq: false } }
 		},
+		{ $sort : { saleDate : 1} },
 		{
 			"$lookup": {
 		        "from": "promotions",

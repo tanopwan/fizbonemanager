@@ -4,6 +4,19 @@
 		<div id="page-content-sidebar">
 			<div class="collapse navbar-collapse remove-padding">
 
+				<div class="block-section" >
+					<h4 class="inner-sidebar-header">
+						Monthly Report
+					</h4>
+					<ul class="nav nav-pills nav-stacked nav-icons">
+						<li v-for="(summary, $index) in saleSummaries">
+							<a href="javascript:void(0)" @click="selectMonthIndex=$index">
+								<i class="fa fa-fw fa-circle icon-push text-info"></i> <strong>{{ summary._id.month }} / {{ summary._id.year }}</strong>
+							</a>
+						</li>
+					</ul>
+				</div>
+
 				<!-- Labels -->
 				<div class="block-section" v-for="product in products">
 					<h4 class="inner-sidebar-header">
@@ -32,7 +45,7 @@
 						<h2 class="widget-heading h3 text-warning">
 							<strong>Monthly</strong>
 						</h2>
-						<span class="text-muted">{{latestMonth}}</span>
+						<span class="text-muted">{{selectMonthName}}</span>
 					</div>
 				</a>
 			</div>
@@ -147,12 +160,13 @@ export default {
 	data() {
 		return {
 			products: [],
-			saleSummaries: [{}],
+			saleSummaries: [{_id: {}}],
 			batchStocks: [],
 			totalQuantity: 0,
 			totalAmount: 0,
 			totalTransaction: 0,
-			latestMonth: 'N/A',
+			selectMonthName: 'N/A',
+			selectMonthIndex: 0,
 			batchInfo: {
 				totalQuantity: 0,
 				totalTransaction: 0,
@@ -276,37 +290,32 @@ export default {
 				);
 			})
 			.catch(response => console.log(response));
-		}
-	},
-	created() {
-		EventBus.getProductsWithBatches()
-			.then(response => this.products = response.body)
-			.catch(response => console.log(response));
-		EventBus.getSaleSummary()
-		.then(response => {
-			this.saleSummaries = response.body;
-			if (this.saleSummaries.length > 0) {
-				this.totalQuantity = this.saleSummaries[0].totalQuantity;
-				this.totalAmount = this.saleSummaries[0].totalAmount / 100;
-				this.totalTransaction = this.saleSummaries[0].transaction;
-				if (this.saleSummaries[0]._id) {
-					this.latestMonth = moment([this.saleSummaries[0]._id.year, this.saleSummaries[0]._id.month - 1]).format("MMMM of YYYY");
+		},
+		selectMonth() {
+			if (this.saleSummaries.length > this.selectMonthIndex) {
+				this.totalQuantity = this.saleSummaries[this.selectMonthIndex].totalQuantity;
+				this.totalAmount = this.saleSummaries[this.selectMonthIndex].totalAmount / 100;
+				this.totalTransaction = this.saleSummaries[this.selectMonthIndex].transaction;
+				if (this.saleSummaries[this.selectMonthIndex]._id) {
+					this.selectMonthName = moment([this.saleSummaries[this.selectMonthIndex]._id.year, this.saleSummaries[this.selectMonthIndex]._id.month - 1]).format("MMMM of YYYY");
 				}
 
 				let vm = this;
 				$('[data-toggle="counter"]').each(function(){
 					var $this = $(this);
+					let to = 0;
 					if (this.id === "totalTransactionCounter") {
-						$this.context.dataset.to = vm.totalTransaction;
+						to = vm.totalTransaction;
 					}
 					else if (this.id === "totalQuantityCounter") {
-						$this.context.dataset.to = vm.totalQuantity;
+						to = vm.totalQuantity;
 					}
 					else if (this.id === "totalAmountCounter") {
-						$this.context.dataset.to = vm.totalAmount;
+						to = vm.totalAmount;
 					}
 					$this.countTo({
 						speed: 1000,
+						to: to,
 						refreshInterval: 25,
 						onComplete: function() {
 							if($this.data('after')) {
@@ -316,6 +325,21 @@ export default {
 					});
 				});
 			}
+		}
+	},
+	watch: {
+		selectMonthIndex: function (val) {
+			this.selectMonth();
+		}
+	},
+	created() {
+		EventBus.getProductsWithBatches()
+			.then(response => this.products = response.body)
+			.catch(response => console.log(response));
+		EventBus.getSaleSummary()
+		.then(response => {
+			this.saleSummaries = response.body;
+			this.selectMonth();
 		})
 		.catch(response => console.log(response));
 		EventBus.getBatchStock()
