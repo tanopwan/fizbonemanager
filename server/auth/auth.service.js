@@ -40,7 +40,7 @@ module.exports = {
 	},
 	sign: function(content) {
 		return jwt.sign(content, config.jwt, {
-			expiresIn: 1440 // expires in 24 hours
+			expiresIn: '1d' // expires in 24 hours
 		});
 	},
 	hasRoleAdmin: function(req, res, next) {
