@@ -225,11 +225,23 @@ const stockById = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const setIsFinish = function(req, res) {
+	let objectId = new ObjectId(req.params.id);
+	let isFinish = req.params.isFinish;
+
+	return Batch.findOneAndUpdate({ _id: objectId }, { $set: { isFinish: isFinish }}).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
 	index,
 	destroy,
 	stock,
-	stockById
+	stockById,
+	setIsFinish
 };

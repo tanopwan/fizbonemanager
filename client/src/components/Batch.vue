@@ -53,6 +53,9 @@
 						<div>
 							จำนวน {{ batch.quantity }}
 						</div>
+						<p>
+							<a href="javascript:void(0)" @click="setIsFinish(batch._id, !batch.isFinish)" class="label" :class="{ 'label-success': !batch.isFinish, 'label-default': batch.isFinish}">{{ batch.isFinish ? 'ขายหมด' : 'มีสินค้าขาย' }}</a>
+						</p>
 					</template>
 				</div>
 			</div>
@@ -121,7 +124,18 @@ export default {
 			}, response => {
 				console.log(response);
 			});
-		}
+		},
+		setIsFinish(id, isFinish) {
+			this.$http.put(`/api/batches/${id}/finish/${isFinish}`).then(response => {
+				this.batches.forEach((batch, idx) => {
+					if (batch._id === id) {
+						batch.isFinish = isFinish;
+					}
+				});
+			}, response => {
+				console.log(response);
+			});
+		},
 	},
 	created() {
 		EventBus.query("{ products { _id, name } }")

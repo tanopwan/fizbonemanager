@@ -13,6 +13,7 @@ router.get('/', ctrl.index);
 
 router.use(auth.verifyMiddleware);
 
+router.put('/:id/finish/:isFinish', ctrl.setIsFinish);
 router.post('/', ctrl.create);
 router.delete('/:id', ctrl.destroy);
 

@@ -197,7 +197,7 @@ export default {
 			this.products.forEach(product => {
 				var options = [];
 				this.batches.filter(batch => {
-					return batch.productId === product._id;
+					return batch.productId === product._id && batch.isFinish === false;
 				}).forEach(batch => {
 					options.push({ id: batch._id, text: batch.batchRef });
 				});
