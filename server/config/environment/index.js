@@ -13,5 +13,6 @@ module.exports = {
 		clientSecret: config.facebook.clientSecret || 'clientSecret',
 		callbackURL: config.facebook.callbackURL || `${process.env.DOMAIN || ''}/auth/facebook/callback`
 	},
-	jwt: config.jwt || 'superSecret'
+	jwt: config.jwt || 'superSecret',
+	authorizedEmails: ['tanopwan@hotmail.com', 't_thanapon@hotmail.com', 'noolizaa@hotmail.com']
 }

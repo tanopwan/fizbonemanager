@@ -1,9 +1,10 @@
 const passport = require('passport');
 const facebookPassport = require('passport-facebook');
+const config = require('../../config/environment');
 
 const FacebookStrategy = facebookPassport.Strategy;
 
-const authorizedEmails = ['tanopwan@hotmail.com', 't_thanapon@hotmail.com', 'noolizaa@hotmail.com'];
+const authorizedEmails = config.authorizedEmails;
 
 module.exports = function(User, config) {
 	passport.use(new FacebookStrategy({
