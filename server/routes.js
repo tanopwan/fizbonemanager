@@ -17,8 +17,8 @@ module.exports = function(app) {
 		res.sendFile(path.resolve(`${__dirname}/views/login.html`));
 	});
 
-	app.get('/webhook', facebookBot.verifyRequestSignature, facebookBot.verifyWebhook);
-	app.post('/webhook', facebookBot.verifyRequestSignature, facebookBot.webhook);
+	app.get('/webhook', bodyParser.json({ verify: facebookBot.verifyRequestSignature }), facebookBot.verifyWebhook);
+	app.post('/webhook', bodyParser.json({ verify: facebookBot.verifyRequestSignature }), facebookBot.webhook);
 
 	// Below all routes
 	app.use((req, res) => {
