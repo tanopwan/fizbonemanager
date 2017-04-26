@@ -279,7 +279,17 @@ function sendProductList(recipientId) {
 							"default_action": {
 								"type": "postback",
 								"payload": "BUY_FIZBONE_CL_70_PAYLOAD"
-							}
+							},
+							"buttons": [
+								{
+									"title": "Buy",
+									"type": "web_url",
+									"url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
+									"messenger_extensions": true,
+									"webview_height_ratio": "tall",
+									"fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+								}
+							]
 						},
 						{
 							"title": "ฟิซโบน แซลมอน 50 กรัม",
@@ -288,7 +298,17 @@ function sendProductList(recipientId) {
 							"default_action": {
 								"type": "postback",
 								"payload": "BUY_FIZBONE_SM_50_PAYLOAD"
-							}
+							},
+							"buttons": [
+								{
+									"title": "Buy",
+									"type": "web_url",
+									"url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
+									"messenger_extensions": true,
+									"webview_height_ratio": "tall",
+									"fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+								}
+							] 
 						},
 					],
 					"buttons": [
