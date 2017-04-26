@@ -250,6 +250,12 @@ function receivedPostback(event) {
 		case 'PRODUCT_LIST_PAYLOAD':
 		sendProductList(senderID);
 		break;
+		case 'BUY_FIZBONE_CL_70_PAYLOAD':
+		sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ");
+		break;
+		case 'BUY_FIZBONE_SM_50_PAYLOAD':
+		sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน แซลมอน กี่ถุงดีคร้าบ");
+		break;
 		default:
 		// When a postback is called, we'll send a message back to the sender to
 		// let them know it was successful
@@ -300,6 +306,50 @@ function sendProductList(recipientId) {
 					],
 				}
 			}
+		}
+	};
+
+	callSendAPI(messageData);
+}
+
+/*
+* Send a message with Quick Reply buttons.
+*
+*/
+function sendQuickReplyOrderQuantity(recipientId, message) {
+	var messageData = {
+		recipient: {
+			id: recipientId
+		},
+		message: {
+			text: message,
+			quick_replies: [
+				{
+					"content_type":"text",
+					"title":"1",
+					"payload":"ONE_QUANTITY"
+				},
+				{
+					"content_type":"text",
+					"title":"2",
+					"payload":"TWO_QUANTITY"
+				},
+				{
+					"content_type":"text",
+					"title":"3",
+					"payload":"THREE_QUANTITY"
+				},
+				{
+					"content_type":"text",
+					"title":"4",
+					"payload":"FOUR_QUANTITY"
+				},
+				{
+					"content_type":"text",
+					"title":"5+",
+					"payload":"FIVE_QUANTITY"
+				}
+			]
 		}
 	};
 
