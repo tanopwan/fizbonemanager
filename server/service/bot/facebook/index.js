@@ -241,7 +241,7 @@ function receivedPostback(event) {
 	console.log("Received postback for user %d and page %d with payload '%s' " +
 	"at %d", senderID, recipientID, payload, timeOfPostback);
 
-	switch (messageText) {
+	switch (payload) {
 		case 'GET_STARTED_PAYLOAD':
 			sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
 			sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
