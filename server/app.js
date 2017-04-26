@@ -18,8 +18,8 @@ app.listen(port, () => {
 
 mongoose.connect(config.mongo.uri, config.mongo.options);
 mongoose.connection.on('error', function(err) {
-    console.error(`MongoDB connection error: ${err}`);
-    process.exit(-1);
+	console.error(`MongoDB connection error: ${err}`);
+	process.exit(-1);
 });
 
 module.exports = app;

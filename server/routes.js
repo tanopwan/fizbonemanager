@@ -1,6 +1,7 @@
 'use strict';
 
 const path = require('path');
+const facebookBot = require('./service/bot/facebook');
 
 module.exports = function(app) {
 
@@ -14,6 +15,9 @@ module.exports = function(app) {
 	app.use('/login', function(req, res) {
 		res.sendFile(path.resolve(`${__dirname}/views/login.html`));
 	});
+
+	app.get('/webhook', facebookBot.verifyRequestSignature, facebookBot.verifyWebhook);
+	app.post('/webhook', facebookBot.verifyRequestSignature, facebookBot.webhook);
 
 	// Below all routes
 	app.use((req, res) => {
