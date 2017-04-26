@@ -243,13 +243,13 @@ function receivedPostback(event) {
 
 	switch (payload) {
 		case 'GET_STARTED_PAYLOAD':
-			sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
-			sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
-			break;
+		sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
+		sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
+		break;
 		default:
-			// When a postback is called, we'll send a message back to the sender to
-			// let them know it was successful
-			sendTextMessage(senderID, "Postback called");
+		// When a postback is called, we'll send a message back to the sender to
+		// let them know it was successful
+		sendTextMessage(senderID, "Postback called");
 	}
 }
 
@@ -269,6 +269,36 @@ function sendTextMessage(recipientId, messageText) {
 	};
 
 	callSendAPI(messageData);
+}
+
+/*
+* Call the Send API. The message data goes in the body. If successful, we'll
+* get the message id in a response
+*
+*/
+function callSendAPI(messageData) {
+	request({
+		uri: 'https://graph.facebook.com/v2.6/me/messages',
+		qs: { access_token: PAGE_ACCESS_TOKEN },
+		method: 'POST',
+		json: messageData
+
+	}, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			var recipientId = body.recipient_id;
+			var messageId = body.message_id;
+
+			if (messageId) {
+				console.log("Successfully sent message with id %s to recipient %s",
+				messageId, recipientId);
+			} else {
+				console.log("Successfully called Send API for recipient %s",
+				recipientId);
+			}
+		} else {
+			console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
+		}
+	});
 }
 
 module.exports = {
