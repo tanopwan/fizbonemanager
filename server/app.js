@@ -4,14 +4,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./config/environment');
 const path = require('path');
-const bodyParser = require('body-parser');
 
 const app = express();
 const port = config.port;
 
 mongoose.Promise = require('bluebird');
 
-app.use(bodyParser.json());
 app.listen(port, () => {
 	console.log("listen on port " + port);
 });
