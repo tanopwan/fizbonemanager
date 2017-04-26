@@ -271,20 +271,17 @@ function sendProductList(recipientId) {
 				"type": "template",
 				"payload": {
 					"template_type": "list",
+					"top_element_style": "compact",
 					"elements": [
 						{
 							"title": "ฟิซโบน ตับไก่ 70 กรัม",
 							"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
 							"subtitle": "ถุงละ 189 บาท",
-							"default_action": {
-								"type": "postback",
-								"payload": "BUY_FIZBONE_CL_70_PAYLOAD"
-							},
 							"buttons": [
 								{
-									"title": "ซื้อเลย",
-									"type": "postback",
-									"payload": "payload"
+									"type":"postback",
+									"title":"ซื้อเลย",
+									"payload":"BUY_FIZBONE_CL_70_PAYLOAD"
 								}
 							]
 						},
@@ -292,26 +289,15 @@ function sendProductList(recipientId) {
 							"title": "ฟิซโบน แซลมอน 50 กรัม",
 							"image_url": "https://fizbonemanager.herokuapp.com/images/salmon.png",
 							"subtitle": "ถุงละ 189 บาท",
-							"default_action": {
-								"type": "postback",
-								"payload": "BUY_FIZBONE_SM_50_PAYLOAD"
-							},
 							"buttons": [
 								{
-									"title": "ซื้อเลย",
-									"type": "postback",
-									"payload": "payload"
+									"type":"postback",
+									"title":"ซื้อเลย",
+									"payload":"BUY_FIZBONE_SM_50_PAYLOAD"
 								}
 							]
 						},
 					],
-					"buttons": [
-						{
-							"title": "View More",
-							"type": "postback",
-							"payload": "payload"
-						}
-					]
 				}
 			}
 		}
