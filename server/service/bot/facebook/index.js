@@ -248,7 +248,7 @@ function receivedPostback(event) {
 		sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
 		break;
 		case 'PRODUCT_LIST_PAYLOAD':
-		sendProductList(senderId);
+		sendProductList(senderID);
 		break;
 		default:
 		// When a postback is called, we'll send a message back to the sender to
