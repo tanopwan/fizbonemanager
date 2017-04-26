@@ -247,11 +247,61 @@ function receivedPostback(event) {
 		sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
 		sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
 		break;
+		case 'PRODUCT_LIST_PAYLOAD':
+		sendProductList(senderId);
+		break;
 		default:
 		// When a postback is called, we'll send a message back to the sender to
 		// let them know it was successful
 		sendTextMessage(senderID, "Postback called");
 	}
+}
+
+/*
+* Send a Product list
+*
+*/
+function sendProductList(recipientId) {
+	var messageData = {
+		recipient: {
+			id: recipientId
+		},
+		message: {
+			"attachment": {
+        "type": "template",
+        "payload": {
+            "template_type": "list",
+            "elements": [
+                {
+                    "title": "ฟิซโบน ตับไก่ 70 กรัม",
+                    "image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
+                    "subtitle": "ถุงละ 189 บาท",
+                    "default_action": {
+						"type": "postback",
+                    	"payload": "BUY_FIZBONE_CL_70_PAYLOAD"
+                    }
+                },
+				{
+                    "title": "ฟิซโบน แซลมอน 50 กรัม",
+                    "image_url": "https://fizbonemanager.herokuapp.com/images/salmon.png",
+                    "subtitle": "ถุงละ 189 บาท",
+                    "default_action": {
+						"type": "postback",
+                    	"payload": "BUY_FIZBONE_SM_50_PAYLOAD"
+                    }
+                },
+            ],
+             "buttons": [
+                {
+                    "title": "View More",
+                    "type": "postback",
+                    "payload": "payload"
+                }
+            ]
+		}
+	};
+
+	callSendAPI(messageData);
 }
 
 /*
