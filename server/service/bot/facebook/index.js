@@ -282,12 +282,9 @@ function sendProductList(recipientId) {
 							},
 							"buttons": [
 								{
-									"title": "Buy",
-									"type": "web_url",
-									"url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
-									"messenger_extensions": true,
-									"webview_height_ratio": "tall",
-									"fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+									"title": "ซื้อเลย",
+									"type": "postback",
+									"payload": "payload"
 								}
 							]
 						},
@@ -301,14 +298,11 @@ function sendProductList(recipientId) {
 							},
 							"buttons": [
 								{
-									"title": "Buy",
-									"type": "web_url",
-									"url": "https://peterssendreceiveapp.ngrok.io/shop?item=101",
-									"messenger_extensions": true,
-									"webview_height_ratio": "tall",
-									"fallback_url": "https://peterssendreceiveapp.ngrok.io/"
+									"title": "ซื้อเลย",
+									"type": "postback",
+									"payload": "payload"
 								}
-							] 
+							]
 						},
 					],
 					"buttons": [
