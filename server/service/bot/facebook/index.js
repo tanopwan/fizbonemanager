@@ -117,10 +117,10 @@ const receivedPostback = (event) => {
 
 	switch (payload) {
 		case 'GET_STARTED_PAYLOAD':
-		messenger.sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
-		messenger.sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
+		messenger.sendGreetingMessage(senderID);
 		break;
 		case 'PRODUCT_LIST_PAYLOAD':
+		orderIdQuickReply = '';
 		messenger.sendProductList(senderID);
 		break;
 		case 'BUY_FIZBONE_CL_70_PAYLOAD':

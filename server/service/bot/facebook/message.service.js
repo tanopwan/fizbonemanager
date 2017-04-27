@@ -39,6 +39,27 @@ const sendTextMessage = (recipientId, messageText) => {
 	callSendAPI(messageData);
 }
 
+
+/*
+* Send a template message using the Send API.
+*
+*/
+const sendTemplateMessage = (recipientId, payload) => {
+	var messageData = {
+		recipient: {
+			id: recipientId
+		},
+		message: {
+			"attachment": {
+				"type": "template",
+				"payload": payload
+			}
+		}
+	};
+
+	callSendAPI(messageData);
+}
+
 /*
 * Call the Send API. The message data goes in the body. If successful, we'll
 * get the message id in a response
@@ -77,16 +98,16 @@ module.exports = {
 	*
 	*/
 	sendProductList: (recipientId) => {
-		var messageData = {
-			recipient: {
-				id: recipientId
-			},
-			message: config.LIST_TEMPLATE_PRODUCTS
-		};
-
-		callSendAPI(messageData);
+		sendTemplateMessage(recipientId, config.TEMPLATE_PRODUCTS_LIST_PAYLOAD);
 	},
-
+	/*
+	* Send Greeting Messages
+	*
+	*/
+	sendGreetingMessage: (recipientId) => {
+		sendTemplateMessage(recipientId, config.TEMPLATE_PHEONIX_GREETING_PAYLOAD);
+		sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
+	},
 	/*
 	* Send a message with Quick Reply buttons.
 	*
@@ -104,4 +125,11 @@ module.exports = {
 
 		callSendAPI(messageData);
 	},
+	/*
+	* Send a text message using the Send API.
+	*
+	*/
+	sendTextMessage: (recipientId, messageText) => {
+		sendTextMessage(recipientId, messageText);
+	}
 }

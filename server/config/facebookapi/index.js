@@ -3,40 +3,35 @@ module.exports = {
 	pageAccessToken: "EAAKKsI1xNOkBACZCbsskeP02b0NlIijrLIUfG7hWZBFhOuKU3jfyUAruBpvJZCHCHaB4ZA4OIZAHcysQ8DKKn1pf8Ccir7Sf6Bj8bj7FRZCVZASZCucmxnb92AZCKUNqw6Kke3IZC9fT5rOIylEPU94yxVPxnZCLdXszP7X8ZBn9VzmD9QZDZD",
 	validationToken: "coconut",
 	serverURL: "https://fizbonemanager.herokuapp.com",
-	LIST_TEMPLATE_PRODUCTS: {
-		"attachment": {
-			"type": "template",
-			"payload": {
-				"template_type": "list",
-				"top_element_style": "compact",
-				"elements": [
+	TEMPLATE_PRODUCTS_LIST_PAYLOAD: {
+		"template_type": "list",
+		"top_element_style": "compact",
+		"elements": [
+			{
+				"title": "ฟิซโบน ตับไก่ 70 กรัม",
+				"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
+				"subtitle": "ถุงละ 189 บาท",
+				"buttons": [
 					{
-						"title": "ฟิซโบน ตับไก่ 70 กรัม",
-						"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
-						"subtitle": "ถุงละ 189 บาท",
-						"buttons": [
-							{
-								"type":"postback",
-								"title":"ซื้อเลย",
-								"payload":"BUY_FIZBONE_CL_70_PAYLOAD"
-							}
-						]
-					},
+						"type":"postback",
+						"title":"ซื้อเลย",
+						"payload":"BUY_FIZBONE_CL_70_PAYLOAD"
+					}
+				]
+			},
+			{
+				"title": "ฟิซโบน แซลมอน 50 กรัม",
+				"image_url": "https://fizbonemanager.herokuapp.com/images/salmon.png",
+				"subtitle": "ถุงละ 189 บาท",
+				"buttons": [
 					{
-						"title": "ฟิซโบน แซลมอน 50 กรัม",
-						"image_url": "https://fizbonemanager.herokuapp.com/images/salmon.png",
-						"subtitle": "ถุงละ 189 บาท",
-						"buttons": [
-							{
-								"type":"postback",
-								"title":"ซื้อเลย",
-								"payload":"BUY_FIZBONE_SM_50_PAYLOAD"
-							}
-						]
-					},
-				],
-			}
-		}
+						"type":"postback",
+						"title":"ซื้อเลย",
+						"payload":"BUY_FIZBONE_SM_50_PAYLOAD"
+					}
+				]
+			},
+		]
 	},
 	QUICK_REPLES_QUANTITY: [
 		{
@@ -64,5 +59,15 @@ module.exports = {
 			"title":"5+",
 			"payload":"FIVE_QUANTITY"
 		}
-	]
+	],
+	TEMPLATE_PHEONIX_GREETING_PAYLOAD: {
+		"template_type":"generic",
+		"elements":[
+			{
+				"title":"สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์",
+				"image_url":"https://fizbonemanager.herokuapp.com/images/pheonix.jpg",
+				"subtitle":"ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ"
+			}
+		]
+	}
 }
