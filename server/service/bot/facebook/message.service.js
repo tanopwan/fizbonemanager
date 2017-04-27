@@ -31,8 +31,7 @@ const sendTextMessage = (recipientId, messageText) => {
 			id: recipientId
 		},
 		message: {
-			text: `[ฟีนิกซ์] ${messageText}`,
-			metadata: "DEVELOPER_DEFINED_METADATA"
+			text: `[ฟีนิกซ์] ${messageText}`
 		}
 	};
 
@@ -106,7 +105,7 @@ module.exports = {
 	*/
 	sendGreetingMessage: (recipientId) => {
 		sendTemplateMessage(recipientId, config.TEMPLATE_PHEONIX_GREETING_PAYLOAD);
-		sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
+		sendTextMessage(recipientId, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
 	},
 	/*
 	* Send a message with Quick Reply buttons.
