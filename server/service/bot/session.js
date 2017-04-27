@@ -22,6 +22,7 @@ module.exports = {
 	},
 	getSession(senderID, recipientID) {
 		let key = `${recipientID}_${senderID}`;
+		console.log(sessions[key]);
 		return sessions[key];
 	},
 	setState(senderID, recipientID, newState) {
