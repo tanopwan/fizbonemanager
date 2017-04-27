@@ -123,7 +123,7 @@ const receivedPostback = (event) => {
 		messenger.sendProductList(senderID);
 		break;
 		case 'BUY_FIZBONE_CL_70_PAYLOAD':
-		sessionService.setState({ name: 'buy_pending', ref: '123' });
+		sessionService.setState(senderID, recipientID, { name: 'buy_pending', ref: '123' });
 		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ", "123");
 		break;
 		case 'BUY_FIZBONE_SM_50_PAYLOAD':
@@ -180,8 +180,7 @@ const receivedMessage = (event) => {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
 		if (quickReplyPayload.startsWith('QUANTITY_')) {
-			let session = sessionService.getSession(senderID, recipientID);
-			session.setState({ name: 'buy_order', ref: '123', q: 2});
+			sessionService.setState(senderID, recipientID, { name: 'buy_order', ref: '123', q: 2});
 			console.log(session);
 			messenger.sendReceiptTemplate(senderID);
 		}
