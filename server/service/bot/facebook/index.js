@@ -181,7 +181,6 @@ const receivedMessage = (event) => {
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
 		if (quickReplyPayload.startsWith('QUANTITY_')) {
 			sessionService.setState(senderID, recipientID, { name: 'buy_order', ref: '123', q: 2});
-			console.log(session);
 			messenger.sendReceiptTemplate(senderID);
 		}
 		else {
