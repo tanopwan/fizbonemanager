@@ -18,7 +18,7 @@ module.exports = {
 			sessions.key = session;
 		}
 		console.log("Create User Session...");
-		console.log(session);
+		console.log(sessions);
 	},
 	getSession(senderID, recipientID) {
 		let key = `${recipientID}_${senderID}`;
