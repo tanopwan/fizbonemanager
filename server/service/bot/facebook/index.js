@@ -1,6 +1,7 @@
 'use strict';
 
 const messenger = require('./message.service');
+const session = require('../session');
 
 let orderIdQuickReply = '';
 
@@ -117,12 +118,14 @@ const receivedPostback = (event) => {
 
 	switch (payload) {
 		case 'GET_STARTED_PAYLOAD':
+		session.createSession(senderID, recipientID, timeOfPostback);
 		messenger.sendGreetingMessage(senderID);
 		break;
 		case 'PRODUCT_LIST_PAYLOAD':
 		messenger.sendProductList(senderID);
 		break;
 		case 'BUY_FIZBONE_CL_70_PAYLOAD':
+		session.setState({ name: 'buy_pending', ref: '123' });
 		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ", "123");
 		break;
 		case 'BUY_FIZBONE_SM_50_PAYLOAD':
@@ -179,12 +182,14 @@ const receivedMessage = (event) => {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
 		if (quickReplyPayload.startsWith('QUANTITY_')) {
+			let session = session.getSession(senderID, recipientID);
+			session.setState({ name: 'buy_order', ref: '123', q: 2});
+			console.log(session);
 			messenger.sendReceiptTemplate(senderID);
 		}
 		else {
 			messenger.sendTextMessage(senderID, "Quick reply tapped");
 		}
-
 		return;
 	}
 
