@@ -2,6 +2,7 @@
 
 const request = require('request');
 const config = require('../../../config/facebookapi');
+const ProductService = require('../../product.service');
 
 // App Secret can be retrieved from the App Dashboard
 const APP_SECRET = (process.env.MESSENGER_APP_SECRET) || config.appSecret;
@@ -97,7 +98,32 @@ module.exports = {
 	*
 	*/
 	sendProductList: (recipientId) => {
-		sendTemplateMessage(recipientId, config.TEMPLATE_PRODUCTS_LIST_PAYLOAD);
+		ProductService.getOnlineProducts().then(resolve => {
+			let products = resolve;
+			let payload = {
+				"template_type": "list",
+				"top_element_style": "compact",
+				"elements": []
+			};
+			products.forEach(product => {
+				payload.elements.push({
+					"title": product.productName,
+					"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
+					"subtitle": `ถุงละ ${product.price/100} บาท`,
+					"buttons": [
+						{
+							"type": "postback",
+							"title": "ซื้อเลย",
+							"payload": `BUY_PAYLOAD_${product._id}`
+						}
+					]
+				});
+			})
+			sendTemplateMessage(recipientId, payload);
+		}).catch(resolve => {
+			console.log(resolve);
+		})
+
 	},
 	/*
 	* Send a Product list

@@ -21,10 +21,12 @@ module.exports = {
 							req.user = result;
 							return next();
 						}
-						return res.status(401).send({
-							success: false,
-							message: 'User is not registered.'
-						});
+						else {
+							return res.status(401).send({
+								success: false,
+								message: 'User is not registered.'
+							});
+						}
 					})
 				}
 			});
