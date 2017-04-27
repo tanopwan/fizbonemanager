@@ -178,7 +178,7 @@ const receivedMessage = (event) => {
 	} else if (quickReply) {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
-		if (quickReplyPayload.startWith('QUANTITY_')) {
+		if (quickReplyPayload.startsWith('QUANTITY_')) {
 			messenger.sendReceiptTemplate(senderID);
 		}
 		else {
