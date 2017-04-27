@@ -1,25 +1,8 @@
 'use strict';
 
-const config = require('../../../config/facebookapi');
-const request = require('request');
+const messenger = require('./message.service');
 
-// App Secret can be retrieved from the App Dashboard
-const APP_SECRET = (process.env.MESSENGER_APP_SECRET) || config.appSecret;
-
-// Arbitrary value used to validate a webhook
-const VALIDATION_TOKEN = (process.env.MESSENGER_VALIDATION_TOKEN) || config.validationToken;
-
-// Generate a page access token for your page from the App Dashboard
-const PAGE_ACCESS_TOKEN = (process.env.MESSENGER_PAGE_ACCESS_TOKEN) || config.pageAccessToken;
-
-// URL where the app is running (include protocol). Used to point to scripts and
-// assets located at this address.
-const SERVER_URL = (process.env.SERVER_URL) || config.serverURL;
-
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
-	console.error("Missing config values");
-	process.exit(1);
-}
+let orderIdQuickReply = '';
 
 /*
 * Verify that the callback came from Facebook. Using the App Secret from
@@ -41,7 +24,7 @@ function verifyRequestSignature(req, res, buf) {
 		var method = elements[0];
 		var signatureHash = elements[1];
 
-		var expectedHash = crypto.createHmac('sha1', APP_SECRET)
+		var expectedHash = crypto.createHmac('sha1', messenger.appSecret)
 		.update(buf)
 		.digest('hex');
 
@@ -58,7 +41,7 @@ function verifyRequestSignature(req, res, buf) {
 */
 const verifyWebhook = function(req, res) {
 	if (req.query['hub.mode'] === 'subscribe' &&
-	req.query['hub.verify_token'] === VALIDATION_TOKEN) {
+	req.query['hub.verify_token'] === messenger.validationToken) {
 		console.log("Validating webhook");
 		res.status(200).send(req.query['hub.challenge']);
 	} else {
@@ -114,6 +97,46 @@ const webhook = function(req, res) {
 }
 
 /*
+* Postback Event
+*
+* This event is called when a postback is tapped on a Structured Message.
+* https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
+*
+*/
+const receivedPostback = (event) => {
+	var senderID = event.sender.id;
+	var recipientID = event.recipient.id;
+	var timeOfPostback = event.timestamp;
+
+	// The 'payload' param is a developer-defined field which is set in a postback
+	// button for Structured Messages.
+	var payload = event.postback.payload;
+
+	console.log("Received postback for user %d and page %d with payload '%s' " +
+	"at %d", senderID, recipientID, payload, timeOfPostback);
+
+	switch (payload) {
+		case 'GET_STARTED_PAYLOAD':
+		messenger.sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
+		messenger.sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
+		break;
+		case 'PRODUCT_LIST_PAYLOAD':
+		messenger.sendProductList(senderID);
+		break;
+		case 'BUY_FIZBONE_CL_70_PAYLOAD':
+		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ");
+		break;
+		case 'BUY_FIZBONE_SM_50_PAYLOAD':
+		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน แซลมอน กี่ถุงดีคร้าบ");
+		break;
+		default:
+		// When a postback is called, we'll send a message back to the sender to
+		// let them know it was successful
+		messenger.sendTextMessage(senderID, "Postback called");
+	}
+};
+
+/*
 * Message Event
 *
 * This event is called when a message is sent to your page. The 'message'
@@ -127,7 +150,7 @@ const webhook = function(req, res) {
 * then we'll simply confirm that we've received the attachment.
 *
 */
-function receivedMessage(event) {
+const receivedMessage = (event) => {
 	var senderID = event.sender.id;
 	var recipientID = event.recipient.id;
 	var timeOfMessage = event.timestamp;
@@ -153,7 +176,7 @@ function receivedMessage(event) {
 	} else if (quickReply) {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
-		sendTextMessage(senderID, "Quick reply tapped");
+		messenger.sendTextMessage(senderID, "Quick reply tapped");
 		return;
 	}
 
@@ -216,193 +239,12 @@ function receivedMessage(event) {
 			break;*/
 
 			default:
-			sendTextMessage(senderID, messageText + ' [bot]');
+			messenger.sendTextMessage(senderID, messageText + ' [bot]');
 		}
 	} else if (messageAttachments) {
-		sendTextMessage(senderID, "Message with attachment received");
+		messenger.sendTextMessage(senderID, "Message with attachment received");
 	}
-}
-
-/*
-* Postback Event
-*
-* This event is called when a postback is tapped on a Structured Message.
-* https://developers.facebook.com/docs/messenger-platform/webhook-reference/postback-received
-*
-*/
-function receivedPostback(event) {
-	var senderID = event.sender.id;
-	var recipientID = event.recipient.id;
-	var timeOfPostback = event.timestamp;
-
-	// The 'payload' param is a developer-defined field which is set in a postback
-	// button for Structured Messages.
-	var payload = event.postback.payload;
-
-	console.log("Received postback for user %d and page %d with payload '%s' " +
-	"at %d", senderID, recipientID, payload, timeOfPostback);
-
-	switch (payload) {
-		case 'GET_STARTED_PAYLOAD':
-		sendTextMessage(senderID, "สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์ ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ");
-		sendTextMessage(senderID, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ");
-		break;
-		case 'PRODUCT_LIST_PAYLOAD':
-		sendProductList(senderID);
-		break;
-		case 'BUY_FIZBONE_CL_70_PAYLOAD':
-		sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ");
-		break;
-		case 'BUY_FIZBONE_SM_50_PAYLOAD':
-		sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน แซลมอน กี่ถุงดีคร้าบ");
-		break;
-		default:
-		// When a postback is called, we'll send a message back to the sender to
-		// let them know it was successful
-		sendTextMessage(senderID, "Postback called");
-	}
-}
-
-/*
-* Send a Product list
-*
-*/
-function sendProductList(recipientId) {
-	var messageData = {
-		recipient: {
-			id: recipientId
-		},
-		message: {
-			"attachment": {
-				"type": "template",
-				"payload": {
-					"template_type": "list",
-					"top_element_style": "compact",
-					"elements": [
-						{
-							"title": "ฟิซโบน ตับไก่ 70 กรัม",
-							"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
-							"subtitle": "ถุงละ 189 บาท",
-							"buttons": [
-								{
-									"type":"postback",
-									"title":"ซื้อเลย",
-									"payload":"BUY_FIZBONE_CL_70_PAYLOAD"
-								}
-							]
-						},
-						{
-							"title": "ฟิซโบน แซลมอน 50 กรัม",
-							"image_url": "https://fizbonemanager.herokuapp.com/images/salmon.png",
-							"subtitle": "ถุงละ 189 บาท",
-							"buttons": [
-								{
-									"type":"postback",
-									"title":"ซื้อเลย",
-									"payload":"BUY_FIZBONE_SM_50_PAYLOAD"
-								}
-							]
-						},
-					],
-				}
-			}
-		}
-	};
-
-	callSendAPI(messageData);
-}
-
-/*
-* Send a message with Quick Reply buttons.
-*
-*/
-function sendQuickReplyOrderQuantity(recipientId, message) {
-	var messageData = {
-		recipient: {
-			id: recipientId
-		},
-		message: {
-			text: message,
-			quick_replies: [
-				{
-					"content_type":"text",
-					"title":"1",
-					"payload":"ONE_QUANTITY"
-				},
-				{
-					"content_type":"text",
-					"title":"2",
-					"payload":"TWO_QUANTITY"
-				},
-				{
-					"content_type":"text",
-					"title":"3",
-					"payload":"THREE_QUANTITY"
-				},
-				{
-					"content_type":"text",
-					"title":"4",
-					"payload":"FOUR_QUANTITY"
-				},
-				{
-					"content_type":"text",
-					"title":"5+",
-					"payload":"FIVE_QUANTITY"
-				}
-			]
-		}
-	};
-
-	callSendAPI(messageData);
-}
-
-/*
-* Send a text message using the Send API.
-*
-*/
-function sendTextMessage(recipientId, messageText) {
-	var messageData = {
-		recipient: {
-			id: recipientId
-		},
-		message: {
-			text: `[ฟีนิกซ์] ${messageText}`,
-			metadata: "DEVELOPER_DEFINED_METADATA"
-		}
-	};
-
-	callSendAPI(messageData);
-}
-
-/*
-* Call the Send API. The message data goes in the body. If successful, we'll
-* get the message id in a response
-*
-*/
-function callSendAPI(messageData) {
-	request({
-		uri: 'https://graph.facebook.com/v2.6/me/messages',
-		qs: { access_token: PAGE_ACCESS_TOKEN },
-		method: 'POST',
-		json: messageData
-
-	}, function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-			var recipientId = body.recipient_id;
-			var messageId = body.message_id;
-
-			if (messageId) {
-				console.log("Successfully sent message with id %s to recipient %s",
-				messageId, recipientId);
-			} else {
-				console.log("Successfully called Send API for recipient %s",
-				recipientId);
-			}
-		} else {
-			console.error("Failed calling Send API", response.statusCode, response.statusMessage, body.error);
-		}
-	});
-}
+};
 
 module.exports = {
 	verifyRequestSignature,
