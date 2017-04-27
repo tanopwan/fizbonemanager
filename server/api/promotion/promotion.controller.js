@@ -74,14 +74,16 @@ const destroy = function(req, res) {
 	Sale.findOne({ promotionId }).exec()
 	.then(sale => {
 		if (sale) {
-			return res.status(400).json({ message: "Please remove Sales associated with this Promotion" });
+			return Promise.reject("Please remove Sales associated with this Promotion");
 		}
 		return Promotion.findOne({ _id: promotionId }).remove().exec()
 	})
 	.then(result => {
 		res.json(result);
 	})
-	.catch(err => res.status(500).json(err));
+	.catch(err => {
+		res.status(500).json({ message: err })
+	});
 }
 
 const setIsActive = function(req, res) {
