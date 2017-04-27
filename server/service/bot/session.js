@@ -22,7 +22,7 @@ module.exports = {
 	},
 	getSession(senderID, recipientID) {
 		let key = `${recipientID}_${senderID}`;
-		return session.key;
+		return sessions.key;
 	},
 	setState(senderID, recipientID, newState) {
 		let key = `${recipientID}_${senderID}`;
