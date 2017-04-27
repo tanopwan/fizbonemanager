@@ -132,14 +132,9 @@ const receivedPostback = (event) => {
 		messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
 		break;
 		default:
-		if (payload.startWith('QUANTITY_')) {
-			messenger.sendReceiptTemplate(senderID);
-		}
-		else {
-			// When a postback is called, we'll send a message back to the sender to
-			// let them know it was successful
-			messenger.sendTextMessage(senderID, "Postback called");
-		}
+		// When a postback is called, we'll send a message back to the sender to
+		// let them know it was successful
+		messenger.sendTextMessage(senderID, "Postback called");
 	}
 };
 
@@ -183,7 +178,13 @@ const receivedMessage = (event) => {
 	} else if (quickReply) {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
-		messenger.sendTextMessage(senderID, "Quick reply tapped");
+		if (payload.startWith('QUANTITY_')) {
+			messenger.sendReceiptTemplate(senderID);
+		}
+		else {
+			messenger.sendTextMessage(senderID, "Quick reply tapped");
+		}
+
 		return;
 	}
 
