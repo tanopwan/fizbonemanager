@@ -100,26 +100,64 @@ module.exports = {
 		sendTemplateMessage(recipientId, config.TEMPLATE_PRODUCTS_LIST_PAYLOAD);
 	},
 	/*
+	* Send a Product list
+	*
+	*/
+	sendReceiptTemplate: (recipientId) => {
+		sendTemplateMessage(recipientId, config.TEMPLATE_RECEIPT_PAYLOAD);
+	},
+	/*
 	* Send Greeting Messages
 	*
 	*/
 	sendGreetingMessage: (recipientId) => {
 		sendTemplateMessage(recipientId, config.TEMPLATE_PHEONIX_GREETING_PAYLOAD);
 		setTimeout(() => sendTextMessage(recipientId, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ"), 1000);
-
+		setTimeout(() => sendTemplateMessage(recipientId, config.TEMPLATE_CHOICES_PAYLOAD), 2000);
 	},
 	/*
 	* Send a message with Quick Reply buttons.
 	*
 	*/
-	sendQuickReplyOrderQuantity: (recipientId, message) => {
+	sendQuickReplyOrderQuantity: (recipientId, message, ref) => {
 		var messageData = {
 			recipient: {
 				id: recipientId
 			},
 			message: {
-				text: `[ฟีนิกซ์] ${message}`,
-				quick_replies: config.QUICK_REPLES_QUANTITY
+				text: `[ฟีนิกซ์] ${message} (${ref})`,
+				quick_replies: [
+					{
+						"content_type": "text",
+						"title": "1",
+						"payload": `QUANTITY_ONE_${ref}`
+					},
+					{
+						"content_type": "text",
+						"title": "2",
+						"payload": `QUANTITY_TWO_${ref}`
+					},
+					{
+						"content_type": "text",
+						"title": "3",
+						"payload": `QUANTITY_THREE_${ref}`
+					},
+					{
+						"content_type": "text",
+						"title": "4",
+						"payload": `QUANTITY_FOUR_${ref}`
+					},
+					{
+						"content_type": "text",
+						"title": "5",
+						"payload": `QUANTITY_FIVE_${ref}`
+					},
+					{
+						"content_type": "text",
+						"title": "6",
+						"payload": `QUANTITY_SIX_${ref}`
+					}
+				]
 			}
 		};
 

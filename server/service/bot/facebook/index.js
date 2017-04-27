@@ -120,19 +120,26 @@ const receivedPostback = (event) => {
 		messenger.sendGreetingMessage(senderID);
 		break;
 		case 'PRODUCT_LIST_PAYLOAD':
-		orderIdQuickReply = '';
 		messenger.sendProductList(senderID);
 		break;
 		case 'BUY_FIZBONE_CL_70_PAYLOAD':
-		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ");
+		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ", "123");
 		break;
 		case 'BUY_FIZBONE_SM_50_PAYLOAD':
-		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน แซลมอน กี่ถุงดีคร้าบ");
+		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน แซลมอน กี่ถุงดีคร้าบ", "234");
+		break;
+		case 'CHOICE_PERSON':
+		messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
 		break;
 		default:
-		// When a postback is called, we'll send a message back to the sender to
-		// let them know it was successful
-		messenger.sendTextMessage(senderID, "Postback called");
+		if (payload.startWith('QUANTITY_')) {
+			messenger.sendReceiptTemplate(senderID);
+		}
+		else {
+			// When a postback is called, we'll send a message back to the sender to
+			// let them know it was successful
+			messenger.sendTextMessage(senderID, "Postback called");
+		}
 	}
 };
 
