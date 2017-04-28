@@ -1,7 +1,7 @@
 'use strict';
 
-const messenger = require('./message.service');
-const sessionService = require('../session');
+const messenger = require('./messenger.facebook');
+const sessionService = require('./session');
 
 /*
 * Verify that the callback came from Facebook. Using the App Secret from
@@ -113,29 +113,44 @@ const receivedPostback = (event) => {
 
 	console.log("Received postback for user %d and page %d with payload '%s' " +
 	"at %d", senderID, recipientID, payload, timeOfPostback);
+	let session = sessionService.createSession(senderID, recipientID, timeOfPostback);
 
 	switch (payload) {
 		case 'GET_STARTED_PAYLOAD':
-		sessionService.createSession(senderID, recipientID, timeOfPostback);
 		messenger.sendGreetingMessage(senderID);
 		break;
 		case 'PRODUCT_LIST_PAYLOAD':
-		messenger.sendProductList(senderID);
+		messenger.sendProductList(session);
 		break;
-		case 'BUY_FIZBONE_CL_70_PAYLOAD':
-		sessionService.setState(senderID, recipientID, { name: 'buy_pending', ref: '123' });
-		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน ตับไก่ กี่ถุงดีคร้าบ", "123");
-		break;
-		case 'BUY_FIZBONE_SM_50_PAYLOAD':
-		messenger.sendQuickReplyOrderQuantity(senderID, "รับ ฟิซโบน แซลมอน กี่ถุงดีคร้าบ", "234");
+		case 'ORDER_LIST_PAYLOAD':
+		console.log(session.orders);
+		messenger.sendTextMessage(senderID, "ORDER_LIST_PAYLOAD");
 		break;
 		case 'CHOICE_PERSON':
 		messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
 		break;
 		default:
-		// When a postback is called, we'll send a message back to the sender to
-		// let them know it was successful
-		messenger.sendTextMessage(senderID, "Postback called");
+		if (payload.startsWith('CUSTOM_')) {
+			// User wants to buy
+			let commands = payload.split('_');
+			switch (commands[1]) {
+				case 'BUY':
+					if (commands.length > 2) {
+						let productId = commands[2];
+						console.log(`User(${senderID}) wants to buy ''${productId}' from Page(${recipientID})`);
+						let ref = session.addItem(productId, timeOfPostback);
+						messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
+					}
+				break;
+				default:
+					console.log("Unknown command: " + commands[1])
+			}
+		}
+		else {
+			// When a postback is called, we'll send a message back to the sender to
+			// let them know it was successful
+			messenger.sendTextMessage(senderID, "Postback called");
+		}
 	}
 };
 
@@ -179,9 +194,23 @@ const receivedMessage = (event) => {
 	} else if (quickReply) {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
-		if (quickReplyPayload.startsWith('QUANTITY_')) {
-			sessionService.setState(senderID, recipientID, { name: 'buy_order', ref: '123', q: 2});
-			messenger.sendReceiptTemplate(senderID);
+		let session = sessionService.createSession(senderID, recipientID, timeOfMessage);
+
+		if (quickReplyPayload.startsWith('CUSTOM_')) {
+			let commands = quickReplyPayload.split('_');
+			if (commands.length === 4 && commands[1] === 'Q') {
+				let q = commands[2];
+				let ref = commands[3];
+				if (session.setNewItemQuantity(ref, q)) {
+					let order = session.orders.find(order => order.ref == ref);
+					let sum = q * order.price / 100;
+					messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.productName} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
+					messenger.sendShopMoreMessage(senderID, "สั่งอะไรเพิ่มมั้ยคร้าบ?", 1500);
+				}
+				else {
+					messenger.sendTextMessage(senderID, "ขอโทษนะคร้าบ ผมงง รบกวนเริ่มกดสั่งซื้อใหม่นะครับ");
+				}
+			}
 		}
 		else {
 			messenger.sendTextMessage(senderID, "Quick reply tapped");

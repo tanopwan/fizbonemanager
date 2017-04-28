@@ -1,8 +1,8 @@
 'use strict';
 
 const request = require('request');
-const config = require('../../../config/facebookapi');
-const ProductService = require('../../product.service');
+const config = require('../../config/facebookapi');
+const ProductService = require('../product.service');
 
 // App Secret can be retrieved from the App Dashboard
 const APP_SECRET = (process.env.MESSENGER_APP_SECRET) || config.appSecret;
@@ -39,6 +39,18 @@ const sendTextMessage = (recipientId, messageText) => {
 	callSendAPI(messageData);
 }
 
+/*
+* Send a template message using the Send API.
+*
+*/
+const sendTemplateMessageWithDelay = (recipientId, messageText, delay) => {
+	if (delay) {
+		setTimeout(() => sendTemplateMessage(recipientId, messageText), delay)
+	}
+	else {
+		sendTemplateMessage(recipientId, messageText);
+	}
+}
 
 /*
 * Send a template message using the Send API.
@@ -97,7 +109,7 @@ module.exports = {
 	* Send a Product list
 	*
 	*/
-	sendProductList: (recipientId) => {
+	sendProductList: (session) => {
 		ProductService.getOnlineProducts().then(resolve => {
 			let products = resolve;
 			let payload = {
@@ -105,6 +117,9 @@ module.exports = {
 				"top_element_style": "compact",
 				"elements": []
 			};
+			if (products.length > 5) {
+				products.splice(0, 5);
+			}
 			products.forEach(product => {
 				payload.elements.push({
 					"title": product.productName,
@@ -114,12 +129,12 @@ module.exports = {
 						{
 							"type": "postback",
 							"title": "ซื้อเลย",
-							"payload": `BUY_PAYLOAD_${product._id}`
+							"payload": `CUSTOM_BUY_${product._id}`
 						}
 					]
 				});
 			})
-			sendTemplateMessage(recipientId, payload);
+			sendTemplateMessage(session.senderID, payload);
 		}).catch(resolve => {
 			console.log(resolve);
 		})
@@ -138,8 +153,34 @@ module.exports = {
 	*/
 	sendGreetingMessage: (recipientId) => {
 		sendTemplateMessage(recipientId, config.TEMPLATE_PHEONIX_GREETING_PAYLOAD);
-		setTimeout(() => sendTextMessage(recipientId, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ"), 1000);
-		setTimeout(() => sendTemplateMessage(recipientId, config.TEMPLATE_CHOICES_PAYLOAD), 2000);
+		sendTextMessage(recipientId, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ", 1000);
+		sendTemplateMessageWithDelay(recipientId, config.TEMPLATE_CHOICES_PAYLOAD, 2000);
+	},
+	sendShopMoreMessage: (recipientId, text, delay) => {
+		if (!delay) {
+			delay = 0;
+		}
+		sendTemplateMessageWithDelay(recipientId, {
+			template_type: "button",
+			text: `[ฟีนิกซ์] ${text}`,
+			buttons: [
+				{
+					type: "postback",
+					title: "สั่งเพิ่ม",
+					payload: "PRODUCT_LIST_PAYLOAD"
+				},
+				{
+					type: "postback",
+					title: "ดูรายการที่สั่ง",
+					payload: "ORDER_LIST_PAYLOAD"
+				},
+				{
+					type: "postback",
+					title: "เสร็จแล้ว",
+					payload: "FINISHED_ORDER"
+				}
+			]
+		}, delay);
 	},
 	/*
 	* Send a message with Quick Reply buttons.
@@ -151,37 +192,37 @@ module.exports = {
 				id: recipientId
 			},
 			message: {
-				text: `[ฟีนิกซ์] ${message} (${ref})`,
+				text: `[ฟีนิกซ์] ${message} (อ้างอิง: ${ref})`,
 				quick_replies: [
 					{
 						"content_type": "text",
 						"title": "1",
-						"payload": `QUANTITY_ONE_${ref}`
+						"payload": `CUSTOM_Q_1_${ref}`
 					},
 					{
 						"content_type": "text",
 						"title": "2",
-						"payload": `QUANTITY_TWO_${ref}`
+						"payload": `CUSTOM_Q_2_${ref}`
 					},
 					{
 						"content_type": "text",
 						"title": "3",
-						"payload": `QUANTITY_THREE_${ref}`
+						"payload": `CUSTOM_Q_3_${ref}`
 					},
 					{
 						"content_type": "text",
 						"title": "4",
-						"payload": `QUANTITY_FOUR_${ref}`
+						"payload": `CUSTOM_Q_4_${ref}`
 					},
 					{
 						"content_type": "text",
 						"title": "5",
-						"payload": `QUANTITY_FIVE_${ref}`
+						"payload": `CUSTOM_Q_5_${ref}`
 					},
 					{
 						"content_type": "text",
 						"title": "6",
-						"payload": `QUANTITY_SIX_${ref}`
+						"payload": `CUSTOM_Q_6_${ref}`
 					}
 				]
 			}
@@ -193,7 +234,12 @@ module.exports = {
 	* Send a text message using the Send API.
 	*
 	*/
-	sendTextMessage: (recipientId, messageText) => {
-		sendTextMessage(recipientId, messageText);
+	sendTextMessage: (recipientId, messageText, delay) => {
+		if (delay) {
+			setTimeout(() => sendTextMessage(recipientId, messageText), delay)
+		}
+		else {
+			sendTextMessage(recipientId, messageText);
+		}
 	}
 }

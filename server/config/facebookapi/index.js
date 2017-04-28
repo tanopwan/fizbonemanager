@@ -3,36 +3,6 @@ module.exports = {
 	pageAccessToken: "EAAKKsI1xNOkBACZCbsskeP02b0NlIijrLIUfG7hWZBFhOuKU3jfyUAruBpvJZCHCHaB4ZA4OIZAHcysQ8DKKn1pf8Ccir7Sf6Bj8bj7FRZCVZASZCucmxnb92AZCKUNqw6Kke3IZC9fT5rOIylEPU94yxVPxnZCLdXszP7X8ZBn9VzmD9QZDZD",
 	validationToken: "coconut",
 	serverURL: "https://fizbonemanager.herokuapp.com",
-	TEMPLATE_PRODUCTS_LIST_PAYLOAD: {
-		"template_type": "list",
-		"top_element_style": "compact",
-		"elements": [
-			{
-				"title": "ฟิซโบน ตับไก่ 70 กรัม",
-				"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
-				"subtitle": "ถุงละ 189 บาท",
-				"buttons": [
-					{
-						"type":"postback",
-						"title":"ซื้อเลย",
-						"payload":"BUY_FIZBONE_CL_70_PAYLOAD"
-					}
-				]
-			},
-			{
-				"title": "ฟิซโบน แซลมอน 50 กรัม",
-				"image_url": "https://fizbonemanager.herokuapp.com/images/salmon.png",
-				"subtitle": "ถุงละ 189 บาท",
-				"buttons": [
-					{
-						"type":"postback",
-						"title":"ซื้อเลย",
-						"payload":"BUY_FIZBONE_SM_50_PAYLOAD"
-					}
-				]
-			},
-		]
-	},
 	TEMPLATE_PHEONIX_GREETING_PAYLOAD: {
 		"template_type":"generic",
 		"elements":[
@@ -45,16 +15,16 @@ module.exports = {
 	},
 	TEMPLATE_CHOICES_PAYLOAD: {
 		"template_type":"button",
-		"text":"What do you want to do next?",
+		"text":"ผมจะช่วยเท่าที่จะช่วยได้คร้าบ ถ้าสั่งซื้อขนม ผมทำได้ดีเลยค้าบ",
 		"buttons":[
 			{
 				"type":"postback",
-				"title":"รอคุยกับแม่",
+				"title":"รอคุยกับแม่ฟีนิกซ์",
 				"payload":"CHOICE_PERSON"
 			},
 			{
 				"type":"postback",
-				"title":"ดูรายละเอียดสินค้า",
+				"title":"ดูรายการสินค้า เพื่อสั่งซื้อ",
 				"payload":"PRODUCT_LIST_PAYLOAD"
 			}
 		]
