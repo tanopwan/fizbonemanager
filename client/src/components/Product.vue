@@ -34,7 +34,7 @@
 							<h4 class="sub-header">
 								{{ product.name }}
 							</h4>
-							<img :src="product.link">
+							<img :src="product.link" width="300px">
 						</div>
 					</template>
 				</div>
@@ -88,6 +88,3 @@ export default {
 	}
 }
 </script>
-
-<style>
-</style>
