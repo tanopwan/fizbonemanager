@@ -123,8 +123,14 @@ const receivedPostback = (event) => {
 		messenger.sendProductList(session);
 		break;
 		case 'ORDER_LIST_PAYLOAD':
-		console.log(session.orders);
-		messenger.sendTextMessage(senderID, "ORDER_LIST_PAYLOAD");
+		if (!session.orders || session.orders.length === 0) {
+			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+		}
+		else {
+			messenger.sendTextMessage(senderID, "ORDER_LIST_PAYLOAD");
+			messenger.sendReceiptTemplate(session);
+		}
+
 		break;
 		case 'CHOICE_PERSON':
 		messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");

@@ -7,9 +7,6 @@ const SESSION = {
 	senderID: '',
 	recipientID: '',
 	timeOfMessage: '',
-	state: {
-		name: 'idle',
-	},
 	addItem(productId, timestamp) {
 		let ref = new Date().getTime();
 		ProductService.getOnlineProducts().then(products => {
@@ -19,6 +16,7 @@ const SESSION = {
 					productId,
 					productName: product.productName,
 					price: product.price,
+					link: product.link,
 					ref,
 					createdAt: timestamp
 				}

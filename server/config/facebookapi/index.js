@@ -30,23 +30,14 @@ module.exports = {
 		]
 	},
 	TEMPLATE_RECEIPT_PAYLOAD: {
-		"template_type":"receipt",
-		"recipient_name":"Stephane Crozatier",
-		"order_number":"12345678902",
-		"currency":"THB",
-		"payment_method":"โอนผ่านบัญชีธนาคาร",
+		"template_type": "receipt",
+		"recipient_name": "Stephane Crozatier",
+		"order_number": "12345678902",
+		"currency": "THB",
+		"payment_method": "โอนเงินผ่านบัญชีธนาคาร",
 		//"order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
-		"timestamp":"1428444852",
-		"elements":[
-			{
-				"title":"Classic White T-Shirt",
-				"subtitle":"100% Soft and Luxurious Cotton",
-				"quantity":2,
-				"price":50,
-				"currency":"USD",
-				"image_url":"https://fizbonemanager.herokuapp.com/images/salmon.jpg"
-			}
-		],
+		//"timestamp": "1428444852",
+		"elements":[],
 		"address":{
 			"street_1":"1 Hacker Way",
 			"street_2":"",
@@ -56,20 +47,9 @@ module.exports = {
 			"country":"US"
 		},
 		"summary":{
-			"subtotal":75.00,
-			"shipping_cost":4.95,
-			"total_tax":6.19,
-			"total_cost":56.14
-		},
-		"adjustments":[
-			{
-				"name":"New Customer Discount",
-				"amount":20
-			},
-			{
-				"name":"$10 Off Coupon",
-				"amount":10
-			}
-		]
+			"subtotal": 0.00,
+			"shipping_cost": 0.00,
+			"total_cost": 0.00
+		}
 	}
 }

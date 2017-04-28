@@ -138,14 +138,35 @@ module.exports = {
 		}).catch(resolve => {
 			console.log(resolve);
 		})
-
 	},
 	/*
-	* Send a Product list
+	* Send a Receipt
 	*
 	*/
-	sendReceiptTemplate: (recipientId) => {
-		sendTemplateMessage(recipientId, config.TEMPLATE_RECEIPT_PAYLOAD);
+	sendReceiptTemplate: (session) => {
+		let payload = Object.assign({}, config.TEMPLATE_RECEIPT_PAYLOAD);
+		payload.recipient_name = "name";
+		payload.order_number = "ref1234";
+		let subtotal = 0.00;
+		if (session.orders) {
+			session.orders.forEach(order => {
+				subtotal = subtotal + (order.price * order.q);
+				payload.elements.push({
+					title: order.productName,
+					subtitle: "ขนมสุนัข ธรรมชาติ 100%",
+					quantity: order.q,
+					price: order.price / 100,
+					currency: "THB",
+					image_url: order.link
+				});
+			})
+		}
+
+		//payload.address = null;
+		payload.summary.subtotal = subtotal / 100;
+		payload.summary.total_cost = subtotal / 100;
+		console.log(payload);
+		sendTemplateMessage(session.senderID, payload);
 	},
 	/*
 	* Send Greeting Messages
