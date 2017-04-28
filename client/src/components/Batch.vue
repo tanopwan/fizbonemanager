@@ -139,7 +139,10 @@ export default {
 	},
 	created() {
 		EventBus.query("{ products { _id, name } }")
-			.then(response => this.products = response.body.data.products)
+			.then(response => {
+				this.products = response.body.data.products
+				console.log(this.products);
+			})
 			.catch(response => console.log(response));
 		EventBus.getBatches()
 			.then(response => this.batches = response.body)

@@ -108,7 +108,7 @@ module.exports = {
 			products.forEach(product => {
 				payload.elements.push({
 					"title": product.productName,
-					"image_url": "https://fizbonemanager.herokuapp.com/images/chickenliver.jpg",
+					"image_url": product.link,
 					"subtitle": `ถุงละ ${product.price/100} บาท`,
 					"buttons": [
 						{

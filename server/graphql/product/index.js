@@ -26,6 +26,7 @@ const ProductType = new graphql.GraphQLObjectType({
 		return {
 			_id: { type: graphql.GraphQLID },
 			name: { type: graphql.GraphQLString },
+			link: { type: graphql.GraphQLString },
 			description: { type: graphql.GraphQLString },
 			batches: { type: BatchType },
 			updatedAt: { type: graphql.GraphQLString },

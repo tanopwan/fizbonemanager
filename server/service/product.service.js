@@ -33,6 +33,7 @@ const getOnlineProducts = () => {
 			$group: {
 				_id: '$product._id',
 				productName: { $first: '$product.name' },
+				link: { $first: '$product.link' },
 				price: { $first: '$price' }
 			}
 		}

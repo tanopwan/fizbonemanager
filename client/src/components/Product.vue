@@ -11,6 +11,9 @@
 							</span>
 						</div>
 					</div>
+					<div class="form-group">
+						<input type="text" v-model="productImage" class="form-control" placeholder="http://">
+					</div>
 				</div>
 			</div>
 		</div>
@@ -31,6 +34,7 @@
 							<h4 class="sub-header">
 								{{ product.name }}
 							</h4>
+							<img :src="product.link">
 						</div>
 					</template>
 				</div>
@@ -47,14 +51,15 @@ export default {
 	data() {
 		return {
 			productName: '',
+			productImage: '',
 			products: []
 		};
 	},
 	methods: {
 		addProduct() {
-			EventBus.query(`mutation { addProduct(name: "${ this.productName }") { product { _id, name } } }`)
+			EventBus.addProduct({ name: this.productName, link: this.productImage })
 				.then(response => {
-					this.products.push(response.body.data.addProduct.product);
+					this.products.push(response.body);
 				}, response => {
 					console.log(response);
 				});
@@ -77,7 +82,7 @@ export default {
 		}
 	},
 	created() {
-		EventBus.query("{ products { _id, name } }")
+		EventBus.query("{ products { _id, name, link } }")
 			.then(response => this.products = response.body.data.products)
 			.catch(response => console.log(response));
 	}
