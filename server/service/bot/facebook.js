@@ -2,6 +2,8 @@
 
 const messenger = require('./messenger.facebook');
 const sessionService = require('./session');
+const Lev = require('../levenshtein.service');
+//const PostalService = require('../postal.service');
 
 /*
 * Verify that the callback came from Facebook. Using the App Secret from
@@ -117,6 +119,7 @@ const receivedPostback = (event) => {
 
 	switch (payload) {
 		case 'GET_STARTED_PAYLOAD':
+		session.orders = [];
 		messenger.sendGreetingMessage(senderID);
 		break;
 		case 'PRODUCT_LIST_PAYLOAD':
@@ -125,12 +128,35 @@ const receivedPostback = (event) => {
 		case 'ORDER_LIST_PAYLOAD':
 		if (!session.orders || session.orders.length === 0) {
 			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+			messenger.sendMenuMessage(senderID, 500);
 		}
 		else {
-			messenger.sendTextMessage(senderID, "ORDER_LIST_PAYLOAD");
 			messenger.sendReceiptTemplate(session);
 		}
-
+		break;
+		case 'CHECK_OUT':
+			messenger.sendPaymentMethod(session);
+		break;
+		case 'CHECK_OUT_ADDRESS':
+			messenger.sendTextMessage(senderID, "ผมรบกวนขอที่อยู่จัดส่งหน่อยนะครับ ค่อยๆตอบคำถามผมนะคร้าบ");
+			messenger.sendAskForPostalCode(session);
+		break;
+		case 'DELETE_ALL_ORDERS':
+			session.orders = [];
+			session.newItem = null;
+			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+			messenger.sendMenuMessage(senderID, 500);
+		break;
+		case 'ENTER_POSTAL_CODE':
+			session.status = {};
+			messenger.sendAskForPostalCode(session);
+		break;
+		case 'ENTER_SUB_DISTRICT':
+			//messenger.sendTextMessage(senderID, "ENTER_SUB_DISTRICT");
+			messenger.sendAskForSubDistrict(session);
+		break;
+		case 'ENTER_ADDRESS':
+			messenger.sendAskForAddress(session);
 		break;
 		case 'CHOICE_PERSON':
 		messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
@@ -146,6 +172,14 @@ const receivedPostback = (event) => {
 						console.log(`User(${senderID}) wants to buy ''${productId}' from Page(${recipientID})`);
 						let ref = session.addItem(productId, timeOfPostback);
 						messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
+					}
+				break;
+				case 'SUBD':
+					if (commands.length > 2) {
+						let subDistrict = commands[2];
+						console.log(`User(${senderID}) set subDistrict to '${subDistrict} from Page(${recipientID})'`);
+						session.setAddress({ street_2: subDistrict });
+						messenger.sendSubDistrictResult(session);
 					}
 				break;
 				default:
@@ -193,6 +227,8 @@ const receivedMessage = (event) => {
 	var messageAttachments = message.attachments;
 	var quickReply = message.quick_reply;
 
+	let session = sessionService.createSession(senderID, recipientID, timeOfMessage);
+
 	if (isEcho) {
 		// Just logging message echoes to console
 		console.log("Received echo for message %s and app %d with metadata %s", messageId, appId, metadata);
@@ -200,7 +236,6 @@ const receivedMessage = (event) => {
 	} else if (quickReply) {
 		var quickReplyPayload = quickReply.payload;
 		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
-		let session = sessionService.createSession(senderID, recipientID, timeOfMessage);
 
 		if (quickReplyPayload.startsWith('CUSTOM_')) {
 			let commands = quickReplyPayload.split('_');
@@ -211,7 +246,7 @@ const receivedMessage = (event) => {
 					let order = session.orders.find(order => order.ref == ref);
 					let sum = q * order.price / 100;
 					messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.productName} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
-					messenger.sendShopMoreMessage(senderID, "สั่งอะไรเพิ่มมั้ยคร้าบ?", 1500);
+					messenger.sendShopMoreMessage(session, 1000);
 				}
 				else {
 					messenger.sendTextMessage(senderID, "ขอโทษนะคร้าบ ผมงง รบกวนเริ่มกดสั่งซื้อใหม่นะครับ");
@@ -222,6 +257,64 @@ const receivedMessage = (event) => {
 			messenger.sendTextMessage(senderID, "Quick reply tapped");
 		}
 		return;
+	}
+
+	if (session.status && session.status.name === 'retrieving_address') {
+		if (session.status.substatus === 'postal_code') {
+			let postalCode = messageText;
+			if (postalCode.length === 5 && /^\d+$/.test(postalCode)) {
+				//let area = PostalService.getPostal(postalCode);
+				//messenger.sendTextMessage(senderID, "รหัสไปรษณีย์ของคุณคือ " + messageText);
+				/*let address = {
+					postal_code: postalCode,
+					city: area.district,
+					state: area.province
+				};*/
+				//session.setAddress(address);
+				messenger.sendPostalCodeResult(session);
+				messenger.status = { name: '', substatus: '' };
+			}
+			else {
+				messenger.sendAskForPostalCode(session);
+			}
+
+			return;
+		}
+		else if (session.status.substatus === 'sub_district') {
+			let area = PostalService.getPostal(session.address.postal_code);
+			let subDistrict = messageText;
+			let subDistricts = area.subDistrictList;
+
+			if (subDistricts.includes(subDistrict)) {
+				console.log(`User(${senderID}) set subDistrict to '${subDistrict} from Page(${recipientID})'`);
+				session.setAddress({ street_2: subDistrict });
+				messenger.sendSubDistrictResult(session);
+			}
+			else {
+				let suggested = [];
+				let topSuggested = [];
+				subDistricts.forEach(actual => {
+					let d = Lev.distance(subDistrict, actual);
+					suggested.push({d, subD: actual});
+				});
+				suggested.sort((a, b) => a.d - b.d);
+				if (suggested.length > 2) {
+					topSuggested = suggested.slice(0, 2);
+				}
+				else {
+					topSuggested = suggested;
+				}
+				console.log("Suggested subDistrict for " + subDistrict + " is " + JSON.stringify(topSuggested))
+				messenger.sendSuggestedSubdistricts(session, topSuggested);
+			}
+
+			return;
+		}
+		else if (session.status.substatus === 'address') {
+			session.setAddress({ street_1: messageText });
+			messenger.sendAddressResult(session);
+			return;
+		}
 	}
 
 	if (messageText) {

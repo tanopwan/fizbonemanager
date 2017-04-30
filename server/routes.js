@@ -16,6 +16,9 @@ module.exports = function(app) {
 	app.use('/login', function(req, res) {
 		res.sendFile(path.resolve(`${__dirname}/views/login.html`));
 	});
+	app.use('/facebook-messenger/shipping-address', function(req, res) {
+		res.sendFile(path.resolve(`${__dirname}/views/shipping-address.html`));
+	});
 
 	app.get('/webhook', bodyParser.json({ verify: facebookBot.verifyRequestSignature }), facebookBot.verifyWebhook);
 	app.post('/webhook', bodyParser.json({ verify: facebookBot.verifyRequestSignature }), facebookBot.webhook);

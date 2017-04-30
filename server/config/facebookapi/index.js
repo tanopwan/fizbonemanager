@@ -24,32 +24,9 @@ module.exports = {
 			},
 			{
 				"type":"postback",
-				"title":"ดูรายการสินค้า เพื่อสั่งซื้อ",
+				"title":"ดูรายการสินค้า",
 				"payload":"PRODUCT_LIST_PAYLOAD"
 			}
 		]
-	},
-	TEMPLATE_RECEIPT_PAYLOAD: {
-		"template_type": "receipt",
-		"recipient_name": "Stephane Crozatier",
-		"order_number": "12345678902",
-		"currency": "THB",
-		"payment_method": "โอนเงินผ่านบัญชีธนาคาร",
-		//"order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
-		//"timestamp": "1428444852",
-		"elements":[],
-		"address":{
-			"street_1":"1 Hacker Way",
-			"street_2":"",
-			"city":"Menlo Park",
-			"postal_code":"94025",
-			"state":"CA",
-			"country":"US"
-		},
-		"summary":{
-			"subtotal": 0.00,
-			"shipping_cost": 0.00,
-			"total_cost": 0.00
-		}
 	}
 }

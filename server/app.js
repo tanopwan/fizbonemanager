@@ -3,7 +3,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const config = require('./config/environment');
-const path = require('path');
 
 const app = express();
 const port = config.port;
