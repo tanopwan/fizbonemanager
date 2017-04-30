@@ -234,11 +234,11 @@ const sendShopMoreMessage = (session, delay) => {
 				title: "ดูสินค้าในตระกร้า",
 				payload: "ORDER_LIST_PAYLOAD"
 			},
-			{
+			/*{
 				type: "postback",
 				title: checkoutMessage,
 				payload: checkoutPayload
-			},
+			},*/
 			{
 				"title": "ระบุที่อยู่จัดส่ง",
 				"type": "web_url",

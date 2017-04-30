@@ -1,0 +1,72 @@
+<html>
+<head>
+	<title>Shipping Address</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<link rel="stylesheet" type="text/css" href="/semantic/semantic.css"/>
+	<style>
+	h3.ui.center.header {
+		margin-top: 3em;
+	}
+	</style>
+	<script src="/js/vendor/jquery-2.2.4.min.js"></script>
+	<script src="/semantic/semantic.js"></script>
+</head>
+<body>
+	<script>
+
+	window.extAsyncInit = function() {
+		// the Messenger Extensions JS SDK is done loading
+		console.log("extAsyncInit");
+	};
+
+	(function(d, s, id){
+		var js, fjs = d.getElementsByTagName(s)[0];
+		if (d.getElementById(id)) {return;}
+		js = d.createElement(s); js.id = id;
+		js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+		fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'Messenger'));
+
+	</script>
+
+	<h3 class="ui center aligned header">Fizbone</h3>
+	<form class="ui form container" action="/shipping-address" method="post">
+		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
+		<div class="field">
+			<label>ชื่อผู้รับ</label>
+			<div class="field">
+				<input type="text" name="shipping[full-name]" placeholder="ชื่อผู้รับ">
+			</div>
+			<label>ที่อยู่</label>
+			<div class="field">
+				<input type="text" name="shipping[last-name]" placeholder="บ้านเลขที่ อาคาร ชั้น ซอย ถนน">
+			</div>
+			<label>แขวง</label>
+			<div class="field">
+				<input type="text" name="shipping[sub-district]" placeholder="แขวง">
+			</div>
+			<label>เขต</label>
+			<div class="field">
+				<input type="text" name="shipping[district]" placeholder="เขต">
+			</div>
+			<label>รหัสไปรษณีย์</label>
+			<div class="field">
+				<input type="text" name="shipping[postal-code]" placeholder="10150">
+			</div>
+			<button id="save" class="ui teal fluid button">
+				เสร็จแล้ว
+			</button>
+		</div>
+	</div>
+	<script>
+	var areas = [];
+	$.ajax({
+		url: "/area-th.json"
+	}).then(function(data) {
+		areas = data;
+		var area = areas[0];
+	});
+
+	</script>
+</body>
+</html>
