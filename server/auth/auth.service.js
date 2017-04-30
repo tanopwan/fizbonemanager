@@ -14,10 +14,8 @@ module.exports = {
 			let signedData = signedRequest.split('.');
 			let hash = base64url.decode(signedData[0]);
 			let data = base64url.decode(signedData[1]);
-			let expectedHash = sha256(config.PAGE_SECRET, data);
+			let expectedHash = base64url(sha256(config.PAGE_SECRET, data));
 			console.log(hash);
-			console.log(hash.toString());
-
 			console.log(data);
 			console.log(expectedHash);
 
