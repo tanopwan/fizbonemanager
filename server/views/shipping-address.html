@@ -28,6 +28,16 @@
 		});
 	};
 
+	var isSupported = MessengerExtensions.isInExtension();
+	console.log("1. MessengerExtensions is " + isSupported);
+	MessengerExtensions.getUserID(function success(uids) {
+		// User ID was successfully obtained.
+		var psid = uids.psid;
+		console.log(psid);
+	}, function error(err, errorMessage) {
+		// Error handling code
+	});
+
 	(function(d, s, id){
 		var js, fjs = d.getElementsByTagName(s)[0];
 		if (d.getElementById(id)) {return;}
