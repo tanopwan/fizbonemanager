@@ -5,6 +5,7 @@ const config = require('../config/environment');
 const User = require('../api/user/user.model');
 const base64url = require('base64-url');
 const crypto = require('crypto');
+const path = require('path');
 
 module.exports = {
 	verifyMessengerExtenstion: function(req, res, next) {
@@ -18,14 +19,14 @@ module.exports = {
 			let data = base64url.decode(payload);
 			const hmac = crypto.createHmac('sha256', config.PAGE_SECRET);
 			hmac.update(payload);
-			let expectedSig = hmac.digest('binary');
+			let expectedSig = hmac.digest('utf-8');
 
-			console.log(sig);
-			console.log(expectedSig);
-			console.log(payload);
-
-			console.log(sig === expectedSig);
-			next();
+			if (sig === expectedSig) {
+				next();
+			}
+			else {
+				res.sendFile(path.resolve(`${__dirname}/views/error.html`));
+			}
 		}
 		else {
 			res.sendFile(path.resolve(`${__dirname}/views/error.html`));
