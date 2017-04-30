@@ -3,6 +3,8 @@
 const jwt = require('jsonwebtoken');
 const config = require('../config/environment');
 const User = require('../api/user/user.model');
+const base64url = require('base64-url');
+const sha256 = require('fast-sha256');
 
 module.exports = {
 	verifyMessengerExtenstion: function(req, res, next) {

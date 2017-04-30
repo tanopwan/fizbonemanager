@@ -4,8 +4,6 @@ const path = require('path');
 const facebookBot = require('./service/bot/facebook');
 const bodyParser = require('body-parser');
 const auth = require('./auth');
-const base64url = require('base64-url');
-const sha256 = require('fast-sha256');
 
 module.exports = function(app) {
 	app.use(bodyParser.urlencoded({ extended: false }));
