@@ -12,8 +12,8 @@ module.exports = function(app) {
 		let signedRequest = req.body.signed_request;
 		if (signedRequest) {
 			let signedData = signedRequest.split('.');
-			let hash = base64url.decode(signedRequest[0]);
-			let data = base64url.decode(signedRequest[1]);
+			let hash = base64url.decode(signedData[0]);
+			let data = base64url.decode(signedData[1]);
 			console.log(hash);
 			console.log(data);
 
