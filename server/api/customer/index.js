@@ -8,6 +8,7 @@ var router = express.Router();
 
 router.get('/:id', ctrl.view);
 router.get('/', ctrl.index);
+router.post('/shipping-address', auth.verifyMessengerExtenstion, ctrl.shippingAddress);
 
 router.use(auth.verifyMiddleware);
 

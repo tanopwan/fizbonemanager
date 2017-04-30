@@ -3,14 +3,9 @@
 const path = require('path');
 const facebookBot = require('./service/bot/facebook');
 const bodyParser = require('body-parser');
-const auth = require('./auth');
 
 module.exports = function(app) {
 	app.use(bodyParser.urlencoded({ extended: false }));
-	app.post('/shipping-address', auth.verifyMessengerExtenstion, function(req, res) {
-		console.log(req.body);
-		res.sendFile(path.resolve(`${__dirname}/views/thank-you.html`));
-	});
 	app.use(bodyParser.json());
 	app.use('/api/auth', require('./auth').facebookRouter);
 	app.use('/api/users', require('./api/user'));

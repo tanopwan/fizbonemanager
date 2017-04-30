@@ -53,7 +53,7 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let customerId = new ObjectId(req.params.id);
 
-	Sale.findOne({ customerId }).exec()
+	Sale.findOne({ _id: customerId }).exec()
 	.then(sale => {
 		if (sale) {
 			return res.status(400).json({ message: "Please remove Sales associated with this Customer" });
@@ -66,9 +66,34 @@ const destroy = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const shippingAddress = function(req, res) {
+	let psid = req.data.psid;
+	console.log("Verified Signed Signature for customer: " + psid);
+	Customer.findOne({ refUserId: psid }).exec().then(customer => {
+		if (customer) {
+			customer.address = {
+				name: req.data['shipping[full-name]'],
+				street_1: req.data['shipping[street_1'],
+				street_2: req.data['shipping[sub-district'],
+				city: req.data['shipping[district]'],
+				province: 'กรุงเทพฯ',
+				postalCode: req.data['shipping[postal-code]']
+			}
+			customer.save(function (err, customer) {
+				if (err) {
+					console.log(err);
+					return res.sendFile(path.resolve(`${__dirname}/views/error.html`));
+				}
+				res.sendFile(path.resolve(`${__dirname}/views/thank-you.html`));
+			});
+		}
+	});
+}
+
 module.exports = {
 	view,
 	create,
 	index,
-	destroy
+	destroy,
+	shippingAddress
 };

@@ -9,7 +9,6 @@ const path = require('path');
 
 module.exports = {
 	verifyMessengerExtenstion: function(req, res, next) {
-		console.log(req.body);
 		let signedRequest = req.body.signed_request;
 		if (signedRequest) {
 			let signedData = signedRequest.split('.');

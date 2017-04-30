@@ -8,6 +8,7 @@ mongoose.Promise = require('bluebird');
 const CustomerSchema = new Schema({
 	name: String,
 	address: {
+		name: String,
 		street_1: String,
 		street_2: String,
 		city: String,
