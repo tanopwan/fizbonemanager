@@ -174,14 +174,6 @@ const receivedPostback = (event) => {
 						messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
 					}
 				break;
-				case 'SUBD':
-					if (commands.length > 2) {
-						let subDistrict = commands[2];
-						console.log(`User(${senderID}) set subDistrict to '${subDistrict} from Page(${recipientID})'`);
-						session.setAddress({ street_2: subDistrict });
-						messenger.sendSubDistrictResult(session);
-					}
-				break;
 				default:
 					console.log("Unknown command: " + commands[1])
 			}
@@ -257,64 +249,6 @@ const receivedMessage = (event) => {
 			messenger.sendTextMessage(senderID, "Quick reply tapped");
 		}
 		return;
-	}
-
-	if (session.status && session.status.name === 'retrieving_address') {
-		if (session.status.substatus === 'postal_code') {
-			let postalCode = messageText;
-			if (postalCode.length === 5 && /^\d+$/.test(postalCode)) {
-				//let area = PostalService.getPostal(postalCode);
-				//messenger.sendTextMessage(senderID, "รหัสไปรษณีย์ของคุณคือ " + messageText);
-				/*let address = {
-					postal_code: postalCode,
-					city: area.district,
-					state: area.province
-				};*/
-				//session.setAddress(address);
-				messenger.sendPostalCodeResult(session);
-				messenger.status = { name: '', substatus: '' };
-			}
-			else {
-				messenger.sendAskForPostalCode(session);
-			}
-
-			return;
-		}
-		else if (session.status.substatus === 'sub_district') {
-			let area = PostalService.getPostal(session.address.postal_code);
-			let subDistrict = messageText;
-			let subDistricts = area.subDistrictList;
-
-			if (subDistricts.includes(subDistrict)) {
-				console.log(`User(${senderID}) set subDistrict to '${subDistrict} from Page(${recipientID})'`);
-				session.setAddress({ street_2: subDistrict });
-				messenger.sendSubDistrictResult(session);
-			}
-			else {
-				let suggested = [];
-				let topSuggested = [];
-				subDistricts.forEach(actual => {
-					let d = Lev.distance(subDistrict, actual);
-					suggested.push({d, subD: actual});
-				});
-				suggested.sort((a, b) => a.d - b.d);
-				if (suggested.length > 2) {
-					topSuggested = suggested.slice(0, 2);
-				}
-				else {
-					topSuggested = suggested;
-				}
-				console.log("Suggested subDistrict for " + subDistrict + " is " + JSON.stringify(topSuggested))
-				messenger.sendSuggestedSubdistricts(session, topSuggested);
-			}
-
-			return;
-		}
-		else if (session.status.substatus === 'address') {
-			session.setAddress({ street_1: messageText });
-			messenger.sendAddressResult(session);
-			return;
-		}
 	}
 
 	if (messageText) {

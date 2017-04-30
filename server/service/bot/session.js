@@ -1,9 +1,9 @@
 'use strict';
 
 const sessions = {};
-const request = require('request');
-const config = require('../../config/environment');
+
 const ProductService = require('../product.service');
+const CustomerService = require('../customer.service');
 
 function Session(senderID, recipientID, timeOfMessage) {
 
@@ -11,10 +11,6 @@ function Session(senderID, recipientID, timeOfMessage) {
 		senderID: '',
 		recipientID: '',
 		timeOfMessage: '',
-		status: {
-			name: '',
-			substatus: ''
-		},
 		addItem(productId, timestamp) {
 			let ref = new Date().getTime();
 			ProductService.getOnlineProducts().then(products => {
@@ -29,7 +25,7 @@ function Session(senderID, recipientID, timeOfMessage) {
 						createdAt: timestamp
 					}
 				}
-			})
+			});
 
 			return ref;
 		},
@@ -59,33 +55,29 @@ function Session(senderID, recipientID, timeOfMessage) {
 				return false;
 			}
 		},
-		setAddress(address) {
-			if (!this.address) {
-				this.address = {};
-			}
-			this.address = Object.assign(this.address, address);
-		}
 	};
 	session.senderID = senderID;
 	session.recipientID = recipientID;
 	session.timeOfMessage = timeOfMessage;
-	request({
-		uri: 'https://graph.facebook.com/v2.6/' + 1657504657607935,
-		qs: { access_token: config.PAGE_ACCESS_TOKEN, fields: "first_name,last_name,profile_pic,locale,timezone,gender" },
-		method: 'GET'
-	}, function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-			session.body = JSON.parse(body);
-			console.log(JSON.stringify(sessions));
-		} else {
-			console.error(error);
-		}
-	});
+
 	return session;
 }
 
 module.exports = {
 	createSession(senderID, recipientID, timeOfMessage) {
+		console.log("Create new Session for user psid: " + senderID);
+		CustomerService.getFacebookCustomer(senderID).then(user => {
+			if (!user) {
+				CustomerService.createFacebookCustomer(senderID);
+			}
+			else {
+				console.log("session.js - Existing user: ")
+				console.log(user);
+			}
+		}).catch(error => {
+			console.log(error);
+		})
+
 		let key = `${recipientID}_${senderID}`;
 		let session = sessions[key];
 		if (!session) {

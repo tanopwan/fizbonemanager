@@ -7,8 +7,15 @@ mongoose.Promise = require('bluebird');
 
 const CustomerSchema = new Schema({
 	name: String,
-	address: String,
-	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+	address: {
+		street_1: String,
+		street_2: String,
+		city: String,
+		province: String,
+		postalCode: String
+	},
+	type: String,
+	refUserId: String
 },
 {
 	timestamps: true

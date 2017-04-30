@@ -18,8 +18,9 @@
 		console.log("extAsyncInit");
 		var isSupported = MessengerExtensions.isInExtension();
 		console.log("MessengerExtensions is " + isSupported);
-		$('#log').text("extAsyncInit");
+
 		MessengerExtensions.getContext('715440845305065', function success(result){
+			$('#log').text(result);
 			$("#signed_request").val(result.signed_request);
 		}, function error(result){
 			$('#log').text(JSON.stringify(result));
