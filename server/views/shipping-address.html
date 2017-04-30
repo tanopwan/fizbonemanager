@@ -23,8 +23,7 @@
 			// User ID was successfully obtained.
 			user = uids;
 			var psid = uids.psid;
-			alert(psid);
-			$('#user')text(JSON.stringify(user));
+			$('#user').text(JSON.stringify(user));
 
 		}, function error(err, errorMessage) {
 			// Error handling code
@@ -42,7 +41,7 @@
 	</script>
 
 	<h3 class="ui center aligned header">Fizbone</h3>
-	<span id="user">
+	<span id="user">0</span>
 	<form class="ui form container" action="/shipping-address" method="post">
 		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
 		<div class="field">
