@@ -13,12 +13,12 @@
 </head>
 <body>
 	<script>
-	var user;
 	window.extAsyncInit = function() {
 		// the Messenger Extensions JS SDK is done loading
 		console.log("extAsyncInit");
 		var isSupported = MessengerExtensions.isInExtension();
 		console.log("MessengerExtensions is " + isSupported);
+		$('#log').text("extAsyncInit");
 		MessengerExtensions.getContext('715440845305065', function success(result){
 			$("#signed_request").val(result.signed_request);
 		}, function error(result){
