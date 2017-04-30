@@ -4,7 +4,8 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/environment');
 const User = require('../api/user/user.model');
 const base64url = require('base64-url');
-const sha256 = require('fast-sha256');
+//const sha256 = require('fast-sha256');
+const crypto = require('crypto');
 
 module.exports = {
 	verifyMessengerExtenstion: function(req, res, next) {
@@ -14,7 +15,10 @@ module.exports = {
 			let signedData = signedRequest.split('.');
 			let hash = base64url.decode(signedData[0]);
 			let data = base64url.decode(signedData[1]);
-			let expectedHash = base64url.encode(sha256(config.PAGE_SECRET, data));
+			//let expectedHash = base64url.encode(sha256(config.PAGE_SECRET, data));
+			const hmac = crypto.createHmac('sha256', config.PAGE_SECRET);
+			hmac.update(data);
+			let expectedHash = hmac.digest('binary');
 			console.log(hash);
 			console.log(data);
 			console.log(expectedHash);
