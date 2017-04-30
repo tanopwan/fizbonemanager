@@ -67,7 +67,7 @@ const destroy = function(req, res) {
 }
 
 const shippingAddress = function(req, res) {
-	let psid = req.data.psid;
+	let psid = req.body.psid;
 	console.log("Verified Signed Signature for customer: " + psid);
 	Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {

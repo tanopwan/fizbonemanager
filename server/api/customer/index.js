@@ -7,7 +7,6 @@ const bodyParser = require('body-parser');
 
 var router = express.Router();
 
-router.use(bodyParser.urlencoded({ extended: false }));
 router.post('/shipping-address', auth.verifyMessengerExtenstion, ctrl.shippingAddress);
 
 router.get('/:id', ctrl.view);
