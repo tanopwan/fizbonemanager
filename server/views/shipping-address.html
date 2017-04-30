@@ -13,20 +13,16 @@
 </head>
 <body>
 	<script>
-	/*var user;
+	var user;
 	window.extAsyncInit = function() {
 		// the Messenger Extensions JS SDK is done loading
 		console.log("extAsyncInit");
 		var isSupported = MessengerExtensions.isInExtension();
 		console.log("MessengerExtensions is " + isSupported);
-		MessengerExtensions.getUserID(function success(uids) {
-			// User ID was successfully obtained.
-			user = uids;
-			var psid = uids.psid;
-			$('#user').text(JSON.stringify(user));
-
-		}, function error(err, errorMessage) {
-			// Error handling code
+		MessengerExtensions.getContext('715440845305065', function success(result){
+			$('#log').text(JSON.stringify(result));
+		}, function error(result){
+			$('#log').text(JSON.stringify(result));
 		});
 	};
 
@@ -36,11 +32,12 @@
 		js = d.createElement(s); js.id = id;
 		js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
 		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'Messenger'));*/
+	}(document, 'script', 'Messenger'));
 
 	</script>
 
 	<h3 class="ui center aligned header">Fizbone</h3>
+	<span id="log">log</span>
 	<form class="ui form container" action="/shipping-address" method="post">
 		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
 		<input type="hidden" name="psid" id="psid">
@@ -73,24 +70,24 @@
 	<script>
 	/*var areas = [];
 	$.ajax({
-		url: "/area-th.json"
-	}).then(function(data) {
-		areas = data;
-		var area = areas[0];
-	});*/
+	url: "/area-th.json"
+}).then(function(data) {
+areas = data;
+var area = areas[0];
+});*/
 
-	function getParameterByName(name, url) {
-		if (!url) url = window.location.href;
-		name = name.replace(/[\[\]]/g, "\\$&");
-		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-		results = regex.exec(url);
-		if (!results) return null;
-		if (!results[2]) return '';
-		return decodeURIComponent(results[2].replace(/\+/g, " "));
-	}
+function getParameterByName(name, url) {
+	if (!url) url = window.location.href;
+	name = name.replace(/[\[\]]/g, "\\$&");
+	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+	results = regex.exec(url);
+	if (!results) return null;
+	if (!results[2]) return '';
+	return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
 
-	var psid = getParameterByName('psid');
-	$("#psid").val(psid);
-	</script>
+var psid = getParameterByName('psid');
+$("#psid").val(psid);
+</script>
 </body>
 </html>
