@@ -242,7 +242,7 @@ const sendShopMoreMessage = (session, delay) => {
 			{
 				"title": "ระบุที่อยู่จัดส่ง",
 				"type": "web_url",
-				"url": "https://fizbonemanager.herokuapp.com/facebook-messenger/shipping-address",
+				"url": `https://fizbonemanager.herokuapp.com/facebook-messenger/shipping-address?psid=${session.senderID}`,
 				"messenger_extensions": true,
 				"webview_height_ratio": "tall"
 			}

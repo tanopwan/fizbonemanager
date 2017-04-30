@@ -13,7 +13,7 @@
 </head>
 <body>
 	<script>
-	var user;
+	/*var user;
 	window.extAsyncInit = function() {
 		// the Messenger Extensions JS SDK is done loading
 		console.log("extAsyncInit");
@@ -36,8 +36,20 @@
 		js = d.createElement(s); js.id = id;
 		js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
 		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'Messenger'));
+	}(document, 'script', 'Messenger'));*/
 
+	function getParameterByName(name, url) {
+		if (!url) url = window.location.href;
+		name = name.replace(/[\[\]]/g, "\\$&");
+		var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+		results = regex.exec(url);
+		if (!results) return null;
+		if (!results[2]) return '';
+		return decodeURIComponent(results[2].replace(/\+/g, " "));
+	}
+
+	var psid = getParameterByName('psid');
+	$('#user').text(JSON.stringify(user));
 	</script>
 
 	<h3 class="ui center aligned header">Fizbone</h3>
