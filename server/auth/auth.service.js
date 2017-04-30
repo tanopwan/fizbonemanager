@@ -5,6 +5,26 @@ const config = require('../config/environment');
 const User = require('../api/user/user.model');
 
 module.exports = {
+	verifyMessengerExtenstion: function(req, res, next) {
+		console.log(req.body);
+		let signedRequest = req.body.signed_request;
+		if (signedRequest) {
+			let signedData = signedRequest.split('.');
+			let hash = base64url.decode(signedData[0]);
+			let data = base64url.decode(signedData[1]);
+			let expectedHash = sha256(config.PAGE_ACCESS_TOKEN, data);
+			console.log(hash);
+
+			console.log(data);
+			console.log(expectedHash);
+
+			console.log(hash === expectedHash);
+			next();
+		}
+		else {
+			res.sendFile(path.resolve(`${__dirname}/views/error.html`));
+		}
+	},
 	verifyMiddleware: function(req, res, next) {
 		var token = req.headers['x-access-token'];
 		if (token) {

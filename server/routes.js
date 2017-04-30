@@ -3,30 +3,15 @@
 const path = require('path');
 const facebookBot = require('./service/bot/facebook');
 const bodyParser = require('body-parser');
+const auth = require('./auth');
 const base64url = require('base64-url');
-const sha256 = require('js-sha256');
+const sha256 = require('fast-sha256');
 
 module.exports = function(app) {
 	app.use(bodyParser.urlencoded({ extended: false }));
-	app.post('/shipping-address', function(req, res) {
+	app.post('/shipping-address', auth.verifyMessengerExtenstion, function(req, res) {
 		console.log(req.body);
-		let signedRequest = req.body.signed_request;
-		if (signedRequest) {
-			let signedData = signedRequest.split('.');
-			let hash = base64url.decode(signedData[0]);
-			let data = base64url.decode(signedData[1]);
-			let expectedHash = sha256(data);
-			console.log(hash);
-
-			console.log(data);
-			console.log(expectedHash);
-
-			console.log(hash === expectedHash);
-			res.sendFile(path.resolve(`${__dirname}/views/thank-you.html`));
-		}
-		else {
-			res.sendFile(path.resolve(`${__dirname}/views/error.html`));
-		}
+		res.sendFile(path.resolve(`${__dirname}/views/thank-you.html`));
 	});
 	app.use(bodyParser.json());
 	app.use('/api/auth', require('./auth').facebookRouter);
