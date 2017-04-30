@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/environment');
 const User = require('../api/user/user.model');
 const base64url = require('base64-url');
-//const sha256 = require('fast-sha256');
 const crypto = require('crypto');
 
 module.exports = {
@@ -13,17 +12,15 @@ module.exports = {
 		let signedRequest = req.body.signed_request;
 		if (signedRequest) {
 			let signedData = signedRequest.split('.');
-			let hash = base64url.decode(signedData[0]);
-			let data = base64url.decode(signedData[1]);
-			//let expectedHash = base64url.encode(sha256(config.PAGE_SECRET, data));
+			let encoded_sig = base64url.decode(signedData[0]);
+			let payload = base64url.decode(signedData[1]);
 			const hmac = crypto.createHmac('sha256', config.PAGE_SECRET);
-			hmac.update(data);
+			hmac.update(payload);
 			let expectedHash = hmac.digest('binary');
-			console.log(hash);
-			console.log(data);
-			console.log(expectedHash);
 
-			console.log(hash === expectedHash);
+			console.log(encoded_sig);
+			console.log(payload);
+			console.log(encoded_sig === expectedHash);
 			next();
 		}
 		else {
