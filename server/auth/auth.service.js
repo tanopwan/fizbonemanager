@@ -12,17 +12,19 @@ module.exports = {
 		let signedRequest = req.body.signed_request;
 		if (signedRequest) {
 			let signedData = signedRequest.split('.');
-			let encoded_sig = base64url.decode(signedData[0]);
-			let payload = base64url.decode(signedData[1]);
+			let encoded_sig = signedData[0];
+			let payload = signedData[1];
+			let sig = base64url.decode(encoded_sig);
+			let data = base64url.decode(payload);
 			const hmac = crypto.createHmac('sha256', config.PAGE_SECRET);
 			hmac.update(payload);
-			let expectedHash = hmac.digest('binary');
+			let expectedSig = hmac.digest('binary');
 
-			console.log(encoded_sig);
-			console.log(expectedHash);
-			
+			console.log(sig);
+			console.log(expectedSig);
 			console.log(payload);
-			console.log(encoded_sig === expectedHash);
+
+			console.log(sig === expectedSig);
 			next();
 		}
 		else {
