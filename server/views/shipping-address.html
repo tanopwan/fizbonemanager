@@ -13,7 +13,7 @@
 </head>
 <body>
 	<script>
-
+	var user;
 	window.extAsyncInit = function() {
 		// the Messenger Extensions JS SDK is done loading
 		console.log("extAsyncInit");
@@ -21,8 +21,11 @@
 		console.log("MessengerExtensions is " + isSupported);
 		MessengerExtensions.getUserID(function success(uids) {
 			// User ID was successfully obtained.
+			user = uids;
 			var psid = uids.psid;
-			console.log("psid");
+			alert(psid);
+			$('#user')text(JSON.stringify(user));
+
 		}, function error(err, errorMessage) {
 			// Error handling code
 		});
@@ -39,6 +42,7 @@
 	</script>
 
 	<h3 class="ui center aligned header">Fizbone</h3>
+	<span id="user">
 	<form class="ui form container" action="/shipping-address" method="post">
 		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
 		<div class="field">
