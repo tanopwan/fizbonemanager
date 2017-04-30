@@ -115,7 +115,6 @@ const sendProductList = (session) => {
 				]
 			});
 		});
-		console.log(payload);
 		sendTemplateMessage(session.senderID, payload);
 	}).catch(resolve => {
 		console.log(resolve);
