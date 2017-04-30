@@ -19,6 +19,8 @@ module.exports = {
 			let expectedHash = hmac.digest('binary');
 
 			console.log(encoded_sig);
+			console.log(expectedHash);
+			
 			console.log(payload);
 			console.log(encoded_sig === expectedHash);
 			next();
