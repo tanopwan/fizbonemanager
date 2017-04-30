@@ -1,10 +1,12 @@
 'use strict';
 
 const sessions = {};
+const request = require('request');
+const config = require('../../config/environment');
 const ProductService = require('../product.service');
 
-
 function Session(senderID, recipientID, timeOfMessage) {
+
 	let session = {
 		senderID: '',
 		recipientID: '',
@@ -67,6 +69,18 @@ function Session(senderID, recipientID, timeOfMessage) {
 	session.senderID = senderID;
 	session.recipientID = recipientID;
 	session.timeOfMessage = timeOfMessage;
+	request({
+		uri: 'https://graph.facebook.com/v2.6/' + 1657504657607935,
+		qs: { access_token: config.PAGE_ACCESS_TOKEN, fields: "first_name,last_name,profile_pic,locale,timezone,gender" },
+		method: 'GET'
+	}, function (error, response, body) {
+		if (!error && response.statusCode == 200) {
+			session.body = JSON.parse(body);
+			console.log(JSON.stringify(sessions));
+		} else {
+			console.error(error);
+		}
+	});
 	return session;
 }
 
