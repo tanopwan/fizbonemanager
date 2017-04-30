@@ -74,12 +74,12 @@ const shippingAddress = function(req, res) {
 	Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {
 			customer.address = {
-				name: req.body['shipping[full-name]'],
-				street_1: req.body['shipping[street_1'],
-				street_2: req.body['shipping[sub-district'],
-				city: req.body['shipping[district]'],
+				name: req.body.shipping.fullName,
+				street_1: req.body.shipping.street_1,
+				street_2: req.body.shipping.subDistrict,
+				city: req.body.shipping.district,
 				province: 'กรุงเทพฯ',
-				postalCode: req.body['shipping[postal-code]']
+				postalCode: req.body.shipping.postalCode
 			}
 			customer.save(function (err, customer) {
 				if (err) {
