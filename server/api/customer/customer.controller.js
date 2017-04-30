@@ -81,6 +81,7 @@ const shippingAddress = function(req, res) {
 				province: 'กรุงเทพฯ',
 				postalCode: req.body.shipping.postalCode
 			}
+			console.log(customer);
 			customer.save(function (err, customer) {
 				if (err) {
 					console.log(err);
@@ -88,6 +89,9 @@ const shippingAddress = function(req, res) {
 				}
 				res.sendFile(path.resolve(`${__dirname}/../../views/thank-you.html`));
 			});
+		}
+		else {
+			res.sendFile(path.resolve(`${__dirname}/../../views/error.html`));
 		}
 	});
 }
