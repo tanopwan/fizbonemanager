@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 module.exports = function(app) {
 	app.use(bodyParser.json({ type: 'application/*+json' }));
-	app.use(bodyParser.urlencoded({ type: 'application/x-www-form-urlencoded'}));
+	app.use(bodyParser.urlencoded({ extended: true }));
 	app.use('/api/auth', require('./auth').facebookRouter);
 	app.use('/api/users', require('./api/user'));
 	app.use('/api/products', require('./api/product'));

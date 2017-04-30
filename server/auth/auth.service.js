@@ -24,11 +24,11 @@ module.exports = {
 				next();
 			}
 			else {
-				res.sendFile(path.resolve(`${__dirname}/views/error.html`));
+				res.sendFile(path.resolve(`${__dirname}/../views/error.html`));
 			}
 		}
 		else {
-			res.sendFile(path.resolve(`${__dirname}/views/error.html`));
+			res.sendFile(path.resolve(`${__dirname}/../views/error.html`));
 		}
 	},
 	verifyMiddleware: function(req, res, next) {

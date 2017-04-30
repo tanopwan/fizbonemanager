@@ -3,6 +3,7 @@
 const Customer = require('../../model/customer.model');
 const Sale = require('../sale/sale.model');
 const config = require('../../config/environment');
+const path = require('path');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -67,24 +68,25 @@ const destroy = function(req, res) {
 }
 
 const shippingAddress = function(req, res) {
+	console.log(req.body)
 	let psid = req.body.psid;
 	console.log("Verified Signed Signature for customer: " + psid);
 	Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {
 			customer.address = {
-				name: req.data['shipping[full-name]'],
-				street_1: req.data['shipping[street_1'],
-				street_2: req.data['shipping[sub-district'],
-				city: req.data['shipping[district]'],
+				name: req.body['shipping[full-name]'],
+				street_1: req.body['shipping[street_1'],
+				street_2: req.body['shipping[sub-district'],
+				city: req.body['shipping[district]'],
 				province: 'กรุงเทพฯ',
-				postalCode: req.data['shipping[postal-code]']
+				postalCode: req.body['shipping[postal-code]']
 			}
 			customer.save(function (err, customer) {
 				if (err) {
 					console.log(err);
-					return res.sendFile(path.resolve(`${__dirname}/views/error.html`));
+					return res.sendFile(path.resolve(`${__dirname}/../../views/error.html`));
 				}
-				res.sendFile(path.resolve(`${__dirname}/views/thank-you.html`));
+				res.sendFile(path.resolve(`${__dirname}/../../views/thank-you.html`));
 			});
 		}
 	});
