@@ -3,12 +3,15 @@
 const express = require('express');
 const ctrl = require('./customer.controller');
 const auth = require('../../auth');
+const bodyParser = require('body-parser');
 
 var router = express.Router();
 
+router.use(bodyParser.urlencoded({ extended: false }));
+router.post('/shipping-address', auth.verifyMessengerExtenstion, ctrl.shippingAddress);
+
 router.get('/:id', ctrl.view);
 router.get('/', ctrl.index);
-router.post('/shipping-address', auth.verifyMessengerExtenstion, ctrl.shippingAddress);
 
 router.use(auth.verifyMiddleware);
 
