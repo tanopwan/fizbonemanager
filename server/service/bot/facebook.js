@@ -1,5 +1,6 @@
 'use strict';
 
+const crypto = require('crypto');
 const messenger = require('./messenger.facebook');
 const sessionService = require('./session');
 const Lev = require('../levenshtein.service');
