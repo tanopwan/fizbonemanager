@@ -6,7 +6,7 @@ const Customer = require('../model/customer.model');
 
 const createFacebookCustomer = (psid) => {
 
-	request({
+	return request({
 		uri: 'https://graph.facebook.com/v2.6/' + psid,
 		qs: { access_token: config.PAGE_ACCESS_TOKEN, fields: "first_name,last_name,profile_pic,locale,timezone,gender" },
 		method: 'GET'

@@ -3,7 +3,7 @@
 const crypto = require('crypto');
 const messenger = require('./messenger.facebook');
 const sessionService = require('./session');
-const Lev = require('../levenshtein.service');
+//const Lev = require('../levenshtein.service');
 //const PostalService = require('../postal.service');
 
 /*
@@ -114,77 +114,102 @@ const receivedPostback = (event) => {
 	// button for Structured Messages.
 	var payload = event.postback.payload;
 
+	console.log("----------------------------------------------------------------");
 	console.log("Received postback for user %d and page %d with payload '%s' " +
 	"at %d", senderID, recipientID, payload, timeOfPostback);
-	let session = sessionService.createSession(senderID, recipientID, timeOfPostback);
-
-	switch (payload) {
-		case 'GET_STARTED_PAYLOAD':
-		session.orders = [];
-		messenger.sendGreetingMessage(senderID);
-		break;
-		case 'PRODUCT_LIST_PAYLOAD':
-		messenger.sendProductList(session);
-		break;
-		case 'ORDER_LIST_PAYLOAD':
-		if (!session.orders || session.orders.length === 0) {
-			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
-			messenger.sendMenuMessage(senderID, 500);
-		}
-		else {
-			messenger.sendReceiptTemplate(session);
-		}
-		break;
-		case 'CHECK_OUT':
-			messenger.sendPaymentMethod(session);
-		break;
-		case 'CHECK_OUT_ADDRESS':
-			messenger.sendTextMessage(senderID, "ผมรบกวนขอที่อยู่จัดส่งหน่อยนะครับ ค่อยๆตอบคำถามผมนะคร้าบ");
-			messenger.sendAskForPostalCode(session);
-		break;
-		case 'DELETE_ALL_ORDERS':
+	sessionService.createSession(senderID, recipientID, timeOfPostback).then(session => {
+		switch (payload) {
+			case 'GET_STARTED_PAYLOAD':
+			session.orders = [];
+			messenger.sendGreetingMessage(senderID);
+			break;
+			case 'PRODUCT_LIST_PAYLOAD':
+			messenger.sendProductList(session);
+			break;
+			case 'ORDER_LIST_PAYLOAD':
+			if (!session.orders || session.orders.length === 0) {
+				messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+				messenger.sendMenuMessage(senderID, 500);
+			}
+			else {
+				messenger.sendOrderList(session);
+				messenger.sendShopMoreMessage(session, false, 500);
+			}
+			break;
+			case 'CHECK_OUT_ADDRESS':
+			console.log(session);
+			if (session.address && session.address.confirm) {
+				// CHECK_OUT
+			}
+			else if (session.address
+				&& session.address.name
+				&& session.address.street_1
+				&& session.address.street_2
+				&& session.address.city
+				&& session.address.state
+				&& session.address.postal_code
+			) {
+				session.address.confirm = false;
+				messenger.sendAddressResult(session);
+				break;
+			}
+			else {
+				messenger.sendAskForAddress(session);
+				break;
+			}
+			case 'CONFIRM_ADDRESS':
+			session.address.confirm = true;
+			case 'CHECK_OUT':
+			if (session.address.confirm) {
+				if (session.orders && session.orders.length > 0) {
+					messenger.sendReceiptTemplate(session);
+					messenger.sendPaymentMethod(session, 3000);
+				}
+				else {
+					messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+					messenger.sendMenuMessage(senderID, 500);
+				}
+			}
+			else {
+				messenger.sendAddressResult(session);
+			}
+			break;
+			case 'DELETE_ALL_ORDERS':
 			session.orders = [];
 			session.newItem = null;
 			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
 			messenger.sendMenuMessage(senderID, 500);
-		break;
-		case 'ENTER_POSTAL_CODE':
-			session.status = {};
-			messenger.sendAskForPostalCode(session);
-		break;
-		case 'ENTER_SUB_DISTRICT':
-			//messenger.sendTextMessage(senderID, "ENTER_SUB_DISTRICT");
-			messenger.sendAskForSubDistrict(session);
-		break;
-		case 'ENTER_ADDRESS':
-			messenger.sendAskForAddress(session);
-		break;
-		case 'CHOICE_PERSON':
-		messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
-		break;
-		default:
-		if (payload.startsWith('CUSTOM_')) {
-			// User wants to buy
-			let commands = payload.split('_');
-			switch (commands[1]) {
-				case 'BUY':
+			break;
+			case 'CHOICE_PERSON':
+			messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
+			break;
+			default:
+			if (payload.startsWith('CUSTOM_')) {
+				// User wants to buy
+				let commands = payload.split('_');
+				switch (commands[1]) {
+					case 'BUY':
 					if (commands.length > 2) {
 						let productId = commands[2];
 						console.log(`User(${senderID}) wants to buy ''${productId}' from Page(${recipientID})`);
 						let ref = session.addItem(productId, timeOfPostback);
 						messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
 					}
-				break;
-				default:
+					break;
+					default:
 					console.log("Unknown command: " + commands[1])
+				}
+			}
+			else {
+				// When a postback is called, we'll send a message back to the sender to
+				// let them know it was successful
+				messenger.sendTextMessage(senderID, "Postback called");
 			}
 		}
-		else {
-			// When a postback is called, we'll send a message back to the sender to
-			// let them know it was successful
-			messenger.sendTextMessage(senderID, "Postback called");
-		}
-	}
+	}).catch(error => {
+		console.log(error);
+	});
+
 };
 
 /*
@@ -207,6 +232,7 @@ const receivedMessage = (event) => {
 	var timeOfMessage = event.timestamp;
 	var message = event.message;
 
+	console.log("----------------------------------------------------------------");
 	console.log("Received message for user %d and page %d at %d with message:", senderID, recipientID, timeOfMessage);
 	console.log(JSON.stringify(message));
 
@@ -220,102 +246,103 @@ const receivedMessage = (event) => {
 	var messageAttachments = message.attachments;
 	var quickReply = message.quick_reply;
 
-	let session = sessionService.createSession(senderID, recipientID, timeOfMessage);
+	sessionService.createSession(senderID, recipientID, timeOfMessage).then(session => {
+		if (isEcho) {
+			// Just logging message echoes to console
+			console.log("Received echo for message %s and app %d with metadata %s", messageId, appId, metadata);
+			return;
+		} else if (quickReply) {
+			var quickReplyPayload = quickReply.payload;
+			console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
 
-	if (isEcho) {
-		// Just logging message echoes to console
-		console.log("Received echo for message %s and app %d with metadata %s", messageId, appId, metadata);
-		return;
-	} else if (quickReply) {
-		var quickReplyPayload = quickReply.payload;
-		console.log("Quick reply for message %s with payload %s", messageId, quickReplyPayload);
-
-		if (quickReplyPayload.startsWith('CUSTOM_')) {
-			let commands = quickReplyPayload.split('_');
-			if (commands.length === 4 && commands[1] === 'Q') {
-				let q = commands[2];
-				let ref = commands[3];
-				if (session.setNewItemQuantity(ref, q)) {
-					let order = session.orders.find(order => order.ref == ref);
-					let sum = q * order.price / 100;
-					messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.productName} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
-					messenger.sendShopMoreMessage(session, 1000);
-				}
-				else {
-					messenger.sendTextMessage(senderID, "ขอโทษนะคร้าบ ผมงง รบกวนเริ่มกดสั่งซื้อใหม่นะครับ");
+			if (quickReplyPayload.startsWith('CUSTOM_')) {
+				let commands = quickReplyPayload.split('_');
+				if (commands.length === 4 && commands[1] === 'Q') {
+					let q = commands[2];
+					let ref = commands[3];
+					if (session.setNewItemQuantity(ref, q)) {
+						let order = session.orders.find(order => order.ref == ref);
+						let sum = q * order.price / 100;
+						messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.productName} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
+						messenger.sendShopMoreMessage(session, true, 1000);
+					}
+					else {
+						messenger.sendTextMessage(senderID, "ขอโทษนะคร้าบ ผมงง รบกวนเริ่มกดสั่งซื้อใหม่นะครับ");
+					}
 				}
 			}
+			else {
+				messenger.sendTextMessage(senderID, "Quick reply tapped");
+			}
+			return;
 		}
-		else {
-			messenger.sendTextMessage(senderID, "Quick reply tapped");
+
+		if (messageText) {
+
+			// If we receive a text message, check to see if it matches any special
+			// keywords and send back the corresponding example. Otherwise, just echo
+			// the text we received.
+			switch (messageText) {
+				/*case 'image':
+				sendImageMessage(senderID);
+				break;
+
+				case 'gif':
+				sendGifMessage(senderID);
+				break;
+
+				case 'audio':
+				sendAudioMessage(senderID);
+				break;
+
+				case 'video':
+				sendVideoMessage(senderID);
+				break;
+
+				case 'file':
+				sendFileMessage(senderID);
+				break;
+
+				case 'button':
+				sendButtonMessage(senderID);
+				break;
+
+				case 'generic':
+				sendGenericMessage(senderID);
+				break;
+
+				case 'receipt':
+				sendReceiptMessage(senderID);
+				break;
+
+				case 'quick reply':
+				sendQuickReply(senderID);
+				break;
+
+				case 'read receipt':
+				sendReadReceipt(senderID);
+				break;
+
+				case 'typing on':
+				sendTypingOn(senderID);
+				break;
+
+				case 'typing off':
+				sendTypingOff(senderID);
+				break;
+
+				case 'account linking':
+				sendAccountLinking(senderID);
+				break;*/
+
+				default:
+				messenger.sendTextMessage(senderID, messageText + ' [bot]');
+			}
+		} else if (messageAttachments) {
+			messenger.sendTextMessage(senderID, "Message with attachment received");
 		}
-		return;
-	}
+	});
 
-	if (messageText) {
-
-		// If we receive a text message, check to see if it matches any special
-		// keywords and send back the corresponding example. Otherwise, just echo
-		// the text we received.
-		switch (messageText) {
-			/*case 'image':
-			sendImageMessage(senderID);
-			break;
-
-			case 'gif':
-			sendGifMessage(senderID);
-			break;
-
-			case 'audio':
-			sendAudioMessage(senderID);
-			break;
-
-			case 'video':
-			sendVideoMessage(senderID);
-			break;
-
-			case 'file':
-			sendFileMessage(senderID);
-			break;
-
-			case 'button':
-			sendButtonMessage(senderID);
-			break;
-
-			case 'generic':
-			sendGenericMessage(senderID);
-			break;
-
-			case 'receipt':
-			sendReceiptMessage(senderID);
-			break;
-
-			case 'quick reply':
-			sendQuickReply(senderID);
-			break;
-
-			case 'read receipt':
-			sendReadReceipt(senderID);
-			break;
-
-			case 'typing on':
-			sendTypingOn(senderID);
-			break;
-
-			case 'typing off':
-			sendTypingOff(senderID);
-			break;
-
-			case 'account linking':
-			sendAccountLinking(senderID);
-			break;*/
-
-			default:
-			messenger.sendTextMessage(senderID, messageText + ' [bot]');
-		}
-	} else if (messageAttachments) {
-		messenger.sendTextMessage(senderID, "Message with attachment received");
-	}
 };
 
 module.exports = {

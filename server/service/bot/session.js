@@ -65,42 +65,49 @@ function Session(senderID, recipientID, timeOfMessage) {
 
 module.exports = {
 	createSession(senderID, recipientID, timeOfMessage) {
-		console.log("Create new Session for user psid: " + senderID);
-		CustomerService.getFacebookCustomer(senderID).then(user => {
-			if (!user) {
-				CustomerService.createFacebookCustomer(senderID);
+		console.log("Create new Session for customer psid: " + senderID);
+		return CustomerService.getFacebookCustomer(senderID).then(customer => {
+			if (!customer) {
+				console.log("session.js - New customer");
+				return CustomerService.createFacebookCustomer(senderID);
 			}
 			else {
-				console.log("session.js - Existing user: ")
-				console.log(user);
+				console.log("session.js - Existing customer");
+				return Promise.resolve(customer);
 			}
-		}).catch(error => {
-			console.log(error);
-		})
+		}).then(customer => {
+			console.log("resolve " + customer);
 
-		let key = `${recipientID}_${senderID}`;
-		let session = sessions[key];
-		if (!session) {
-			console.log("Create new session with key: " + key);
-			session = new Session(senderID, recipientID, timeOfMessage);
-			sessions[key] = session;
-		}
-		else {
-			console.log("User session exists with key: " + key);
-		}
-		console.log(JSON.stringify(sessions));
-		return session;
+			let key = `${recipientID}_${senderID}`;
+			let session = sessions[key];
+			if (!session) {
+				console.log("Create new session with key: " + key);
+				session = new Session(senderID, recipientID, timeOfMessage);
+				sessions[key] = session;
+			}
+			else {
+				console.log("Customer session exists with key: " + key);
+			}
+
+			if (customer.address) {
+				session.address = {
+					name: customer.address.name,
+					street_1: customer.address.street,
+					street_2: customer.address.subDistrict,
+					city: customer.address.district,
+					state: customer.address.province,
+					postal_code: customer.address.postalCode,
+					country: "ประเทศไทย"
+				}
+			}
+			
+			console.log(JSON.stringify(session));
+			return session;
+		});
 	},
 	getSession(senderID, recipientID) {
 		let key = `${recipientID}_${senderID}`;
 		return sessions[key];
-	},
-	setState(senderID, recipientID, newState) {
-		let key = `${recipientID}_${senderID}`;
-		let session = sessions[key];
-		if (session) {
-			session.state = newState;
-		}
 	},
 	addOrder(senderID, recipientID, item) {
 		let key = `${recipientID}_${senderID}`;

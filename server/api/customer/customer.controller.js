@@ -2,8 +2,8 @@
 
 const Customer = require('../../model/customer.model');
 const Sale = require('../sale/sale.model');
-const config = require('../../config/environment');
-const path = require('path');
+const messenger = require('../../service/bot/messenger.facebook');
+const sessionManager = require('../../service/bot/session');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -69,15 +69,17 @@ const destroy = function(req, res) {
 
 const shippingAddress = function(req, res) {
 	let psid = req.data.psid;
+	let page_id = req.data.page_id;
 	console.log("Verified Signed Signature for customer: " + psid);
 	Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {
+			console.log(req.body);
 			customer.address = {
-				name: req.body.fullName,
-				street_1: req.body.street_1,
-				street_2: req.body.subDistrict,
-				city: req.body.district,
-				province: 'กรุงเทพฯ',
+				name: req.body.name,
+				street: req.body.street,
+				subDistrict: req.body.subDistrict,
+				district: req.body.district,
+				province: 'กรุงเทพฯ', //TODO
 				postalCode: req.body.postalCode
 			}
 			console.log("Saving customer address: " + customer);
@@ -87,6 +89,24 @@ const shippingAddress = function(req, res) {
 					return res.status(500).json(err);
 				}
 				res.status(200).json("{}");
+				messenger.sendTextMessage(psid, "ขอบคุณสำหรับข้อมูลคร้าบ");
+				let session = sessionManager.getSession(psid, page_id);
+				if (session) {
+					session.address = {
+						name: customer.address.name,
+						street_1: customer.address.street,
+						street_2: customer.address.subDistrict,
+						city: customer.address.district,
+						state: customer.address.province,
+						postal_code: customer.address.postalCode,
+						country: "ประเทศไทย"
+					}
+					session.rec
+					messenger.sendAddressResult(session);
+				}
+				else {
+					messenger.sendTextMessage(psid, "เกิดข้อผิดพลาด กรุณาทำรายการใหม่ (อาจจะเป็นเพราะรอนานเกินไปค้าบ)");
+				}
 			});
 		}
 		else {

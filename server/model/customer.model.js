@@ -9,9 +9,9 @@ const CustomerSchema = new Schema({
 	name: String,
 	address: {
 		name: String,
-		street_1: String,
-		street_2: String,
-		city: String,
+		street: String,
+		subDistrict: String,
+		district: String,
 		province: String,
 		postalCode: String
 	},

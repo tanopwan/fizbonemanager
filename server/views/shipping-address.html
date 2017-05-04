@@ -47,23 +47,23 @@
 		<div class="field">
 			<label>ชื่อผู้รับ</label>
 			<div class="field">
-				<input type="text" name="shipping[fullName]" id="fullName" placeholder="ชื่อผู้รับ">
+				<input type="text" id="fullName" placeholder="ชื่อผู้รับ">
 			</div>
 			<label>ที่อยู่</label>
 			<div class="field">
-				<input type="text" name="shipping[street_1]" id="street_1" placeholder="บ้านเลขที่ อาคาร ชั้น ซอย ถนน">
+				<input type="text" id="street" placeholder="บ้านเลขที่ อาคาร ชั้น ซอย ถนน">
 			</div>
 			<label>แขวง</label>
 			<div class="field">
-				<input type="text" name="shipping[subDistrict]" id="subDistrict" placeholder="แขวง">
+				<input type="text" id="subDistrict" placeholder="แขวง">
 			</div>
 			<label>เขต</label>
 			<div class="field">
-				<input type="text" name="shipping[district]" id="district" placeholder="เขต">
+				<input type="text" id="district" placeholder="เขต">
 			</div>
 			<label>รหัสไปรษณีย์</label>
 			<div class="field">
-				<input type="text" name="shipping[postalCode]" id="postalCode" placeholder="10150">
+				<input type="text" id="postalCode" placeholder="10150">
 			</div>
 			<button id="save" class="ui teal fluid button">
 				เสร็จแล้ว
@@ -82,8 +82,8 @@
 			method: 'POST',
 			dataType: 'json',
 			data: JSON.stringify({
-				fullName: $('#fullName').val(),
-				street_1: $('#street_1').val(),
+				name: $('#fullName').val(),
+				street: $('#street').val(),
 				subDistrict: $('#subDistrict').val(),
 				district: $('#district').val(),
 				postalCode: $('#postalCode').val()
