@@ -9,7 +9,7 @@ const path = require('path');
 
 module.exports = {
 	verifyMessengerExtenstion: function(req, res, next) {
-		let signedRequest = req.body.signed_request;
+		let signedRequest = req.get('Authorization').split(' ')[1];
 		if (signedRequest) {
 			let signedData = signedRequest.split('.');
 			let encoded_sig = signedData[0];
@@ -21,6 +21,7 @@ module.exports = {
 			let expectedSig = hmac.digest('utf-8');
 
 			if (sig === expectedSig) {
+				req.data = JSON.parse(data);
 				next();
 			}
 			else {

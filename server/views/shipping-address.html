@@ -13,6 +13,7 @@
 </head>
 <body>
 	<script>
+	var tanopwan = null;
 	window.extAsyncInit = function() {
 		// the Messenger Extensions JS SDK is done loading
 		console.log("extAsyncInit");
@@ -20,8 +21,9 @@
 		console.log("MessengerExtensions is " + isSupported);
 
 		MessengerExtensions.getContext('715440845305065', function success(result){
-			$('#log').text(result);
+			$('#log').text(JSON.stringify(result));
 			$("#signed_request").val(result.signed_request);
+			tanopwan = result.signed_request;
 		}, function error(result){
 			$('#log').text(JSON.stringify(result));
 		});
@@ -39,57 +41,65 @@
 
 	<h3 class="ui center aligned header">Fizbone</h3>
 	<span id="log"></span>
-	<form class="ui form container" action="/api/customers/shipping-address" method="post">
+	<form class="ui form container">
 		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
-		<input type="hidden" name="psid" id="psid">
 		<input type="hidden" name="signed_request" id="signed_request">
 		<div class="field">
 			<label>ชื่อผู้รับ</label>
 			<div class="field">
-				<input type="text" name="shipping[fullName]" placeholder="ชื่อผู้รับ">
+				<input type="text" name="shipping[fullName]" id="fullName" placeholder="ชื่อผู้รับ">
 			</div>
 			<label>ที่อยู่</label>
 			<div class="field">
-				<input type="text" name="shipping[street_1]" placeholder="บ้านเลขที่ อาคาร ชั้น ซอย ถนน">
+				<input type="text" name="shipping[street_1]" id="street_1" placeholder="บ้านเลขที่ อาคาร ชั้น ซอย ถนน">
 			</div>
 			<label>แขวง</label>
 			<div class="field">
-				<input type="text" name="shipping[subDistrict]" placeholder="แขวง">
+				<input type="text" name="shipping[subDistrict]" id="subDistrict" placeholder="แขวง">
 			</div>
 			<label>เขต</label>
 			<div class="field">
-				<input type="text" name="shipping[district]" placeholder="เขต">
+				<input type="text" name="shipping[district]" id="district" placeholder="เขต">
 			</div>
 			<label>รหัสไปรษณีย์</label>
 			<div class="field">
-				<input type="text" name="shipping[postalCode]" placeholder="10150">
+				<input type="text" name="shipping[postalCode]" id="postalCode" placeholder="10150">
 			</div>
 			<button id="save" class="ui teal fluid button">
 				เสร็จแล้ว
 			</button>
 		</div>
-	</div>
+	</form>
 	<script>
-	/*var areas = [];
-	$.ajax({
-	url: "/area-th.json"
-}).then(function(data) {
-areas = data;
-var area = areas[0];
-});*/
+	$( "form" ).submit(function( event ) {
+		event.preventDefault();
+		$.ajax({
+			url: '/api/customers/shipping-address',
+			headers: {
+				'Authorization':'Basic ' + tanopwan,
+				'Content-Type':'application/json'
+			},
+			method: 'POST',
+			dataType: 'json',
+			data: JSON.stringify({
+				fullName: $('#fullName').val(),
+				street_1: $('#street_1').val(),
+				subDistrict: $('#subDistrict').val(),
+				district: $('#district').val(),
+				postalCode: $('#postalCode').val()
+			}),
+			success: function(){
+				MessengerExtensions.requestCloseBrowser(function success() {
 
-function getParameterByName(name, url) {
-	if (!url) url = window.location.href;
-	name = name.replace(/[\[\]]/g, "\\$&");
-	var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-	results = regex.exec(url);
-	if (!results) return null;
-	if (!results[2]) return '';
-	return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
-
-var psid = getParameterByName('psid');
-$("#psid").val(psid);
-</script>
+				}, function error(err) {
+					$('#log').text(JSON.stringify(result));
+				});
+			},
+			error: function(XMLHttpRequest, textStatus, errorThrown) {
+				alert("Status: " + textStatus); alert("Error: " + errorThrown);
+			}
+		});
+	});
+	</script>
 </body>
 </html>

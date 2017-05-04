@@ -68,30 +68,29 @@ const destroy = function(req, res) {
 }
 
 const shippingAddress = function(req, res) {
-	console.log(req.body)
-	let psid = req.body.psid;
+	let psid = req.data.psid;
 	console.log("Verified Signed Signature for customer: " + psid);
 	Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {
 			customer.address = {
-				name: req.body.shipping.fullName,
-				street_1: req.body.shipping.street_1,
-				street_2: req.body.shipping.subDistrict,
-				city: req.body.shipping.district,
+				name: req.body.fullName,
+				street_1: req.body.street_1,
+				street_2: req.body.subDistrict,
+				city: req.body.district,
 				province: 'กรุงเทพฯ',
-				postalCode: req.body.shipping.postalCode
+				postalCode: req.body.postalCode
 			}
-			console.log(customer);
+			console.log("Saving customer address: " + customer);
 			customer.save(function (err, customer) {
 				if (err) {
 					console.log(err);
-					return res.sendFile(path.resolve(`${__dirname}/../../views/error.html`));
+					return res.status(500).json(err);
 				}
-				res.sendFile(path.resolve(`${__dirname}/../../views/thank-you.html`));
+				res.status(200).json("{}");
 			});
 		}
 		else {
-			res.sendFile(path.resolve(`${__dirname}/../../views/error.html`));
+			res.status(500).json(err);
 		}
 	});
 }
