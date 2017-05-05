@@ -28,12 +28,15 @@
 					<template v-for="customer in customers">
 						<div>
 							<div class="pull-right">
-								{{ customer._id }}
-								<button class="btn btn-danger" @click="deleteCustomer(customer._id)"><i class="fa fa-minus"></i></button>
+								<button v-if="customer.type==='FacebookOnline'" class="btn btn-info"><i class="fa fa-facebook"></i></button>
+								{{ customer.refUserId }}
 							</div>
 							<h4 class="sub-header">
 								{{ customer.name }}
 							</h4>
+							<p>
+								{{ JSON.stringify(customer) }}
+							</p>
 						</div>
 					</template>
 				</div>
@@ -58,21 +61,6 @@ export default {
 		addCustomer() {
 			this.$http.post('/api/customers', { name: this.customerName, address: this.customerAddress }).then(response => {
 				this.customers.push(response.body);
-			}, response => {
-				console.log(response);
-			});
-		},
-		deleteCustomer(id) {
-			this.$http.delete('/api/customers/' + id).then(response => {
-				let index = -1;
-				this.customers.forEach((customer, idx) => {
-					if (customer._id === id) {
-						index = idx;
-					}
-				});
-				if (index !== -1) {
-					this.customers.splice(index, 1);
-				}
 			}, response => {
 				console.log(response);
 			});

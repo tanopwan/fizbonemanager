@@ -61,7 +61,7 @@
 							<li>
 								<router-link to="/sale">
 									<i class="gi gi-shopping_cart sidebar-nav-icon"></i>
-									<span class="sidebar-nav-mini-hide">Sale</span>
+									<span class="sidebar-nav-mini-hide">Create Sale</span>
 								</router-link>
 							</li>
 						</ul>

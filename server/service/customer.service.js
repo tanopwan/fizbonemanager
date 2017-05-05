@@ -61,7 +61,7 @@ const setShippingAddress = (psid, address) => {
 				province: 'กรุงเทพฯ', //TODO
 				postalCode: address.postalCode
 			}
-			console.log("Saving customer address");
+			console.log("Saving customer address " + customer);
 			return customer.save();
 		}
 	});
@@ -70,5 +70,8 @@ const setShippingAddress = (psid, address) => {
 module.exports = {
 	createFacebookCustomer,
 	getFacebookCustomer,
-	setShippingAddress
+	setShippingAddress,
+	getCustomer,
+	getCustomers,
+	createCustomer
 }
