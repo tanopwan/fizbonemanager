@@ -4,6 +4,9 @@ const request = require('request');
 const config = require('../config/environment');
 const Customer = require('../model/customer.model');
 
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 const createFacebookCustomer = (psid) => {
 	return request({
 		uri: 'https://graph.facebook.com/v2.6/' + psid,
@@ -34,6 +37,18 @@ const createFacebookCustomer = (psid) => {
 const getFacebookCustomer = (psid) => {
 	return Customer.findOne({ refUserId: psid }).exec();
 };
+
+const getCustomer = (id) => {
+	return Customer.findOne({ _id: id }).exec();
+};
+
+const getCustomers = (limit) => {
+	return Customer.find().sort({'createdAt': -1}).limit(limit).exec();
+};
+
+const createCustomer = (customerData) => {
+	return Customer.create(customerData);
+}
 
 const setShippingAddress = (psid, address) => {
 	return Customer.findOne({ refUserId: psid }).exec().then(customer => {
