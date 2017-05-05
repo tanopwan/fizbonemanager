@@ -3,8 +3,8 @@
 const crypto = require('crypto');
 const messenger = require('./messenger.facebook');
 const sessionService = require('./session');
-//const Lev = require('../levenshtein.service');
-//const PostalService = require('../postal.service');
+const orderService = require('../order.service');
+const saleService = require('../sale.service');
 
 /*
 * Verify that the callback came from Facebook. Using the App Secret from
@@ -120,14 +120,14 @@ const receivedPostback = (event) => {
 	sessionService.createSession(senderID, recipientID, timeOfPostback).then(session => {
 		switch (payload) {
 			case 'GET_STARTED_PAYLOAD':
-			session.orders = [];
+			session.items = [];
 			messenger.sendGreetingMessage(senderID);
 			break;
 			case 'PRODUCT_LIST_PAYLOAD':
 			messenger.sendProductList(session);
 			break;
 			case 'ORDER_LIST_PAYLOAD':
-			if (!session.orders || session.orders.length === 0) {
+			if (!session.items || session.items.length === 0) {
 				messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
 				messenger.sendMenuMessage(senderID, 500);
 			}
@@ -137,31 +137,38 @@ const receivedPostback = (event) => {
 			}
 			break;
 			case 'CHECK_OUT_ADDRESS':
-			console.log(session);
-			if (session.address && session.address.confirm) {
+			let address = session.customer.address;
+			if (session.addressConfirm) {
 				// CHECK_OUT
+				console.log("[Action] address is confirm, go to next step");
 			}
-			else if (session.address
-				&& session.address.name
-				&& session.address.street_1
-				&& session.address.street_2
-				&& session.address.city
-				&& session.address.state
-				&& session.address.postal_code
+			else if (address
+			   && address.name
+			   && address.street
+			   && address.subDistrict
+			   && address.district
+			   && address.province
+			   && address.postalCode
 			) {
-				session.address.confirm = false;
+				console.log("[Action] address is not confirm, send address result");
+				session.addressConfirm = false;
 				messenger.sendAddressResult(session);
 				break;
 			}
 			else {
+				console.log("[Action] address is not set, send ask for address");
 				messenger.sendAskForAddress(session);
 				break;
 			}
 			case 'CONFIRM_ADDRESS':
-			session.address.confirm = true;
+			session.addressConfirm = true;
 			case 'CHECK_OUT':
-			if (session.address.confirm) {
-				if (session.orders && session.orders.length > 0) {
+			if (session.addressConfirm) {
+				if (session.items && session.items.length > 0) {
+					return orderService.createOrder(session).then(order => {
+						console.log(order);
+					});
+
 					messenger.sendReceiptTemplate(session);
 					messenger.sendPaymentMethod(session, 3000);
 				}
@@ -175,7 +182,7 @@ const receivedPostback = (event) => {
 			}
 			break;
 			case 'DELETE_ALL_ORDERS':
-			session.orders = [];
+			session.items = [];
 			session.newItem = null;
 			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
 			messenger.sendMenuMessage(senderID, 500);
@@ -189,10 +196,11 @@ const receivedPostback = (event) => {
 				let commands = payload.split('_');
 				switch (commands[1]) {
 					case 'BUY':
-					if (commands.length > 2) {
+					if (commands.length > 3) {
 						let productId = commands[2];
-						console.log(`User(${senderID}) wants to buy ''${productId}' from Page(${recipientID})`);
-						let ref = session.addItem(productId, timeOfPostback);
+						let batchId = commands[3];
+						console.log(`User(${senderID}) wants to buy '${productId}' batch '${batchId}' from Page(${recipientID})`);
+						let ref = session.addItem(batchId, timeOfPostback);
 						messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
 					}
 					break;
@@ -261,9 +269,9 @@ const receivedMessage = (event) => {
 					let q = commands[2];
 					let ref = commands[3];
 					if (session.setNewItemQuantity(ref, q)) {
-						let order = session.orders.find(order => order.ref == ref);
+						let order = session.items.find(order => order.ref == ref);
 						let sum = q * order.price / 100;
-						messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.productName} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
+						messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.product.name} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
 						messenger.sendShopMoreMessage(session, true, 1000);
 					}
 					else {
@@ -344,6 +352,51 @@ const receivedMessage = (event) => {
 	});
 
 };
+
+let orders = [];
+orders.push({
+	q: 2,
+	price: 189,
+	productName: 'Fizbone',
+	link: 'link',
+	promotionId: '5901fa5da6613e67eca51b90',
+},
+{
+	q: 1,
+	price: 189,
+	productName: 'Fizbone',
+	link: 'link',
+	promotionId: '5901fa5da6613e67eca51b90',
+})
+let customer = {
+	_id: '590b31b73079e580ec57f16d'
+}
+
+const checkout = (items, customerId) => {
+	/*let sales = [];
+	items.forEach(item => {
+		sales.push(saleService.createSale({
+			quantity: item.q,
+			description: 'Facebook Messenger Bot',
+			saleDate: new Date(),
+			promotionId: item.promotionId,
+			customerId: customerId
+		}).then(sale => {
+			console.log("a sale saved");
+			console.log(sale);
+			item.saleId = sale._id;
+		}));
+	});
+	Promise.all(sales).then(() => {
+		console.log("All sales saved");
+		console.log(items);
+		orderService.createOrder(sales, session).then(order => {
+			console.log(order);
+		})
+	});*/
+}
+
+//checkout(orders);
 
 module.exports = {
 	verifyRequestSignature,

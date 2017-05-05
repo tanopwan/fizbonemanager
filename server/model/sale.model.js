@@ -9,6 +9,7 @@ const SaleSchema = new Schema({
 	quantity: Number,
 	description: String,
 	saleDate: Date,
+	orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
 	isConsignment: { type: Boolean, default: false },
 	isDeleted: { type: Boolean, default: false },
 	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },

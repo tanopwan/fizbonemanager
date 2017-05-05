@@ -34,11 +34,14 @@ const promiseOnlineProducts = Promotion.aggregate([
 			_id: '$product._id',
 			productName: { $first: '$product.name' },
 			link: { $first: '$product.link' },
-			price: { $first: '$price' }
+			price: { $first: '$price' },
+			batchId: { $first: '$batch._id' },
+			promotionId: { $first: '$_id' },
 		}
 	}
 ]).exec().then(resolve => {
 	cacheOnlineProducts = resolve;
+	console.log(cacheOnlineProducts);
 });
 
 const getOnlineProducts = () => {

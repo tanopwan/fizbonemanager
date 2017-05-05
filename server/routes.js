@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const facebookBot = require('./service/bot/facebook');
+const facebookBot = require('./service/bot/facebook.controller');
 const bodyParser = require('body-parser');
 
 module.exports = function(app) {

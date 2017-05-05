@@ -1,6 +1,6 @@
 'use strict';
 
-const Sale = require('./sale.model');
+const Sale = require('../../model/sale.model');
 const config = require('../../config/environment');
 const moment = require('moment');
 

@@ -11,17 +11,20 @@ function Session(senderID, recipientID, timeOfMessage) {
 		senderID: '',
 		recipientID: '',
 		timeOfMessage: '',
-		addItem(productId, timestamp) {
+		addItem(batchId, timestamp) {
 			let ref = new Date().getTime();
 			ProductService.getOnlineProducts().then(products => {
-				let product = products.find(product => product._id == productId);
+				let product = products.find(product => product.batchId == batchId);
 				if (product){
 					this.newItem = {
-						productId,
-						productName: product.productName,
+						batchId,
 						price: product.price,
-						link: product.link,
+						product: {
+							name: product.productName,
+							link: product.link
+						},
 						ref,
+						promotionId: product.promotionId,
 						createdAt: timestamp
 					}
 				}
@@ -29,29 +32,25 @@ function Session(senderID, recipientID, timeOfMessage) {
 
 			return ref;
 		},
-		setNewItemQuantity(ref, q, timestamp) {
+		setNewItemQuantity(ref, quantity, timestamp) {
 			if (!this.newItem) {
-				return false;
-			}
-
-			if (!this.newItem.productId) {
-				// reset newItem data
-				this.newItem = null;
+				console.log("[Error] session.js No newItem");
 				return false;
 			}
 
 			if (this.newItem.ref == ref) {
-				this.newItem.q = q;
+				this.newItem.quantity = quantity;
+				this.newItem.total = this.newItem.quantity * this.newItem.price;
 				this.newItem.updatedAt = timestamp;
-				if (!this.orders) {
-					this.orders = [];
+				if (!this.items) {
+					this.items = [];
 				}
-				this.orders.push(this.newItem);
+				this.items.push(this.newItem);
 				this.newItem = null;
 				return true;
 			}
 			else {
-				console.log(`[Error] Unmatched ref. ${this.newItem.ref} != ${ref}`);
+				console.log(`[Error] session.js Unmatched ref. ${this.newItem.ref} != ${ref}`);
 				return false;
 			}
 		},
@@ -76,8 +75,6 @@ module.exports = {
 				return Promise.resolve(customer);
 			}
 		}).then(customer => {
-			console.log("resolve " + customer);
-
 			let key = `${recipientID}_${senderID}`;
 			let session = sessions[key];
 			if (!session) {
@@ -89,18 +86,7 @@ module.exports = {
 				console.log("Customer session exists with key: " + key);
 			}
 
-			if (customer.address) {
-				session.address = {
-					name: customer.address.name,
-					street_1: customer.address.street,
-					street_2: customer.address.subDistrict,
-					city: customer.address.district,
-					state: customer.address.province,
-					postal_code: customer.address.postalCode,
-					country: "ประเทศไทย"
-				}
-			}
-
+			session.customer = customer;
 			console.log(JSON.stringify(session));
 			return session;
 		});
@@ -108,12 +94,5 @@ module.exports = {
 	getSession(senderID, recipientID) {
 		let key = `${recipientID}_${senderID}`;
 		return sessions[key];
-	},
-	addOrder(senderID, recipientID, item) {
-		let key = `${recipientID}_${senderID}`;
-		let session = sessions[key];
-		if (session) {
-			session["orders"].push(item);
-		}
 	}
 }

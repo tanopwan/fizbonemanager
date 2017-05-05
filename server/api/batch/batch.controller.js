@@ -2,7 +2,7 @@
 
 const Batch = require('../../model/batch.model');
 const Promotion = require('../promotion/promotion.model');
-const Sale = require('../sale/sale.model');
+const Sale = require('../../model/sale.model');
 const config = require('../../config/environment');
 
 const mongoose = require('mongoose');

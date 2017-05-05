@@ -52,19 +52,9 @@ const shippingAddress = function(req, res) {
 	let page_id = req.data.page_id;
 	console.log("Verified Signed Signature for customer: " + psid);
 	CustomerService.setShippingAddress(psid, req.body).then(customer => {
-		let address = customer.address;
 		let session = sessionManager.getSession(psid, page_id);
-		if (session) {
-			session.address = {
-				name: address.name,
-				street_1: address.street,
-				street_2: address.subDistrict,
-				city: address.district,
-				state: address.province,
-				postal_code: address.postalCode,
-				country: "ประเทศไทย"
-			}
-			messenger.sendAddressResult(session);
+		if (session && customer.address) {
+			messenger.sendAddressResult(session, customer.address);
 			res.status(200).json("{}");
 		}
 		else {

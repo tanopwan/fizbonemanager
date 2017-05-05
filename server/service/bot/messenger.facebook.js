@@ -110,7 +110,7 @@ const sendProductList = (session) => {
 					{
 						"type": "postback",
 						"title": "ซื้อเลย",
-						"payload": `CUSTOM_BUY_${product._id}`
+						"payload": `CUSTOM_BUY_${product._id}_${product.batchId}`
 					}
 				]
 			});
@@ -126,9 +126,9 @@ const sendProductList = (session) => {
 *
 */
 const sendOrderList = (session) => {
-	let text = `คุณมีสินค้า ${session.orders.length} ชิ้น อยู่ในตระกร้า\n`;
+	let text = `คุณมีสินค้า ${session.items.length} ชิ้น อยู่ในตระกร้า\n`;
 	let count = 1;
-	session.orders.forEach(order => {
+	session.items.forEach(order => {
 		text = text + `${count}. ${order.productName}\nจำนวน ${order.q} รวมเป็นเงิน ${order.price / 100 * order.q} บาท\n`;
 		count++;
 	});
@@ -181,13 +181,13 @@ const sendReceiptTemplate = (session) => {
 
 	payload.order_number = "ref1234";
 	let subtotal = 0.00;
-	if (session.orders) {
-		session.orders.forEach(order => {
-			subtotal = subtotal + (order.price * order.q);
+	if (session.items) {
+		session.items.forEach(order => {
+			subtotal = subtotal + (order.price * order.quantity);
 			payload.elements.push({
-				title: order.productName,
+				title: order.product.name,
 				subtitle: "ขนมสุนัข ธรรมชาติ 100%",
-				quantity: order.q,
+				quantity: order.quantity,
 				price: order.price / 100,
 				currency: "THB",
 				image_url: order.link
@@ -195,21 +195,22 @@ const sendReceiptTemplate = (session) => {
 		})
 	}
 
-	if (session.address
-		&& session.address.name
-		&& session.address.street_1
-		&& session.address.street_2
-		&& session.address.city
-		&& session.address.state
-		&& session.address.postal_code
+	let address = session.customer.address;
+	if (address
+		&& address.name
+		&& address.street
+		&& address.subDistrict
+		&& address.district
+		&& address.province
+		&& address.postalCode
 	) {
-		payload.recipient_name = session.address.name;
+		payload.recipient_name = address.name;
 		payload.address = {
-			street_1: session.address.street_1,
-			street_2: session.address.street_2,
-			city: session.address.city,
-			state: session.address.state,
-			postal_code: session.address.postal_code,
+			street_1: address.street,
+			street_2: address.subDistrict,
+			city: address.district,
+			state: address.province,
+			postal_code: address.postalCode,
 			country: "ประเทศไทย"
 		};
 	}
@@ -340,7 +341,7 @@ const sendQuickReplyOrderQuantity = (recipientId, message, ref) => {
 */
 const sendTextMessage = (recipientId, messageText, delay) => {
 	if (delay) {
-		setTimeout(() => sendTextMessage(recipientId, messageText), delay)
+		setTimeout(() => sendTextMessage(recipientId, messageText), delay);
 	}
 	else {
 		var messageData = {
@@ -378,31 +379,30 @@ const sendAskForAddress = (session) => {
 }
 
 const sendAddressResult = (session) => {
-	if (session.address) {
-		sendTemplateMessageWithDelay(session.senderID, {
-			template_type: "button",
-			text: `[ฟีนิกซ์] ที่อยู่จัดส่ง\n คุณ ${session.address.name}\n ${session.address.street_1}\n${session.address.street_2} ${session.address.city}\n${session.address.state} ${session.address.postal_code}`,
-			buttons: [
-				{
-					type: "postback",
-					title: "ถูกต้อง",
-					payload: "CONFIRM_ADDRESS"
-				},
-				{
-					"title": "ต้องการแก้ไข",
-					"type": "web_url",
-					"url": `https://f9a2341c.ngrok.io/facebook-messenger/shipping-address`,
-					"messenger_extensions": true,
-					"webview_height_ratio": "tall"
-				},
-				{
-					type: "postback",
-					title: "ไม่ถูกต้อง ติดต่อแม่ฟีนิกซ์",
-					payload: "CHOICE_PERSON"
-				}
-			]
-		});
-	}
+	let address = session.customer.address;
+	sendTemplateMessageWithDelay(session.senderID, {
+		template_type: "button",
+		text: `[ฟีนิกซ์] ที่อยู่จัดส่ง\n คุณ ${address.name}\n ${address.street}\n${address.subDistrict} ${address.district}\n${address.province} ${address.postalCode}`,
+		buttons: [
+			{
+				type: "postback",
+				title: "ถูกต้อง",
+				payload: "CONFIRM_ADDRESS"
+			},
+			{
+				"title": "ต้องการแก้ไข",
+				"type": "web_url",
+				"url": `https://f9a2341c.ngrok.io/facebook-messenger/shipping-address`,
+				"messenger_extensions": true,
+				"webview_height_ratio": "tall"
+			},
+			{
+				type: "postback",
+				title: "ไม่ถูกต้อง ติดต่อแม่ฟีนิกซ์",
+				payload: "CHOICE_PERSON"
+			}
+		]
+	});
 }
 
 const sendMenuMessage = (recipientId, delay) => {
