@@ -3,6 +3,7 @@
 const Customer = require('../../model/customer.model');
 const Sale = require('../sale/sale.model');
 const messenger = require('../../service/bot/messenger.facebook');
+const CustomerService = require('../../service/customer.service');
 const sessionManager = require('../../service/bot/session');
 
 const mongoose = require('mongoose');
@@ -71,7 +72,33 @@ const shippingAddress = function(req, res) {
 	let psid = req.data.psid;
 	let page_id = req.data.page_id;
 	console.log("Verified Signed Signature for customer: " + psid);
-	Customer.findOne({ refUserId: psid }).exec().then(customer => {
+	CustomerService.setShippingAddress(psid, req.body).then(customer => {
+		let address = customer.address;
+		console.log(address);
+		let session = sessionManager.getSession(psid, page_id);
+		if (session) {
+			session.address = {
+				name: address.name,
+				street_1: address.street,
+				street_2: address.subDistrict,
+				city: address.district,
+				state: address.province,
+				postal_code: address.postalCode,
+				country: "ประเทศไทย"
+			}
+			messenger.sendAddressResult(session);
+			res.status(200).json("{}");
+		}
+		else {
+			messenger.sendTextMessage(psid, "เกิดข้อผิดพลาด กรุณาทำรายการใหม่ (อาจจะเป็นเพราะรอนานเกินไปค้าบ)");
+			res.status(500).json({});
+		}
+
+	}).catch(err => {
+		messenger.sendTextMessage(psid, err);
+		res.status(500).json({});
+	})
+	/*Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {
 			console.log(req.body);
 			customer.address = {
@@ -112,7 +139,7 @@ const shippingAddress = function(req, res) {
 		else {
 			res.status(500).json(err);
 		}
-	});
+	});*/
 }
 
 module.exports = {

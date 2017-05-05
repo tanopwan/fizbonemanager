@@ -5,7 +5,6 @@ const config = require('../config/environment');
 const Customer = require('../model/customer.model');
 
 const createFacebookCustomer = (psid) => {
-
 	return request({
 		uri: 'https://graph.facebook.com/v2.6/' + psid,
 		qs: { access_token: config.PAGE_ACCESS_TOKEN, fields: "first_name,last_name,profile_pic,locale,timezone,gender" },
@@ -29,15 +28,32 @@ const createFacebookCustomer = (psid) => {
 		} else {
 			console.error(error);
 		}
-	})
-
+	});
 };
 
 const getFacebookCustomer = (psid) => {
 	return Customer.findOne({ refUserId: psid }).exec();
-}
+};
+
+const setShippingAddress = (psid, address) => {
+	return Customer.findOne({ refUserId: psid }).exec().then(customer => {
+		if (customer) {
+			customer.address = {
+				name: address.name,
+				street: address.street,
+				subDistrict: address.subDistrict,
+				district: address.district,
+				province: 'กรุงเทพฯ', //TODO
+				postalCode: address.postalCode
+			}
+			console.log("Saving customer address");
+			return customer.save();
+		}
+	});
+};
 
 module.exports = {
 	createFacebookCustomer,
-	getFacebookCustomer
+	getFacebookCustomer,
+	setShippingAddress
 }
