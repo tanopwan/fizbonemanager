@@ -216,7 +216,7 @@ const sendReceiptTemplate = (session, order) => {
 	payload.summary.subtotal = subtotal / 100;
 	payload.summary.total_cost = subtotal / 100;
 
-	session.orders = [];
+	session.items = [];
 	sendTemplateMessage(session.senderID, payload);
 };
 

@@ -295,12 +295,24 @@ const receivedMessage = (event) => {
 			}
 		} else if (messageAttachments) {
 			if (messageAttachments.length > 0) {
+				messenger.sendTextMessage(senderID, 'ขอบคุณครับ กรุณารอตรวจสอบนะคร้าบ');
 				messageAttachments.forEach(messageAttachment => {
 					if (messageAttachment.type === 'image') {
-						console.log(messageAttachment.payload);
+						orderService.getWaitPaymentOrders(session.customer.refUserId).then(orders => {
+							if (orders.length === 1) {
+								// Have one waiting payment order, assume this is payment slip
+								let order = orders[0];
+								order.payment.status = "SLIP_PENDING";
+								if (!order.payment.attachments) {
+									order.payment.attachments = [];
+								}
+								order.payment.attachments.push(messageAttachment.payload.url);
+								return order.save();
+							}
+						})
+						// TODO: save to customer temp
 					}
 				});
-				messenger.sendTextMessage(senderID, 'ขอบคุณครับ กรุณารอตรวจสอบนะคร้าบ');
 			}
 		}
 	});

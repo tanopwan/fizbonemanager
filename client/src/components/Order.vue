@@ -1,5 +1,22 @@
 <template>
 	<div>
+		<div id="modal-small" class="modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
+			<div class="modal-dialog modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 class="modal-title"><strong>Are you sure?</strong></h3>
+					</div>
+					<div class="modal-body">
+						หลังจากยืนยันแล้ว จะไม่สามารถแก้ไขได้ และจะส่งคำยืนยันให้ลูกค้าทันที
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-effect-ripple btn-default" data-dismiss="modal" style="overflow: hidden; position: relative;">Cancel</button>
+						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" @click="verify" style="overflow: hidden; position: relative;">Verify</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div v-if="viewOrder" class="block full">
 			<div class="block-title">
 				<ul class="nav nav-tabs" data-toggle="tabs">
@@ -65,6 +82,18 @@
 					</tr>
 				</tbody>
 			</table>
+
+			<div class="block-section">
+				<h4 class="sub-header">Payment</h4>
+				<div class="block full">
+					<div class="text-center">
+						<a href="#modal-small" class="btn btn-effect-ripple btn-danger" data-toggle="modal" style="overflow: hidden; position: relative;">
+							<i class="fa fa-check"></i> Verified
+						</a>
+					</div><br>
+					<img v-for="attachment in viewOrder.payment.attachments" :src="attachment" class="img-responsive center-block" style="max-width: 500px;">
+				</div>
+			</div>
 		</div>
 		<div v-show="!viewOrder" class="block full">
 			<div class="block-title">
@@ -94,7 +123,10 @@
 						<td class="text-center">{{ order.noItems }}</td>
 						<td class="text-center">{{ order.total }}</td>
 						<td class="text-center">{{ order.payment ? order.payment.status : 0 }}</td>
-						<td class="text-center">{{ order.shipping ? order.shipping.status: 0 }}</td>
+						<td class="text-center">
+							{{ order.shipping ? order.shipping.status: 0 }}
+							<button v-if="order.shipping.status==='WAIT_VERIFIED'" class="btn btn-danger"><i class="fa fa-exclamation-circle"></i></button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -111,6 +143,11 @@ export default {
 			orders: [],
 			viewOrder: null
 		};
+	},
+	methods: {
+		verify() {
+			console.log("verify");
+		}
 	},
 	computed: {
 		computedOrders: function() {
@@ -138,6 +175,7 @@ export default {
 				shippingFee\
 				payment {\
 					status\
+					attachments\
 				}\
 				shipping {\
 					status\

@@ -44,7 +44,12 @@ const getOrders = () => {
 	return Order.find().exec();
 }
 
+const getWaitPaymentOrders = (refUserId) => {
+	return Order.find({ 'customer.refUserId': refUserId, 'payment.status': 'WAIT', 'payment.method': 'BANK_TRANSFER' }).exec();
+}
+
 module.exports = {
 	createOrder,
-	getOrders
+	getOrders,
+	getWaitPaymentOrders
 }

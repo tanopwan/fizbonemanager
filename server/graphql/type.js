@@ -89,7 +89,7 @@ const OrderType = new graphql.GraphQLObjectType({
 						return {
 							status: { type: graphql.GraphQLString },
 							method: { type: graphql.GraphQLString },
-							slip: { type: graphql.GraphQLString }
+							attachments: { type: new graphql.GraphQLList(graphql.GraphQLString) }
 						}
 					}
 				})
