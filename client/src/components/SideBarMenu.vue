@@ -64,6 +64,12 @@
 									<span class="sidebar-nav-mini-hide">Create Sale</span>
 								</router-link>
 							</li>
+							<li>
+								<router-link to="/order">
+									<i class="gi gi-shopping_cart sidebar-nav-icon"></i>
+									<span class="sidebar-nav-mini-hide">Order</span>
+								</router-link>
+							</li>
 						</ul>
 					</li>
 					<li class="sidebar-separator">

@@ -29,7 +29,7 @@ const createOrder = (session, shippingFee) => {
 		method: "BANK_TRANSFER"
 	};
 	session.items.forEach(item => {
-		orderData.subTotal += item.total / 100;
+		orderData.subTotal += item.total;
 	});
 	orderData.total = orderData.subTotal + orderData.shippingFee;
 	orderData.customer = {
@@ -40,6 +40,11 @@ const createOrder = (session, shippingFee) => {
 	return Order.create(orderData);
 };
 
+const getOrders = () => {
+	return Order.find().exec();
+}
+
 module.exports = {
-	createOrder
+	createOrder,
+	getOrders
 }

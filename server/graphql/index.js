@@ -3,30 +3,22 @@
 const graphqlHTTP = require('express-graphql');
 const graphql = require('graphql');
 
-const Product = require('./product');
+const Type = require('./type');
 const auth = require('../auth');
 
 const queryType = new graphql.GraphQLObjectType({
 	name: 'Query',
 	fields: function() {
-		return Object.assign(Product.queryType);
-	}
-});
-
-const mutationType = new graphql.GraphQLObjectType({
-	name: 'Mutation',
-	fields: () => {
-		return Object.assign(Product.mutationType);
+		return Object.assign(Type.queryType);
 	}
 });
 
 const schema = new graphql.GraphQLSchema({
-	query: queryType,
-	mutation: mutationType,
+	query: queryType
 });
 
 module.exports = function(app) {
-	app.use('/graphql', auth.verifyMiddleware, graphqlHTTP({
+	app.use('/graphql', /*auth.verifyMiddleware,*/ graphqlHTTP({
 		schema: schema,
 		graphiql: true,
 	}));

@@ -29,12 +29,12 @@ const OrderSchema = new Schema({
 		status: String, //WAIT_VERIFIED, READY, PACKING, DROPOFF, DELIVERED
 		type: String,
 		trackingNo: String
-	}),
+	}, { _id : false }),
 	payment: new Schema({
 		method: String,
-		slip: String,
+		attachments: [String],
 		status: String, //WAIT, SLIP_PENDING, VERIFIED
-	}),
+	}, { _id : false }),
 	subTotal: Number,
 	shippingFee: Number,
 	total: Number,

@@ -166,11 +166,9 @@ const receivedPostback = (event) => {
 			if (session.addressConfirm) {
 				if (session.items && session.items.length > 0) {
 					return orderService.createOrder(session).then(order => {
-						console.log(order);
+						messenger.sendReceiptTemplate(session, order);
+						messenger.sendPaymentMethod(session, 3000);
 					});
-
-					messenger.sendReceiptTemplate(session);
-					messenger.sendPaymentMethod(session, 3000);
 				}
 				else {
 					messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
@@ -291,112 +289,23 @@ const receivedMessage = (event) => {
 			// keywords and send back the corresponding example. Otherwise, just echo
 			// the text we received.
 			switch (messageText) {
-				/*case 'image':
-				sendImageMessage(senderID);
-				break;
-
-				case 'gif':
-				sendGifMessage(senderID);
-				break;
-
-				case 'audio':
-				sendAudioMessage(senderID);
-				break;
-
-				case 'video':
-				sendVideoMessage(senderID);
-				break;
-
-				case 'file':
-				sendFileMessage(senderID);
-				break;
-
-				case 'button':
-				sendButtonMessage(senderID);
-				break;
-
-				case 'generic':
-				sendGenericMessage(senderID);
-				break;
-
-				case 'receipt':
-				sendReceiptMessage(senderID);
-				break;
-
-				case 'quick reply':
-				sendQuickReply(senderID);
-				break;
-
-				case 'read receipt':
-				sendReadReceipt(senderID);
-				break;
-
-				case 'typing on':
-				sendTypingOn(senderID);
-				break;
-
-				case 'typing off':
-				sendTypingOff(senderID);
-				break;
-
-				case 'account linking':
-				sendAccountLinking(senderID);
-				break;*/
 
 				default:
-				messenger.sendTextMessage(senderID, messageText + ' [bot]');
+				//messenger.sendTextMessage(senderID, messageText + ' [bot]');
 			}
 		} else if (messageAttachments) {
-			messenger.sendTextMessage(senderID, "Message with attachment received");
+			if (messageAttachments.length > 0) {
+				messageAttachments.forEach(messageAttachment => {
+					if (messageAttachment.type === 'image') {
+						console.log(messageAttachment.payload);
+					}
+				});
+				messenger.sendTextMessage(senderID, 'ขอบคุณครับ กรุณารอตรวจสอบนะคร้าบ');
+			}
 		}
 	});
 
 };
-
-let orders = [];
-orders.push({
-	q: 2,
-	price: 189,
-	productName: 'Fizbone',
-	link: 'link',
-	promotionId: '5901fa5da6613e67eca51b90',
-},
-{
-	q: 1,
-	price: 189,
-	productName: 'Fizbone',
-	link: 'link',
-	promotionId: '5901fa5da6613e67eca51b90',
-})
-let customer = {
-	_id: '590b31b73079e580ec57f16d'
-}
-
-const checkout = (items, customerId) => {
-	/*let sales = [];
-	items.forEach(item => {
-		sales.push(saleService.createSale({
-			quantity: item.q,
-			description: 'Facebook Messenger Bot',
-			saleDate: new Date(),
-			promotionId: item.promotionId,
-			customerId: customerId
-		}).then(sale => {
-			console.log("a sale saved");
-			console.log(sale);
-			item.saleId = sale._id;
-		}));
-	});
-	Promise.all(sales).then(() => {
-		console.log("All sales saved");
-		console.log(items);
-		orderService.createOrder(sales, session).then(order => {
-			console.log(order);
-		})
-	});*/
-}
-
-//checkout(orders);
 
 module.exports = {
 	verifyRequestSignature,

@@ -21,11 +21,6 @@ const PromotionSchema = new Schema({
 	timestamps: true
 });
 
-// Getter
-PromotionSchema.path('price').get(function(num) {
-  return (num / 100).toFixed(2);
-});
-
 // Setter
 PromotionSchema.path('price').set(function(num) {
   return num * 100;

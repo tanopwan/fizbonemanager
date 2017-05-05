@@ -162,11 +162,10 @@ function sendImageMessage(recipientId, url) {
 * Send a Receipt
 *
 */
-const sendReceiptTemplate = (session) => {
+const sendReceiptTemplate = (session, order) => {
 	let payload = {
 		"template_type": "receipt",
-		//"recipient_name": "Stephane Crozatier",
-		//"order_number": "12345678902",
+		"order_number": order._id,
 		"currency": "THB",
 		"payment_method": "โอนเงินผ่านบัญชีธนาคาร",
 		//"order_url":"http://petersapparel.parseapp.com/order?order_id=123456",
@@ -179,7 +178,6 @@ const sendReceiptTemplate = (session) => {
 		}
 	};
 
-	payload.order_number = "ref1234";
 	let subtotal = 0.00;
 	if (session.items) {
 		session.items.forEach(order => {
@@ -218,6 +216,7 @@ const sendReceiptTemplate = (session) => {
 	payload.summary.subtotal = subtotal / 100;
 	payload.summary.total_cost = subtotal / 100;
 
+	session.orders = [];
 	sendTemplateMessage(session.senderID, payload);
 };
 
