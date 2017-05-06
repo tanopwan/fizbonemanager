@@ -16,7 +16,8 @@ const CustomerSchema = new Schema({
 		postalCode: String
 	},
 	type: String,
-	refUserId: String
+	refUserId: String,
+	ref: new Schema({}, { strict: false })
 },
 {
 	timestamps: true

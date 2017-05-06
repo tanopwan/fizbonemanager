@@ -121,7 +121,7 @@
 						</td>
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
 						<td class="text-center">{{ order.noItems }}</td>
-						<td class="text-center">{{ order.total }}</td>
+						<td class="text-center">{{ (order.total / 100).toFixed(2) }}</td>
 						<td class="text-center">{{ order.payment ? order.payment.status : 0 }}</td>
 						<td class="text-center">
 							{{ order.shipping ? order.shipping.status: 0 }}

@@ -16,13 +16,14 @@ const createFacebookCustomer = (psid) => {
 		if (!error && response.statusCode == 200) {
 			let obj = JSON.parse(body);
 
-			let user = {
+			let customer = {
 				name: obj.first_name + ' ' + obj.last_name,
 				type: 'FacebookOnline',
-				refUserId: psid
+				refUserId: psid,
+				ref: obj
 			};
 
-			Customer.create(user).then(result => {
+			Customer.create(customer).then(result => {
 				console.log("New FacebookOnline customer created");
 				console.log(result);
 			}).catch(error => {
