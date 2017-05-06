@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const messenger = require('./messenger.facebook');
 const sessionService = require('./session');
 const orderService = require('../order.service');
+const attachmentService = require('../attachment.service');
 const saleService = require('../sale.service');
 
 /*
@@ -309,8 +310,12 @@ const receivedMessage = (event) => {
 								order.payment.attachments.push(messageAttachment.payload.url);
 								return order.save();
 							}
+						});
+						attachmentService.saveAttachment(session.customer.customerId, messageAttachment.payload).then(attachment => {
+							console.log(attachment);
+						}).catch(err => {
+							console.log(err);
 						})
-						// TODO: save to customer temp
 					}
 				});
 			}
