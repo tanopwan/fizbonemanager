@@ -126,13 +126,15 @@ const sendProductList = (session) => {
 *
 */
 const sendOrderList = (session) => {
-	let text = `คุณมีสินค้า ${session.items.length} ชิ้น อยู่ในตระกร้า\n`;
+	let text = `คุณมีสินค้า ${session.items.length} รายการ อยู่ในตระกร้า\n`;
 	let count = 1;
+	let sum = 0;
 	session.items.forEach(order => {
-		text = text + `${count}. ${order.productName}\nจำนวน ${order.q} รวมเป็นเงิน ${order.price / 100 * order.q} บาท\n`;
+		text = text + `${count}. ${order.product.name}\nจำนวน ${order.quantity} รวมเป็นเงิน ${(order.price / 100 * order.quantity).toFixed(2)} บาท\n`;
 		count++;
+		sum += (order.price / 100 * order.quantity);
 	});
-
+	text = text + `ยอดรวม ${sum.toFixed(2)} บาท`;
 	sendTextMessage(session.senderID, text);
 };
 
@@ -188,7 +190,7 @@ const sendReceiptTemplate = (session, order) => {
 				quantity: order.quantity,
 				price: order.price / 100,
 				currency: "THB",
-				image_url: order.link
+				image_url: order.product.link
 			});
 		})
 	}

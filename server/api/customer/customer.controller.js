@@ -53,8 +53,9 @@ const shippingAddress = function(req, res) {
 	console.log("Verified Signed Signature for customer: " + psid);
 	CustomerService.setShippingAddress(psid, req.body).then(customer => {
 		let session = sessionManager.getSession(psid, page_id);
-		if (session && customer.address) {
-			messenger.sendAddressResult(session, customer.address);
+		if (session) {
+			session.customer = customer;
+			messenger.sendAddressResult(session);
 			res.status(200).json("{}");
 		}
 		else {

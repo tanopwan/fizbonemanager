@@ -23,12 +23,7 @@ const createFacebookCustomer = (psid) => {
 				ref: obj
 			};
 
-			Customer.create(customer).then(result => {
-				console.log("New FacebookOnline customer created");
-				console.log(result);
-			}).catch(error => {
-				console.log(error);
-			});
+			return Customer.create(customer);
 		} else {
 			console.error(error);
 		}
