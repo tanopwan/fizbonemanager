@@ -146,7 +146,15 @@ export default {
 	},
 	methods: {
 		verify() {
-			console.log("verify");
+			this.$http.post('api/sales/order/' + this.viewOrder._id).then(response => {
+				let updatedOrder = response.body;
+				this.viewOrder = null;
+				this.orders.forEach((order) => {
+					if (order._id === updatedOrder._id) {
+						order.payment = updatedOrder.payment;
+					}
+				});
+			}).catch(response => console.log(response));
 		}
 	},
 	computed: {

@@ -13,6 +13,7 @@ router.get('/:id', ctrl.view);
 router.use(auth.verifyMiddleware);
 
 router.post('/', ctrl.create);
+router.post('/order/:id', ctrl.verifyOrder);
 router.delete('/:id', ctrl.destroy);
 
 module.exports = router;
