@@ -10,6 +10,7 @@ import Consignment from './components/Consignment.vue';
 import Customer from './components/Customer.vue';
 import Dashboard from './components/Dashboard.vue';
 import PageContent from './components/PageContent.vue';
+import OnlineShop from './components/OnlineShop.vue';
 
 const routes = [
 	{
@@ -24,7 +25,7 @@ const routes = [
 			{ path: '/order', component: Order },
 			{ path: '/customer', component: Customer },
 			{ path: '/saleReport', component: SaleReport },
-
+			{ path: '/onlineshop', component: OnlineShop },
 		]
 	},
 	{ path: '/dashboard', component: Dashboard }

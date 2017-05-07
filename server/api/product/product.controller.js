@@ -23,8 +23,19 @@ const view = function(req, res) {
 
 const create = function(req, res) {
 	let userId = req.decoded._doc._id;
-	
+
 	return productService.createProduct(req.body, userId)
+	.then(product => {
+		if(!product) {
+			return res.status(404).end();
+		}
+		res.json(product);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
+const online = function(req, res) {
+	return productService.getOnlineProducts()
 	.then(product => {
 		if(!product) {
 			return res.status(404).end();
@@ -107,5 +118,6 @@ module.exports = {
 	create,
 	index,
 	destroy,
-	batch
+	batch,
+	online
 };

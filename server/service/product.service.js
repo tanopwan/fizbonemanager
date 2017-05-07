@@ -21,17 +21,6 @@ const promiseOnlineProducts = Promotion.aggregate([
 	{
 		$unwind: '$batch'
 	},
-	/*{
-		$lookup: {
-			"from": "products",
-			"localField": "batch.productId",
-			"foreignField": "_id",
-			"as": "product"
-		}
-	},
-	{
-		$unwind: '$product'
-	},*/
 	{
 		$group: {
 			_id: '$batch.product.name',

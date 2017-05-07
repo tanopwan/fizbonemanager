@@ -7,6 +7,7 @@ const auth = require('../../auth');
 var router = express.Router();
 
 router.get('/batches', ctrl.batch);
+router.get('/online', ctrl.online);
 router.get('/:id', ctrl.view);
 router.get('/', ctrl.index);
 

@@ -99,6 +99,12 @@
 							<span class="sidebar-nav-mini-hide">Promotion</span>
 						</router-link>
 					</li>
+					<li>
+						<router-link to="/onlineshop">
+							<i class="gi gi-shopping_bag sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Online Product</span>
+						</router-link>
+					</li>
 				</ul>
 				<!-- END Sidebar Navigation -->
 			</div>

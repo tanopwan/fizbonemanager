@@ -18,9 +18,6 @@ export const EventBus = new Vue({
 		getProducts() {
 			return this.$http.get(this.productURL);
 		},
-		addProduct(data) {
-			return this.$http.post(this.productURL, data);
-		},
 		getBatches() {
 			return this.$http.get(this.batchURL);
 		},

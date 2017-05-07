@@ -57,34 +57,21 @@ export default {
 	},
 	methods: {
 		addProduct() {
-			EventBus.addProduct({ name: this.productName, link: this.productImage })
-				.then(response => {
-					this.products.push(response.body);
-				}, response => {
-					console.log(response);
-				});
+			this.$http.post('/api/products', { name: this.productName, link: this.productImage })
+			.then(response => {
+				this.products.push(response.body);
+			}, response => {
+				console.log(response);
+			});
 		},
 		deleteProduct(id) {
-			EventBus.query(`mutation { deleteProduct(_id: "${ id }") { ok, n } }`)
-				.then(response => {
-					let index = -1;
-					this.products.forEach((product, idx) => {
-						if (product._id === id) {
-							index = idx;
-						}
-					});
-					if (index !== -1) {
-						this.products.splice(index, 1);
-					}
-				}, response => {
-					console.log(response);
-				});
+
 		}
 	},
 	created() {
 		EventBus.query("{ products { _id, name, link } }")
-			.then(response => this.products = response.body.data.products)
-			.catch(response => console.log(response));
+		.then(response => this.products = response.body.data.products)
+		.catch(response => console.log(response));
 	}
 }
 </script>
