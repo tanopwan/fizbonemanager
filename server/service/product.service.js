@@ -3,6 +3,9 @@
 const Product = require('../model/product.model');
 const Promotion = require('../model/promotion.model');
 
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 let cacheOnlineProducts = null;
 const promiseOnlineProducts = Promotion.aggregate([
 	{ $match: { group: { $eq: 'Online' } } },
