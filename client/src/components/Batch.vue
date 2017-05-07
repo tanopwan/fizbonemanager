@@ -47,7 +47,7 @@
 								<button class="btn btn-danger" @click="deleteBatch(batch._id)"><i class="fa fa-minus"></i></button>
 							</div>
 							<h4 class="sub-header">
-								{{ batch.batchRef }} <small>{{ getProductById(batch.productId).name }}</small>
+								{{ batch.batchRef }} <small>{{ batch.product.name }}</small>
 							</h4>
 						</div>
 						<div>
@@ -89,19 +89,14 @@ export default {
 		}
 	},
 	methods: {
-		getProductById(id) {
-			let foundProduct = null;
-			this.products.forEach(product => {
-				if (product._id === id) {
-					foundProduct = product;
-				}
-			});
-			return foundProduct;
-		},
 		addBatch() {
+			let productId = $('.select-select2').val();
+			let product = this.products.find(product => product._id === productId);
 			let body = {
 				batchRef: `${this.batchRefPrefix}_${this.batchRef}`,
-				productId: $('.select-select2').val(),
+				product: {
+					name: product.name
+				},
 				quantity: this.quantity
 			}
 			this.$http.post('/api/batches', body).then(response => {
@@ -141,7 +136,6 @@ export default {
 		EventBus.query("{ products { _id, name } }")
 			.then(response => {
 				this.products = response.body.data.products
-				console.log(this.products);
 			})
 			.catch(response => console.log(response));
 		EventBus.getBatches()

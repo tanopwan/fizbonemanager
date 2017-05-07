@@ -53,11 +53,11 @@ const index = function(req, res) {
 	}
 
 	return Promotion.find({ isEnded: isEnded }).populate({
-		path: 'batchId',
+		path: 'batchId'/*,
 		populate: {
 			path: 'productId',
 			model: 'Product'
-		}
+		}*/
 	}).exec()
 	.then(promotion => {
 		if(!promotion) {

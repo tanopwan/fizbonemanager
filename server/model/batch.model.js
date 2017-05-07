@@ -9,7 +9,12 @@ const BatchSchema = new Schema({
 	quantity: Number,
 	batchRef: String,
 	isFinish: { type: Boolean, default: false },
-	productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+	product: new Schema({
+		name: String,
+		link: String
+	}, {
+		_id : false
+	}),
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
 {

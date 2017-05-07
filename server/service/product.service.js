@@ -21,7 +21,7 @@ const promiseOnlineProducts = Promotion.aggregate([
 	{
 		$unwind: '$batch'
 	},
-	{
+	/*{
 		$lookup: {
 			"from": "products",
 			"localField": "batch.productId",
@@ -31,12 +31,11 @@ const promiseOnlineProducts = Promotion.aggregate([
 	},
 	{
 		$unwind: '$product'
-	},
+	},*/
 	{
 		$group: {
-			_id: '$product._id',
-			productName: { $first: '$product.name' },
-			link: { $first: '$product.link' },
+			_id: '$batch.product.name',
+			link: { $first: '$batch.product.link' },
 			price: { $first: '$price' },
 			batchId: { $first: '$batch._id' },
 			promotionId: { $first: '$_id' },

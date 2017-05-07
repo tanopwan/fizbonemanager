@@ -22,6 +22,7 @@ const view = function(req, res) {
 
 const create = function(req, res) {
 	let userId = new ObjectId(req.decoded._doc._id);
+	let productId = req.body.productId;
 
 	let batchData = Object.assign({ createdBy: userId }, req.body);
 	return Batch.create(batchData)
@@ -88,7 +89,7 @@ const stock = function(req, res) {
 		{
 			$unwind: '$batch'
 		},
-		{
+		/*{
 			$lookup: {
 		        "from": "products",
 		        "localField": "batch.productId",
@@ -98,11 +99,11 @@ const stock = function(req, res) {
 		},
 		{
 			$unwind: '$product'
-		},
+		},*/
 		{
 			$group: {
 				_id: '$promotion.batchId',
-				productName: { $first: '$product.name' },
+				productName: { $first: '$batch.product.name' },
 				batchName: { $first: '$batch.batchRef' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
