@@ -53,6 +53,24 @@ const getOnlineProducts = () => {
 	}
 }
 
+const getProduct = (productId) => {
+	return Product.findOne({ _id: productId }).exec();
+}
+
+const getProducts = (productId) => {
+	return Product.find().exec();
+}
+
+const createProduct = (data, userId) => {
+	let createdBy = new ObjectId(userId);
+	let productData = Object.assign({ createdBy }, data);
+
+	return Product.create(productData);
+}
+
 module.exports = {
-	getOnlineProducts
+	getOnlineProducts,
+	getProduct,
+	getProducts,
+	createProduct
 }

@@ -3,6 +3,7 @@
 const Product = require('../../model/product.model');
 const Batch = require('../../model/batch.model');
 const config = require('../../config/environment');
+const productService = require('../../service/product.service');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -10,7 +11,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const view = function(req, res) {
 	let productId = req.params.id;
 
-	return Product.findOne({ _id: productId }).exec()
+	return productService.getProduct(productId)
 	.then(product => {
 		if(!product) {
 			return res.status(404).end();
@@ -21,10 +22,9 @@ const view = function(req, res) {
 }
 
 const create = function(req, res) {
-	let userId = new ObjectId(req.decoded._doc._id);
-	let productData = Object.assign({ createdBy: userId }, req.body);
-
-	return Product.create(productData)
+	let userId = req.decoded._doc._id;
+	
+	return productService.createProduct(req.body, userId)
 	.then(product => {
 		if(!product) {
 			return res.status(404).end();
@@ -35,7 +35,7 @@ const create = function(req, res) {
 }
 
 const index = function(req, res) {
-	return Product.find().exec()
+	return productService.getProducts()
 	.then(product => {
 		if(!product) {
 			return res.status(404).end();
