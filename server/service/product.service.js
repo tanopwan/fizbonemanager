@@ -1,7 +1,7 @@
 'use strict';
 
 const Product = require('../model/product.model');
-const Promotion = require('../api/promotion/promotion.model');
+const Promotion = require('../model/promotion.model');
 
 let cacheOnlineProducts = null;
 const promiseOnlineProducts = Promotion.aggregate([

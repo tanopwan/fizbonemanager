@@ -1,6 +1,6 @@
 'use strict';
 
-const Promotion = require('./promotion.model');
+const Promotion = require('../../model/promotion.model');
 const Sale = require('../../model/sale.model');
 const config = require('../../config/environment');
 

@@ -3,6 +3,7 @@
 const Sale = require('../../model/sale.model');
 const Order = require('../../model/order.model');
 const config = require('../../config/environment');
+const messenger = require('../../service/bot/messenger.facebook');
 const moment = require('moment');
 
 const mongoose = require('mongoose');
@@ -118,9 +119,9 @@ const verifyOrder = function(req, res) {
 	let orderId = new ObjectId(req.params.id);
 
 	return Order.findOneAndUpdate({ _id: orderId }, { $set: { 'payment.status': 'VERIFIED' } }, { new: true }).exec()
-	.then(result => {
-		console.log(result);
-		res.json(result);
+	.then(order => {
+		messenger.sendReadyToShipMessage(order.customer.refUserId, order._id);
+		res.json(order);
 	})
 	.catch(err => res.status(500).json(err));
 }

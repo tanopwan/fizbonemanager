@@ -1,9 +1,8 @@
 'use strict';
 
 const Batch = require('../../model/batch.model');
-const Promotion = require('../promotion/promotion.model');
+const Promotion = require('../../model/promotion.model');
 const Sale = require('../../model/sale.model');
-const config = require('../../config/environment');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -60,42 +59,6 @@ const destroy = function(req, res) {
 	.then(result => {
 		res.json(result);
 	})
-	.catch(err => res.status(500).json(err));
-}
-
-const stock2 = function(req, res) {
-	let batchId = new ObjectId(req.params.id);
-	let batchDoc = null;
-	Batch.findOne({ _id: batchId }).exec()
-	.then(batch => {
-		if(!batch) {
-			return res.status(404).json({ message: 'Batch not found' });
-		}
-		batchDoc = batch;
-		return Promotion.find({ batchId }).select(['_id']).exec();
-	})
-	.then(promotions => {
-		return Sale.find({ promotionId: { $in: promotions }}).populate('promotionId');
-	})
-	.then(sales => {
-		let totalQuantity = 0;
-		let totalAmount = 0;
-		sales.forEach(sale => {
-			totalQuantity += sale.quantity;
-			totalAmount += sale.quantity * sale.promotionId.price;
-		});
-		let inStock = batchDoc.quantity - totalQuantity;
-		batchDoc.isInStock = inStock > 0 ? true : false;
-
-		res.json({
-			totalQuantity,
-			totalAmount,
-			inStock,
-			sales
-		});
-		return batchDoc.save();
-	})
-	.then(result => console.log(result))
 	.catch(err => res.status(500).json(err));
 }
 

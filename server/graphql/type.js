@@ -119,7 +119,6 @@ const BatchType = new graphql.GraphQLObjectType({
 			_id: { type: graphql.GraphQLID },
 			quantity: { type: graphql.GraphQLInt },
 			batchRef: { type: graphql.GraphQLString },
-			isInStock: { type: graphql.GraphQLBoolean },
 			isFinish: { type: graphql.GraphQLBoolean },
 			productId: { type: graphql.GraphQLID },
 			createdBy: { type: graphql.GraphQLID },

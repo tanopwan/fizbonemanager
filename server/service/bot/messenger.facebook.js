@@ -358,6 +358,20 @@ const sendTextMessage = (recipientId, messageText, delay) => {
 	}
 };
 
+const sendReadyToShipMessage = (recipientId, orderId) => {
+	var messageData = {
+		recipient: {
+			id: recipientId
+		},
+		message: {
+			text: `[ฟีนิกซ์] ขอบคุณสำหรับการสั่งซื้อคร้าบ ผมกำลังช่วยแม่เตรียมสินค้า ซึ่งจะพยายามไม่กินขนมลูกค้านะครับ ยังไงจะแจ้งความคืบหน้าเป็นระยะครับผม (คำสั่งซื้อเลขที่: ${orderId})`
+		},
+		tag: "SHIPPING_UPDATE"
+	};
+
+	callSendAPI(messageData);
+};
+
 const sendAskForAddress = (session) => {
 	sendTemplateMessageWithDelay(session.senderID, {
 		template_type: "button",
@@ -435,5 +449,6 @@ module.exports = {
 	sendAskForAddress,
 	sendAddressResult,
 	sendMenuMessage,
-	sendPaymentMethod
+	sendPaymentMethod,
+	sendReadyToShipMessage
 }
