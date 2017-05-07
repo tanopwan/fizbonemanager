@@ -95,7 +95,7 @@
 					</li>
 					<li>
 						<router-link to="/promotion">
-							<i class="gi gi-inbox sidebar-nav-icon"></i>
+							<i class="gi gi-shopping_bag sidebar-nav-icon"></i>
 							<span class="sidebar-nav-mini-hide">Promotion</span>
 						</router-link>
 					</li>
