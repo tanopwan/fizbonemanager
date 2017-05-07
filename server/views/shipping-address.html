@@ -14,15 +14,16 @@
 <body>
 	<script>
 	var tanopwan = null;
+	var isSupported = false;
 	window.extAsyncInit = function() {
 		// the Messenger Extensions JS SDK is done loading
 		console.log("extAsyncInit");
-		var isSupported = MessengerExtensions.isInExtension();
+		isSupported = MessengerExtensions.isInExtension();
 		console.log("MessengerExtensions is " + isSupported);
 
 		MessengerExtensions.getContext('715440845305065', function success(result){
 			$('#log').text(JSON.stringify(result));
-			$("#signed_request").val(result.signed_request);
+			$('#signed_request').val(result.signed_request);
 			tanopwan = result.signed_request;
 		}, function error(result){
 			$('#log').text(JSON.stringify(result));
@@ -38,9 +39,16 @@
 	}(document, 'script', 'Messenger'));
 
 	</script>
-
 	<h3 class="ui center aligned header">Fizbone</h3>
 	<span id="log"></span>
+	<p id="message">
+		<center>
+			เนื่องจากตอนนี้ทาง Facebook Messenger ไม่ support การเปิดเว็บใน Browser<br>
+			กรุณาเปิดในมือถือ
+			<h4>ขออภัยในความไม่สะดวก</h4>
+		</center>
+	</p>
+
 	<form class="ui form container">
 		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
 		<input type="hidden" name="signed_request" id="signed_request">
@@ -100,6 +108,11 @@
 			}
 		});
 	});
+
+	if (!isSupported) {
+		$("form").hide();
+		$("message").show();
+	}
 	</script>
 </body>
 </html>
