@@ -103,7 +103,7 @@ const sendProductList = (session) => {
 		}
 		products.forEach(product => {
 			payload.elements.push({
-				"title": product.productName,
+				"title": product._id,
 				"image_url": product.link,
 				"subtitle": `ถุงละ ${product.price/100} บาท`,
 				"buttons": [
