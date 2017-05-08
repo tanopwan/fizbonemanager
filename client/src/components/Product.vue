@@ -3,16 +3,16 @@
 		<div class="row">
 			<div class="col-md-6">
 				<div class="block">
-					<div class="form-group">
+					<div class="form-group" :class="{ 'has-error': productImageError }">
+						<input type="text" v-model="productImage" class="form-control" placeholder="http://">
+					</div>
+					<div class="form-group" :class="{ 'has-error': productNameError }">
 						<div class="input-group">
 							<input type="text" v-model="productName" class="form-control" placeholder="Product Name">
 							<span class="input-group-btn">
 								<button type="button" @click="addProduct" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
 							</span>
 						</div>
-					</div>
-					<div class="form-group">
-						<input type="text" v-model="productImage" class="form-control" placeholder="http://">
 					</div>
 				</div>
 			</div>
@@ -52,14 +52,28 @@ export default {
 		return {
 			productName: '',
 			productImage: '',
-			products: []
+			products: [],
+			productNameError: false,
+			productImageError: false
 		};
 	},
 	methods: {
 		addProduct() {
+			if (!this.productName) {
+				this.productNameError = true;
+				return;
+			}
+			if (!this.productImage) {
+				this.productImageError = true;
+				return;
+			}
+			this.productNameError = false;
+			this.productImageError = false;
 			this.$http.post('/api/products', { name: this.productName, link: this.productImage })
 			.then(response => {
 				this.products.push(response.body);
+				this.productName = '';
+				this.productImage = '';
 			}, response => {
 				console.log(response);
 			});
