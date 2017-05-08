@@ -2,7 +2,7 @@
 import Vue from 'vue';
 import Promise from 'promise';
 
-const userAsync = null;
+var userAsync = null;
 
 const cookieName = 'jwt-app';
 

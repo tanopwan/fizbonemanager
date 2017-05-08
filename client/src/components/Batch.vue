@@ -3,7 +3,7 @@
 		<div class="row">
 			<div class="col-md-6 col-xs-12">
 				<div class="block">
-					<div class="row form-group">
+					<div class="row form-group" :class="{ 'has-error': quantityError }">
 						<div class="col-sm-6">
 							<div class="input-group">
 								<span class="input-group-addon">จำนวน</span>
@@ -17,7 +17,7 @@
 							</select>
 						</div>
 					</div>
-					<div class="row form-group">
+					<div class="row form-group" :class="{ 'has-error': batchNameError }">
 						<div class="col-sm-12">
 							<div class="input-group">
 								<input type="text" class="form-control input-group-addon input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
@@ -73,6 +73,8 @@ export default {
 			quantity: 0,
 			batches: [],
 			products: [],
+			quantityError: false,
+			batchNameError: false,
 			batchRefPrefix: ''
 		};
 	},
@@ -92,6 +94,23 @@ export default {
 		addBatch() {
 			let productId = $('.select-select2').val();
 			let product = this.products.find(product => product._id === productId);
+			this.batchNameError = false;
+			this.quantityError = false;
+
+			if (this.quantity < 1) {
+				this.quantityError = true;
+				return;
+			}
+
+			if (!this.batchRef) {
+				this.batchNameError = true;
+				return;
+			}
+
+			if (!productId) {
+				return;
+			}
+
 			let body = {
 				batchRef: `${this.batchRefPrefix}_${this.batchRef}`,
 				product: {
