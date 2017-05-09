@@ -1,97 +1,14 @@
 'use strict';
 
-const request = require('request');
-const config = require('../../config/facebookapi');
-const ProductService = require('../product.service');
-const CustomerService = require('../customer.service');
-
-// App Secret can be retrieved from the App Dashboard
-const APP_SECRET = (process.env.MESSENGER_APP_SECRET) || config.appSecret;
-
-// Arbitrary value used to validate a webhook
-const VALIDATION_TOKEN = (process.env.MESSENGER_VALIDATION_TOKEN) || config.validationToken;
-
-// Generate a page access token for your page from the App Dashboard
-const PAGE_ACCESS_TOKEN = (process.env.MESSENGER_PAGE_ACCESS_TOKEN) || config.pageAccessToken;
-
-// URL where the app is running (include protocol). Used to point to scripts and
-// assets located at this address.
-const SERVER_URL = (process.env.SERVER_URL) || config.serverURL;
-
-if (!(APP_SECRET && VALIDATION_TOKEN && PAGE_ACCESS_TOKEN && SERVER_URL)) {
-	console.error("Missing config values");
-	process.exit(1);
-}
+const fbMessenger = require('./fbmessenger');
+const productService = require('../product.service');
 
 /*
-* Send a template message using the Send API.
-*
-*/
-const sendTemplateMessageWithDelay = (recipientId, messageText, delay) => {
-	if (delay) {
-		setTimeout(() => sendTemplateMessage(recipientId, messageText), delay)
-	}
-	else {
-		sendTemplateMessage(recipientId, messageText);
-	}
-}
-
-/*
-* Send a template message using the Send API.
-*
-*/
-const sendTemplateMessage = (recipientId, payload) => {
-	var messageData = {
-		recipient: {
-			id: recipientId
-		},
-		message: {
-			"attachment": {
-				"type": "template",
-				"payload": payload
-			}
-		}
-	};
-	callSendAPI(messageData);
-}
-
-/*
-* Call the Send API. The message data goes in the body. If successful, we'll
-* get the message id in a response
-*
-*/
-const callSendAPI = (messageData) => {
-	request({
-		uri: 'https://graph.facebook.com/v2.6/me/messages',
-		qs: { access_token: PAGE_ACCESS_TOKEN },
-		method: 'POST',
-		json: messageData
-
-	}, function (error, response, body) {
-		if (!error && response.statusCode == 200) {
-			var recipientId = body.recipient_id;
-			var messageId = body.message_id;
-
-			if (messageId) {
-				console.log("++++++Successfully sent message with id %s to recipient %s",
-				messageId, recipientId);
-			} else {
-				console.log("++++++Successfully called Send API for recipient %s",
-				recipientId);
-			}
-		} else {
-			console.error("++++++Failed calling Send API", response.statusCode, response.statusMessage, body.error);
-		}
-		console.log("------\n" + JSON.stringify(messageData) + "\n------");
-	});
-}
-
-/*
-* Send a Product list
+* Send a Product list (Online Products)
 *
 */
 const sendProductList = (session) => {
-	ProductService.getOnlineProducts().then(resolve => {
+	productService.getOnlineProducts().then(resolve => {
 		let products = resolve;
 		let payload = {
 			"template_type": "list",
@@ -115,14 +32,14 @@ const sendProductList = (session) => {
 				]
 			});
 		});
-		sendTemplateMessage(session.senderID, payload);
+		fbMessenger.sendTemplateMessage(session.senderID, payload);
 	}).catch(resolve => {
 		console.log(resolve);
 	})
 };
 
 /*
-* Send a Order list
+* Send a Order list (Order Items)
 *
 */
 const sendOrderList = (session) => {
@@ -135,36 +52,14 @@ const sendOrderList = (session) => {
 		sum += (order.price / 100 * order.quantity);
 	});
 	text = text + `ยอดรวม ${sum.toFixed(2)} บาท`;
-	sendTextMessage(session.senderID, text);
+	fbMessenger.sendTextMessage(session.senderID, text);
 };
-
-/*
-* Send an image using the Send API.
-*
-*/
-function sendImageMessage(recipientId, url) {
-	var messageData = {
-		recipient: {
-			id: recipientId
-		},
-		message: {
-			attachment: {
-				type: "image",
-				payload: {
-					url: url
-				}
-			}
-		}
-	};
-
-	callSendAPI(messageData);
-}
 
 /*
 * Send a Receipt
 *
 */
-const sendReceiptTemplate = (session, order) => {
+const sendReceipt = (session, order) => {
 	let payload = {
 		"template_type": "receipt",
 		"order_number": order._id,
@@ -219,23 +114,31 @@ const sendReceiptTemplate = (session, order) => {
 	payload.summary.total_cost = subtotal / 100;
 
 	session.items = [];
-	sendTemplateMessage(session.senderID, payload);
+	fbMessenger.sendTemplateMessage(session.senderID, payload);
 };
 
 /*
 * Send Greeting Messages
 *
 */
-const sendGreetingMessage = (recipientId) => {
-	sendTemplateMessage(recipientId, config.TEMPLATE_PHEONIX_GREETING_PAYLOAD);
-	sendTextMessage(recipientId, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ", 1000);
-	sendTemplateMessageWithDelay(recipientId, config.TEMPLATE_CHOICES_PAYLOAD, 1500);
+const sendGreeting = (recipientId) => {
+	fbMessenger.sendTemplateMessage(recipientId, {
+		"template_type":"generic",
+		"elements":[
+			{
+				"title":"สวัสดีครับผมคือระบบตอบรับอัตโนมัติ ชื่อ ฟีนิกซ์",
+				"image_url":"https://fizbonemanager.herokuapp.com/images/pheonix.jpg",
+				"subtitle":"ถ้าไม่สนใจคุยกับผมรอสักครู่แม่ผมจะมาตอบนะครับ"
+			}
+		]
+	});
+	fbMessenger.sendTextMessage(recipientId, "วิธีสังเกตุง่ายๆว่ากำลังคุยกับผมอยู่ ให้ดูที่ต้นประโยคจะเห็น [ฟีนิกซ์] ครับ", 1000);
 };
 
-const sendShopMoreMessage = (session, showOrderListPayload, delay) => {
-	if (!delay) {
-		delay = 0;
-	}
+/*
+* Send Menu for shop more message
+*/
+const sendShopMore = (session, showOrderListPayload, delay) => {
 	let buttons = [
 		{
 			type: "postback",
@@ -257,19 +160,18 @@ const sendShopMoreMessage = (session, showOrderListPayload, delay) => {
 		});
 	}
 
-	sendTemplateMessageWithDelay(session.senderID, {
+	fbMessenger.sendTemplateMessage(session.senderID, {
 		template_type: "button",
 		text: `[ฟีนิกซ์] สั่งอะไรเพิ่มมั้ยคร้าบ?`,
 		buttons
 	}, delay);
 };
 
-const sendConfirmFinishOrderMessage = (session, delay) => {
-	if (!delay) {
-		delay = 0;
-	}
-
-	sendTemplateMessageWithDelay(session.senderID, {
+/*
+* Send confirm finish order message (CHECK_OUT or DELETE_ALL_ORDERS)
+*/
+const sendConfirmFinishOrder = (session, delay) => {
+	fbMessenger.sendTemplateMessage(session.senderID, {
 		template_type: "button",
 		text: `[ฟีนิกซ์] ตรวจสอบความถูกต้องด้วยครับ`,
 		buttons: [
@@ -333,32 +235,14 @@ const sendQuickReplyOrderQuantity = (recipientId, message, ref) => {
 		}
 	};
 
-	callSendAPI(messageData);
+	fbMessenger.callSendAPI(messageData);
 };
 
 /*
-* Send a text message using the Send API.
+* Send a message to tell user that slip is veried and ready to ship
 *
 */
-const sendTextMessage = (recipientId, messageText, delay) => {
-	if (delay) {
-		setTimeout(() => sendTextMessage(recipientId, messageText), delay);
-	}
-	else {
-		var messageData = {
-			recipient: {
-				id: recipientId
-			},
-			message: {
-				text: `[ฟีนิกซ์] ${messageText}`
-			}
-		};
-
-		callSendAPI(messageData);
-	}
-};
-
-const sendReadyToShipMessage = (recipientId, orderId) => {
+const sendReadyToShip = (recipientId, orderId) => {
 	var messageData = {
 		recipient: {
 			id: recipientId
@@ -369,11 +253,15 @@ const sendReadyToShipMessage = (recipientId, orderId) => {
 		tag: "SHIPPING_UPDATE"
 	};
 
-	callSendAPI(messageData);
+	fbMessenger.callSendAPI(messageData);
 };
 
+/*
+* Send a message to ask user to open webview in order to save address
+*
+*/
 const sendAskForAddress = (session) => {
-	sendTemplateMessageWithDelay(session.senderID, {
+	fbMessenger.sendTemplateMessage(session.senderID, {
 		template_type: "button",
 		text: `[ฟีนิกซ์] รบกวนขอที่อยู่จัดส่งด้วยครับผม`,
 		buttons: [
@@ -393,9 +281,12 @@ const sendAskForAddress = (session) => {
 	});
 }
 
+/*
+* Send a address result
+*/
 const sendAddressResult = (session) => {
 	let address = session.customer.address;
-	sendTemplateMessageWithDelay(session.senderID, {
+	fbMessenger.sendTemplateMessage(session.senderID, {
 		template_type: "button",
 		text: `[ฟีนิกซ์] ที่อยู่จัดส่ง\n คุณ ${address.name}\n ${address.street}\n${address.subDistrict} ${address.district}\n${address.province} ${address.postalCode}`,
 		buttons: [
@@ -420,35 +311,53 @@ const sendAddressResult = (session) => {
 	});
 }
 
-const sendMenuMessage = (recipientId, delay) => {
-	sendTemplateMessageWithDelay(recipientId, config.TEMPLATE_CHOICES_PAYLOAD, delay);
-}
-
-const sendPaymentMethod = (session, delay) => {
-	if (!delay) {
-		delay = 0;
-	}
-
-	setTimeout(() => {
-		sendTextMessage(session.senderID, "ลูกค้าสามารถโอนเงินได้ตามช่องทางด้านล่างเลยคร้าบ");
-		sendImageMessage(session.senderID, 'https://firebasestorage.googleapis.com/v0/b/fizbone-manager.appspot.com/o/%E0%B8%8A%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%8A%E0%B8%B3%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99.jpg?alt=media&token=af27325d-8120-46d1-9259-e2026c0bae46')
-		sendTextMessage(session.senderID, "หลังจากส่งสลิปการโอนเงินแล้ว รอระบบยืนยัน เพื่อจัดส่งสินค้าต่อไปคร้าบ", 1000);
+/*
+* Send a Main Menu (PRODUCT_LIST_PAYLOAD and CHOICE_PERSON)
+*/
+const sendMainMenu = (recipientId, delay) => {
+	fbMessenger.sendTemplateMessage(recipientId, {
+		"template_type":"button",
+		"text":"ผมจะช่วยเท่าที่จะช่วยได้คร้าบ ถ้าสั่งซื้อขนม ผมทำได้ดีเลยค้าบ",
+		"buttons":[
+			{
+				"type":"postback",
+				"title":"รอคุยกับแม่ฟีนิกซ์",
+				"payload":"CHOICE_PERSON"
+			},
+			{
+				"type":"postback",
+				"title":"ดูรายการสินค้า",
+				"payload":"PRODUCT_LIST_PAYLOAD"
+			}
+		]
 	}, delay);
 }
 
+/*
+* Send a payment method (image KBank)
+*/
+const sendPaymentMethod = (session, delay) => {
+
+	setTimeout(() => fbMessenger.sendTextMessage(session.senderID, "ลูกค้าสามารถโอนเงินได้ตามช่องทางด้านล่างเลยคร้าบ"), delay);
+	setTimeout(() => fbMessenger.sendImageMessage(session.senderID, 'https://firebasestorage.googleapis.com/v0/b/fizbone-manager.appspot.com/o/%E0%B8%8A%E0%B9%88%E0%B8%AD%E0%B8%87%E0%B8%97%E0%B8%B2%E0%B8%87%E0%B8%81%E0%B8%B2%E0%B8%A3%E0%B8%8A%E0%B8%B3%E0%B8%A3%E0%B8%B0%E0%B9%80%E0%B8%87%E0%B8%B4%E0%B8%99.jpg?alt=media&token=af27325d-8120-46d1-9259-e2026c0bae46'), delay);
+	setTimeout(() => fbMessenger.sendTextMessage(session.senderID, "หลังจากส่งสลิปการโอนเงินแล้ว รอระบบยืนยัน เพื่อจัดส่งสินค้าต่อไปคร้าบ"), delay + 1000);
+}
+
+const sendText = (recipientId, messageText, delay) => {
+	fbMessenger.sendTextMessage(recipientId, messageText, delay);
+}
+
 module.exports = {
-	appSecret: APP_SECRET,
-	validationToken: VALIDATION_TOKEN,
 	sendProductList,
 	sendOrderList,
-	sendReceiptTemplate,
-	sendGreetingMessage,
-	sendShopMoreMessage,
+	sendReceipt,
+	sendGreeting,
+	sendShopMore,
 	sendQuickReplyOrderQuantity,
-	sendTextMessage,
 	sendAskForAddress,
 	sendAddressResult,
-	sendMenuMessage,
+	sendMainMenu,
 	sendPaymentMethod,
-	sendReadyToShipMessage
+	sendReadyToShip,
+	sendText
 }

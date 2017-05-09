@@ -3,7 +3,7 @@
 const Sale = require('../../model/sale.model');
 const Order = require('../../model/order.model');
 const config = require('../../config/environment');
-const messenger = require('../../service/bot/messenger.facebook');
+const messenger = require('../../service/bot/fbmessenger');
 const moment = require('moment');
 
 const mongoose = require('mongoose');

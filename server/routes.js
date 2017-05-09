@@ -1,7 +1,9 @@
 'use strict';
 
 const path = require('path');
-const facebookBot = require('./service/bot/facebook.controller');
+const fbController = require('./service/bot/facebook.controller');
+const fbMessenger = require('./service/bot/fbmessenger');
+
 const bodyParser = require('body-parser');
 
 module.exports = function(app) {
@@ -20,8 +22,8 @@ module.exports = function(app) {
 		res.sendFile(path.resolve(`${__dirname}/views/shipping-address.html`));
 	});
 
-	app.get('/webhook', bodyParser.json({ verify: facebookBot.verifyRequestSignature }), facebookBot.verifyWebhook);
-	app.post('/webhook', bodyParser.json({ verify: facebookBot.verifyRequestSignature }), facebookBot.webhook);
+	app.get('/webhook', bodyParser.json({ verify: fbMessenger.verifyRequestSignature }), fbMessenger.verifyWebhook);
+	app.post('/webhook', bodyParser.json({ verify: fbMessenger.verifyRequestSignature }), fbController.webhook);
 
 	// Below all routes
 	app.use((req, res) => {

@@ -2,8 +2,8 @@
 
 const sessions = {};
 
-const ProductService = require('../product.service');
-const CustomerService = require('../customer.service');
+const productService = require('../product.service');
+const customerService = require('../customer.service');
 
 function Session(senderID, recipientID, timeOfMessage) {
 
@@ -13,14 +13,14 @@ function Session(senderID, recipientID, timeOfMessage) {
 		timeOfMessage: '',
 		addItem(batchId, timestamp) {
 			let ref = new Date().getTime();
-			ProductService.getOnlineProducts().then(products => {
+			productService.getOnlineProducts().then(products => {
 				let product = products.find(product => product.batchId == batchId);
 				if (product){
 					this.newItem = {
 						batchId,
 						price: product.price,
 						product: {
-							name: product.productName,
+							name: product._id,
 							link: product.link
 						},
 						ref,
@@ -65,10 +65,10 @@ function Session(senderID, recipientID, timeOfMessage) {
 module.exports = {
 	createSession(senderID, recipientID, timeOfMessage) {
 		console.log("Create new Session for customer psid: " + senderID);
-		return CustomerService.getFacebookCustomer(senderID).then(customer => {
+		return customerService.getFacebookCustomer(senderID).then(customer => {
 			if (!customer) {
 				console.log("session.js - New customer");
-				return CustomerService.createFacebookCustomer(senderID);
+				return customerService.createFacebookCustomer(senderID);
 			}
 			else {
 				console.log("session.js - Existing customer");

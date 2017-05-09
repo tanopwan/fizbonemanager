@@ -1,57 +1,10 @@
 'use strict';
 
 const crypto = require('crypto');
-const messenger = require('./messenger.facebook');
+const messenger = require('./fbmessenger.service');
 const sessionService = require('./session');
 const orderService = require('../order.service');
 const attachmentService = require('../attachment.service');
-const saleService = require('../sale.service');
-
-/*
-* Verify that the callback came from Facebook. Using the App Secret from
-* the App Dashboard, we can verify the signature that is sent with each
-* callback in the x-hub-signature field, located in the header.
-*
-* https://developers.facebook.com/docs/graph-api/webhooks#setup
-*
-*/
-function verifyRequestSignature(req, res, buf) {
-	var signature = req.headers["x-hub-signature"];
-
-	if (!signature) {
-		// For testing, let's log an error. In production, you should throw an
-		// error.
-		console.error("Couldn't validate the signature.");
-	} else {
-		var elements = signature.split('=');
-		var method = elements[0];
-		var signatureHash = elements[1];
-
-		var expectedHash = crypto.createHmac('sha1', messenger.appSecret)
-		.update(buf)
-		.digest('hex');
-
-		if (signatureHash != expectedHash) {
-			throw new Error("Couldn't validate the request signature.");
-		}
-	}
-}
-
-/*
-* Use your own validation token. Check that the token used in the Webhook
-* setup is the same token used here.
-*
-*/
-const verifyWebhook = function(req, res) {
-	if (req.query['hub.mode'] === 'subscribe' &&
-	req.query['hub.verify_token'] === messenger.validationToken) {
-		console.log("Validating webhook");
-		res.status(200).send(req.query['hub.challenge']);
-	} else {
-		console.error("Failed validation. Make sure the validation tokens match.");
-		res.sendStatus(403);
-	}
-}
 
 /*
 * All callbacks for Messenger are POST-ed. They will be sent to the same
@@ -122,19 +75,20 @@ const receivedPostback = (event) => {
 		switch (payload) {
 			case 'GET_STARTED_PAYLOAD':
 			session.items = [];
-			messenger.sendGreetingMessage(senderID);
+			messenger.sendGreeting(senderID);
+			messenger.sendMainMenu(senderID, 1500);
 			break;
 			case 'PRODUCT_LIST_PAYLOAD':
 			messenger.sendProductList(session);
 			break;
 			case 'ORDER_LIST_PAYLOAD':
 			if (!session.items || session.items.length === 0) {
-				messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
-				messenger.sendMenuMessage(senderID, 500);
+				messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+				messenger.sendMainMenu(senderID, 500);
 			}
 			else {
 				messenger.sendOrderList(session);
-				messenger.sendShopMoreMessage(session, false, 500);
+				messenger.sendShopMore(session, false, 500);
 			}
 			break;
 			case 'CHECK_OUT_ADDRESS':
@@ -167,13 +121,13 @@ const receivedPostback = (event) => {
 			if (session.addressConfirm) {
 				if (session.items && session.items.length > 0) {
 					return orderService.createOrder(session).then(order => {
-						messenger.sendReceiptTemplate(session, order);
+						messenger.sendReceipt(session, order);
 						messenger.sendPaymentMethod(session, 3000);
 					});
 				}
 				else {
-					messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
-					messenger.sendMenuMessage(senderID, 500);
+					messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+					messenger.sendMainMenu(senderID, 500);
 				}
 			}
 			else {
@@ -183,11 +137,11 @@ const receivedPostback = (event) => {
 			case 'DELETE_ALL_ORDERS':
 			session.items = [];
 			session.newItem = null;
-			messenger.sendTextMessage(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
-			messenger.sendMenuMessage(senderID, 500);
+			messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+			messenger.sendMainMenu(senderID, 500);
 			break;
 			case 'CHOICE_PERSON':
-			messenger.sendTextMessage(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
+			messenger.sendText(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
 			break;
 			default:
 			if (payload.startsWith('CUSTOM_')) {
@@ -210,7 +164,7 @@ const receivedPostback = (event) => {
 			else {
 				// When a postback is called, we'll send a message back to the sender to
 				// let them know it was successful
-				messenger.sendTextMessage(senderID, "Postback called");
+				messenger.sendText(senderID, "Postback called");
 			}
 		}
 	}).catch(error => {
@@ -270,16 +224,16 @@ const receivedMessage = (event) => {
 					if (session.setNewItemQuantity(ref, q)) {
 						let order = session.items.find(order => order.ref == ref);
 						let sum = q * order.price / 100;
-						messenger.sendTextMessage(senderID, `คุณได้สั่ง ${order.product.name} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
-						messenger.sendShopMoreMessage(session, true, 1000);
+						messenger.sendText(senderID, `คุณได้สั่ง ${order.product.name} จำนวน ${q} ถุง เป็นเงิน ${sum} บาท (ref: ${ref})`);
+						messenger.sendShopMore(session, true, 1000);
 					}
 					else {
-						messenger.sendTextMessage(senderID, "ขอโทษนะคร้าบ ผมงง รบกวนเริ่มกดสั่งซื้อใหม่นะครับ");
+						messenger.sendText(senderID, "ขอโทษนะคร้าบ ผมงง รบกวนเริ่มกดสั่งซื้อใหม่นะครับ");
 					}
 				}
 			}
 			else {
-				messenger.sendTextMessage(senderID, "Quick reply tapped");
+				messenger.sendText(senderID, "Quick reply tapped");
 			}
 			return;
 		}
@@ -292,11 +246,11 @@ const receivedMessage = (event) => {
 			switch (messageText) {
 
 				default:
-				//messenger.sendTextMessage(senderID, messageText + ' [bot]');
+				//messenger.sendText(senderID, messageText + ' [bot]');
 			}
 		} else if (messageAttachments) {
 			if (messageAttachments.length > 0) {
-				messenger.sendTextMessage(senderID, 'ขอบคุณครับ กรุณารอตรวจสอบนะคร้าบ');
+				messenger.sendText(senderID, 'ขอบคุณครับ กรุณารอตรวจสอบนะคร้าบ');
 				messageAttachments.forEach(messageAttachment => {
 					if (messageAttachment.type === 'image') {
 						orderService.getWaitPaymentOrders(session.customer.refUserId).then(orders => {
@@ -325,7 +279,5 @@ const receivedMessage = (event) => {
 };
 
 module.exports = {
-	verifyRequestSignature,
-	verifyWebhook,
 	webhook
 }

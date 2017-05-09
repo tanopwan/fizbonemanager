@@ -32,7 +32,6 @@ const promiseOnlineProducts = Promotion.aggregate([
 	}
 ]).exec().then(resolve => {
 	cacheOnlineProducts = resolve;
-	console.log(cacheOnlineProducts);
 });
 
 const getOnlineProducts = () => {
