@@ -8,7 +8,7 @@ const productService = require('../product.service');
 *
 */
 const sendProductList = (session) => {
-	productService.getOnlineProducts().then(resolve => {
+	return productService.getOnlineProducts().then(resolve => {
 		let products = resolve;
 		let payload = {
 			"template_type": "list",
@@ -22,7 +22,7 @@ const sendProductList = (session) => {
 			payload.elements.push({
 				"title": product._id,
 				"image_url": product.link,
-				"subtitle": `ถุงละ ${product.price/100} บาท`,
+				"subtitle": `ถุงละ ${(product.price/100).toFixed(2)} บาท`,
 				"buttons": [
 					{
 						"type": "postback",
@@ -33,9 +33,11 @@ const sendProductList = (session) => {
 			});
 		});
 		fbMessenger.sendTemplateMessage(session.senderID, payload);
-	}).catch(resolve => {
-		console.log(resolve);
-	})
+		return Promise.resolve();
+	}).catch(reject => {
+		console.log(reject);
+		return Promise.reject();
+	});
 };
 
 /*
