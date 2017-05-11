@@ -60,17 +60,17 @@ const migrate = function(req, res) {
 		}
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.batch.batchRef === "58b4f3cd5ed28400119edb47") {
+			if (sale.batch.batchId === "58b4f3cd5ed28400119edb47") {
 				sale.product = {
 					name: "ขนม ตับไก่ ฟรีซดราย 70 กรัม"
 				}
 			}
-			else if (sale.batch.batchRef === "58b84fe121e54e001189fb56") {
+			else if (sale.batch.batchId === "58b84fe121e54e001189fb56") {
 				sale.product = {
 					name: "ขนม ตับไก่ ฟรีซดราย 70 กรัม"
 				}
 			}
-			else if (sale.batch.batchRef === "58b93af81847920011ae0e41") {
+			else if (sale.batch.batchId === "58b93af81847920011ae0e41") {
 				sale.product = {
 					name: "Doglicious"
 				}
