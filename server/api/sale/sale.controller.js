@@ -60,19 +60,20 @@ const migrate = function(req, res) {
 		}
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.batch.batchId === ObjectId("58b4f3cd5ed28400119edb47")) {
+			console.log(sale.batch.batchId)
+			if (sale.batch.batchId.toString() === "58b4f3cd5ed28400119edb47") {
 				sale.product = {
 					name: "ขนม ตับไก่ ฟรีซดราย 70 กรัม"
 				}
 				promises.push(sale.save());
 			}
-			else if (sale.batch.batchId === ObjectId("58b84fe121e54e001189fb56")) {
+			else if (sale.batch.batchId.toString() === "58b84fe121e54e001189fb56") {
 				sale.product = {
 					name: "ขนม ตับไก่ ฟรีซดราย 70 กรัม"
 				}
 				promises.push(sale.save());
 			}
-			else if (sale.batch.batchId === ObjectId("58b93af81847920011ae0e41")) {
+			else if (sale.batch.batchId.toString() === "58b93af81847920011ae0e41") {
 				sale.product = {
 					name: "Doglicious"
 				}
