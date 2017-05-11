@@ -25,10 +25,11 @@
 				<thead>
 					<tr>
 						<th class="text-center">Date</th>
-						<th class="text-center hidden-sm hidden-xs">Promotion</th>
+						<th class="text-center">Product / Promotion</th>
 						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal }}</span></th>
+						<th class="text-center">Customer</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
 					</tr>
@@ -36,10 +37,14 @@
 				<tbody>
 					<tr v-for="sale in computedSales">
 						<td class="text-center">{{ sale.stringDate }}</td>
-						<td class="hidden-sm hidden-xs">{{ sale.promotionName }}</td>
+						<td class="text-center">{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.quantity }}</td>
 						<td class="text-center">{{ (sale.price).toFixed(2) }}</td>
 						<td class="text-center">{{ (sale.total).toFixed(2) }}</td>
+						<td class="text-center">
+							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''"><i class="fa fa-facebook"></i></button>
+							{{ sale.customer ? sale.customer.name : '' }}
+						</td>
 						<td class="hidden-sm hidden-xs">{{ sale.description }}</td>
 						<td class="text-center hidden-sm hidden-xs">
 							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
