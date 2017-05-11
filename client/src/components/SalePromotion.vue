@@ -96,6 +96,10 @@ export default {
 				description: this.description,
 				saleDate: this.saleDate,
 				isConsignment: this.isConsignment,
+				product: {
+					name: this.promotion.batchId.product.name,
+					link: this.promotion.batchId.product.link
+				},
 				batch: {
 					batchId: this.promotion.batchId._id,
 					batchRef: this.promotion.batchId.batchRef

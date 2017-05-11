@@ -69,45 +69,23 @@ const stock = function(req, res) {
 		{ $sort : { saleDate : 1 } },
 		{
 			$lookup: {
-		        "from": "promotions",
-		        "localField": "promotionId",
-		        "foreignField": "_id",
-		        "as": "promotion"
-		    }
-		},
-		{
-			$unwind: '$promotion'
-		},
-		{
-			$lookup: {
 		        "from": "batches",
-		        "localField": "promotion.batchId",
+		        "localField": "batch.batchId",
 		        "foreignField": "_id",
-		        "as": "batch"
+		        "as": "batchId"
 		    }
 		},
 		{
-			$unwind: '$batch'
+			$unwind: '$batchId'
 		},
-		/*{
-			$lookup: {
-		        "from": "products",
-		        "localField": "batch.productId",
-		        "foreignField": "_id",
-		        "as": "product"
-		    }
-		},
-		{
-			$unwind: '$product'
-		},*/
 		{
 			$group: {
-				_id: '$promotion.batchId',
-				productName: { $first: '$batch.product.name' },
+				_id: '$batch.batchId',
+				productName: { $first: '$product.name' },
 				batchName: { $first: '$batch.batchRef' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
-				totalStock: { $first: '$batch.quantity' },
+				totalStock: { $first: '$batchId.quantity' },
 				deliveries: {
 					$sum: {
 						$cond: [
@@ -134,32 +112,10 @@ const stockById = function(req, res) {
 
 	Sale.aggregate(
 		{
-			$match: { isDeleted: { $eq: false } }
-		},
-		{
-			$lookup: {
-				"from": "promotions",
-				"localField": "promotionId",
-				"foreignField": "_id",
-				"as": "promotion"
+			$match: {
+				isDeleted: { $eq: false },
+				'batch._id': { $eq: batchId }
 			}
-		},
-		{
-			$unwind: '$promotion'
-		},
-		{
-			$lookup: {
-				"from": "batches",
-				"localField": "promotion.batchId",
-				"foreignField": "_id",
-				"as": "batch"
-			}
-		},
-		{
-			$unwind: '$batch'
-		},
-		{
-			$match: {  'batch._id': { $eq: batchId } }
 		},
 		{
 			$group: {

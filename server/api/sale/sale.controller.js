@@ -60,32 +60,21 @@ const migrate = function(req, res) {
 		}
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.promotion) {
-				if (sale.promotion.price === 15000) {
-					sale.promotion.group = "Booth"
-				}
-				else if (sale.promotion.price === 17000) {
-					sale.promotion.group = "Booth"
-				}
-				else if (sale.promotion.price === 14000) {
-					sale.promotion.group = "Special"
-				}
-				else if (sale.promotion.price === 18900) {
-					sale.promotion.group = "Online"
-				}
-				else if (sale.promotion.price === 13200) {
-					sale.promotion.group = "Wholesale"
-				}
-				else if (sale.promotion.price === 0) {
-					if (sale.promotion.name === "ฝากขาย") {
-						sale.promotion.group = "Consignment"
-					}
-					else {
-						sale.promotion.group = "Sponsor"
-					}
+			if (sale.batch.batchRef === "58b4f3cd5ed28400119edb47") {
+				sale.product = {
+					name: "ขนม ตับไก่ ฟรีซดราย 70 กรัม"
 				}
 			}
-
+			else if (sale.batch.batchRef === "58b84fe121e54e001189fb56") {
+				sale.product = {
+					name: "ขนม ตับไก่ ฟรีซดราย 70 กรัม"
+				}
+			}
+			else if (sale.batch.batchRef === "58b93af81847920011ae0e41") {
+				sale.product = {
+					name: "Doglicious"
+				}
+			}
 			promises.push(sale.save());
 		});
 		Promise.all(promises).then(result => {
