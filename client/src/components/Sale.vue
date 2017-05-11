@@ -37,7 +37,7 @@
 				<tbody>
 					<tr v-for="sale in computedSales">
 						<td class="text-center">{{ sale.stringDate }}</td>
-						<td class="text-center">{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
+						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.quantity }}</td>
 						<td class="text-center">{{ (sale.price).toFixed(2) }}</td>
 						<td class="text-center">{{ (sale.total).toFixed(2) }}</td>
