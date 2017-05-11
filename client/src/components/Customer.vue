@@ -59,7 +59,11 @@ export default {
 	},
 	methods: {
 		addCustomer() {
-			this.$http.post('/api/customers', { name: this.customerName, address: this.customerAddress }).then(response => {
+			this.$http.post('/api/customers', {
+				name: this.customerName,
+				address: this.customerAddress,
+				type: 'Normal'
+			}).then(response => {
 				this.customers.push(response.body);
 			}, response => {
 				console.log(response);

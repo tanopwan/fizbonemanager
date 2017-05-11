@@ -4,6 +4,9 @@ const messenger = require('../../service/bot/fbmessenger');
 const CustomerService = require('../../service/customer.service');
 const sessionManager = require('../../service/bot/session');
 
+const mongoose = require('mongoose');
+const ObjectId = mongoose.Types.ObjectId;
+
 const view = function(req, res) {
 	let customerId = req.params.id;
 
