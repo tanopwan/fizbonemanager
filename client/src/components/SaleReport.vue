@@ -98,7 +98,7 @@ export default {
 			this.sumQuantity = 0;
 			this.sumTotal = 0;
 			this.sales.forEach(sale => {
-				sale.promotionName = sale.promotionId.name;
+				sale.promotionName = sale.promotion.name;
 				sale.price = sale.promotionId.price / 100;
 				sale.total = sale.promotionId.price * sale.quantity / 100;
 				sale.stringDate = moment(sale.saleDate).format('LLL');
