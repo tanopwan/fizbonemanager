@@ -114,17 +114,28 @@ const stockById = function(req, res) {
 		{
 			$match: {
 				isDeleted: { $eq: false },
-				'batch._id': { $eq: batchId }
+				'batch.batchId': { $eq: batchId }
 			}
 		},
 		{
+			$lookup: {
+		        "from": "batches",
+		        "localField": "batch.batchId",
+		        "foreignField": "_id",
+		        "as": "batchId"
+		    }
+		},
+		{
+			$unwind: '$batchId'
+		},
+		{
 			$group: {
-				_id: '$promotion._id',
+				_id: '$promotion.group',
 				promotionName: { $first: '$promotion.name' },
 				promotionGroup: { $first: '$promotion.group' },
 				totalQuantity: { $sum: '$quantity' },
 				transaction: { $sum: 1 },
-				totalStock: { $first: '$batch.quantity' },
+				totalStock: { $first: '$batchId.quantity' },
 				deliveries: {
 					$sum: {
 						$cond: [
