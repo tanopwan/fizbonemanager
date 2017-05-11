@@ -6,6 +6,8 @@ const config = require('../../config/environment');
 const messenger = require('../../service/bot/fbmessenger');
 const moment = require('moment');
 
+const saleService = require('../../service/sale.service');
+
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -25,8 +27,7 @@ const view = function(req, res) {
 const create = function(req, res) {
 	let userId = new ObjectId(req.decoded._doc._id);
 
-	let saleData = Object.assign({ createdBy: userId, isDeleted: false }, req.body)
-	return Sale.create(saleData)
+	return saleService.createSale(req.body, userId)
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
@@ -43,6 +44,51 @@ const create = function(req, res) {
 		console.log(err);
 		res.status(500).json(err);
 	});
+}
+
+const migrate = function(req, res) {
+	return Sale.find({}).populate(['promotionId', 'customerId',{
+		path: 'promotionId',
+		populate: {
+			path: 'batchId'
+		}
+	}]).exec()
+	.then(sales => {
+		console.log(sales);
+		if(!sales) {
+			return res.status(404).end();
+		}
+		let promises = [];
+		sales.forEach(sale => {
+			if (sale.promotionId) {
+				sale.promotion = {
+					name: sale.promotionId.name,
+					price: sale.promotionId.price
+				}
+				if (sale.promotionId.batchId) {
+					sale.batch = {
+						batchId: sale.promotionId.batchId._id,
+						batchRef: sale.promotionId.batchId.batchRef
+					}
+				}
+				sale.promotionId = null;
+			}
+			if (sale.customerId) {
+				sale.customer = {
+					name: sale.customerId.name,
+					type: sale.customerId.type,
+					refUserId: sale.customerId.refUserId
+				}
+				sale.customerId = null
+			}
+
+			promises.push(sale.save());
+		});
+		Promise.all(promises).then(result => {
+			res.json(sales);
+		});
+	})
+	.catch(err => res.status(500).json(err));
 }
 
 const index = function(req, res) {
@@ -62,7 +108,15 @@ const index = function(req, res) {
 			}
 		}
 	}
-	return Sale.find({ isDeleted: false, isConsignment }).sort({'createdAt': -1}).limit(limit).populate(['promotionId', 'customerId']).exec()
+	return Sale.find({ isDeleted: false, isConsignment })
+	.sort({'createdAt': -1}).limit(limit)
+	.populate(['promotionId', 'customerId', {
+		path: 'promotionId',
+		populate: {
+			path: 'batchId'
+		}
+	}])
+	.exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
@@ -132,5 +186,6 @@ module.exports = {
 	index,
 	destroy,
 	summary,
-	verifyOrder
+	verifyOrder,
+	migrate
 };

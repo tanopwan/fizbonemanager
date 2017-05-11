@@ -7,6 +7,7 @@ const auth = require('../../auth');
 var router = express.Router();
 
 router.get('/', ctrl.index);
+router.get('/migrate', ctrl.migrate);
 router.get('/summary', ctrl.summary);
 router.get('/:id', ctrl.view);
 

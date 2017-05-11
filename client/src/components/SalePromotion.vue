@@ -33,7 +33,7 @@
 			<div class="widget-content widget-content-full-top-bottom border-bottom">
 				<div class="row text-center">
 					<div class="col-xs-6 push-inner-top-bottom border-right">
-						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ promotion.price / 100 }} x {{ quantity }} = &#x0E3F;{{ promotion.price*quantity / 100 }}</small></h3>
+						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ (promotion.price / 100).toFixed(2) }} x {{ quantity }} = &#x0E3F;{{ (promotion.price * quantity / 100).toFixed(2) }}</small></h3>
 					</div>
 					<div class="col-xs-6 push-inner-top-bottom">
 						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks <br>{{promotion.batchId.batchRef}}</small></h3>
@@ -42,7 +42,7 @@
 			</div>
 			<div class="widget-content text-center">
 				<h3 class="widget-heading text-dark">
-					{{ promotion.batchId.productId.name }}
+					{{ promotion.batchId.product.name }}
 				</h3>
 			</div>
 		</a>
@@ -92,14 +92,27 @@ export default {
 			}
 
 			let data = {
-				promotionId: this.promotion._id,
 				quantity: this.quantity,
 				description: this.description,
 				saleDate: this.saleDate,
-				isConsignment: this.isConsignment
+				isConsignment: this.isConsignment,
+				batch: {
+					batchId: this.promotion.batchId._id,
+					batchRef: this.promotion.batchId.batchRef
+				},
+				promotion: {
+					name: this.promotion.name,
+					price: this.promotion.price
+				}
 			}
+
 			if (this.selectedCustomer) {
-				data.customerId = this.selectedCustomer;
+				let customer = this.customers.find(customer => customer._id === this.selectedCustomer);
+				data.customer = {
+					name: customer.name,
+					type: customer.type,
+					refUserId: customer.refUserId
+				}
 			}
 			if (this.quantity > stock) {
 				console.log("Over stocks!");

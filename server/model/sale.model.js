@@ -12,8 +12,27 @@ const SaleSchema = new Schema({
 	orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
 	isConsignment: { type: Boolean, default: false },
 	isDeleted: { type: Boolean, default: false },
+	batch: new Schema({
+		batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' },
+		batchRef: String,
+	}, {
+		_id : false
+	}),
 	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
+	promotion: new Schema({
+		name: String,
+		price: Number
+	}, {
+		_id : false
+	}),
 	customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
+	customer: new Schema({
+		name: String,
+		type: String,
+		refUserId: String
+	}, {
+		_id : false
+	}),
 	createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
 {

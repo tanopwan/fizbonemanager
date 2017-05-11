@@ -2,12 +2,10 @@
 
 const Sale = require('../model/sale.model');
 
-const createSale = (saleData) => {
-	if (!saleData) {
-		return Promise.reject({});
-	}
-
+const createSale = (saleData, userId) => {
+	saleData.createdBy = userId;
 	saleData.isDeleted = false;
+
 	return Sale.create(saleData);
 };
 
