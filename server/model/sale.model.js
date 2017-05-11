@@ -21,7 +21,8 @@ const SaleSchema = new Schema({
 	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
 	promotion: new Schema({
 		name: String,
-		price: Number
+		price: Number,
+		group: String
 	}, {
 		_id : false
 	}),

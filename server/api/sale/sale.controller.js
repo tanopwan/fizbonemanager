@@ -60,26 +60,30 @@ const migrate = function(req, res) {
 		}
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.promotionId) {
-				sale.promotion = {
-					name: sale.promotionId.name,
-					price: sale.promotionId.price
+			if (sale.promotion) {
+				if (sale.promotion.price === 15000) {
+					sale.promotion.group = "Booth"
 				}
-				if (sale.promotionId.batchId) {
-					sale.batch = {
-						batchId: sale.promotionId.batchId._id,
-						batchRef: sale.promotionId.batchId.batchRef
+				else if (sale.promotion.price === 17000) {
+					sale.promotion.group = "Booth"
+				}
+				else if (sale.promotion.price === 14000) {
+					sale.promotion.group = "Special"
+				}
+				else if (sale.promotion.price === 18900) {
+					sale.promotion.group = "Online"
+				}
+				else if (sale.promotion.price === 13200) {
+					sale.promotion.group = "Wholesale"
+				}
+				else if (sale.promotion.price === 0) {
+					if (sale.promotion.name === "ฝากขาย") {
+						sale.promotion.group = "Consignment"
+					}
+					else {
+						sale.promotion.group = "Sponsor"
 					}
 				}
-				sale.promotionId = null;
-			}
-			if (sale.customerId) {
-				sale.customer = {
-					name: sale.customerId.name,
-					type: sale.customerId.type,
-					refUserId: sale.customerId.refUserId
-				}
-				sale.customerId = null
 			}
 
 			promises.push(sale.save());
@@ -109,14 +113,7 @@ const index = function(req, res) {
 		}
 	}
 	return Sale.find({ isDeleted: false, isConsignment })
-	.sort({'createdAt': -1}).limit(limit)
-	.populate(['promotionId', 'customerId', {
-		path: 'promotionId',
-		populate: {
-			path: 'batchId'
-		}
-	}])
-	.exec()
+	.sort({'createdAt': -1}).limit(limit).exec()
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
@@ -142,17 +139,6 @@ const summary = function(req, res) {
 			$match: { isDeleted: { $eq: false } }
 		},
 		{ $sort : { saleDate : 1} },
-		{
-			"$lookup": {
-				"from": "promotions",
-				"localField": "promotionId",
-				"foreignField": "_id",
-				"as": "promotion"
-			}
-		},
-		{
-			"$unwind": '$promotion'
-		},
 		{
 			$group: {
 				_id: { month: { $month: "$saleDate"}, year: { $year: "$saleDate" } },

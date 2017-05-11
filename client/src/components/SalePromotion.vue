@@ -102,7 +102,8 @@ export default {
 				},
 				promotion: {
 					name: this.promotion.name,
-					price: this.promotion.price
+					price: this.promotion.price,
+					group: this.promotion.group
 				}
 			}
 
