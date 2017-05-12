@@ -12,6 +12,15 @@ const SaleSchema = new Schema({
 	orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
 	isConsignment: { type: Boolean, default: false },
 	isDeleted: { type: Boolean, default: false },
+	consignment: new Schema({
+		price: Number,
+		bill: [{
+			quantity: Number,
+			date: Date
+		}]
+	}, {
+		_id : false
+	}),
 	product: new Schema({
 		name: String,
 		link: String

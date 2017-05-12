@@ -39,7 +39,7 @@
 							<li>
 								<router-link to="/consignment">
 									<i class="gi gi-inbox sidebar-nav-icon"></i>
-									<span class="sidebar-nav-mini-hide">Consignment</span>
+									<span class="sidebar-nav-mini-hide">Create Sale</span>
 								</router-link>
 							</li>
 							<li>

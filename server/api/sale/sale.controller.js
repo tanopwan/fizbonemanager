@@ -47,12 +47,7 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	return Sale.find({}).populate(['promotionId', 'customerId',{
-		path: 'promotionId',
-		populate: {
-			path: 'batchId'
-		}
-	}]).exec()
+	return Sale.find({ isConsignment: true }).exec()
 	.then(sales => {
 		console.log(sales);
 		if(!sales) {
@@ -88,24 +83,7 @@ const migrate = function(req, res) {
 }
 
 const index = function(req, res) {
-	let limit = 0;
-	let isConsignment = { $in: [null, false, true] };
-
-	if (req.query) {
-		if(!isNaN(parseInt(req.query.limit))) {
-			limit = parseInt(req.query.limit);
-		}
-		if (req.query.consignment) {
-			if (req.query.consignment.toLowerCase() === 'true') {
-				isConsignment = true;
-			}
-			else {
-				isConsignment = { $in: [null, false] };
-			}
-		}
-	}
-	return Sale.find({ isDeleted: false, isConsignment })
-	.sort({'createdAt': -1}).limit(limit).exec()
+	return saleService.getSales(req.query ? req.query.limit : 0, req.query ? req.query.consignment : null)
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();

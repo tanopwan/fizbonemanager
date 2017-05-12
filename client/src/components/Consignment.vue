@@ -71,9 +71,9 @@ export default {
 	computed: {
 		computedConsignments: function() {
 			this.consignments.forEach(consignment => {
-				consignment.promotionName = consignment.promotionId.name;
-				consignment.price = consignment.promotionId.price / 100;
-				consignment.total = consignment.promotionId.price * consignment.quantity / 100;
+				consignment.promotionName = consignment.promotion.name;
+				consignment.price = consignment.promotion.price / 100;
+				consignment.total = consignment.promotion.price * consignment.quantity / 100;
 				consignment.stringDate = moment(consignment.saleDate).format('LLL');
 				consignment.customerName = consignment.customerId ? consignment.customerId.name : 'ทั่วไป';
 			})
