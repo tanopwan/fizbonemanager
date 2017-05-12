@@ -13,12 +13,13 @@ const SaleSchema = new Schema({
 	isConsignment: { type: Boolean, default: false },
 	isDeleted: { type: Boolean, default: false },
 	bill: new Schema({
-		price: Number,
-		bills: [{
+		bills: [new Schema({
 			quantity: Number,
+			price: Number,
 			date: Date
-		}],
-		total: Number
+		}, { _id: false })],
+		total: Number,
+		quantity: Number
 	}, {
 		_id : false
 	}),

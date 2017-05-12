@@ -1,5 +1,35 @@
 <template>
 	<div>
+		<div id="modal-regular" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 class="modal-title"><strong>Bill</strong></h3>
+					</div>
+					<div class="modal-body">
+						<div class="row form-group">
+							<div class="col-sm-6">
+								<div class="input-group">
+									<span class="input-group-addon">จำนวน</span>
+									<input type="text" v-model="billQuantity" class="form-control" placeholder="จำนวน">
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="input-group">
+									<span class="input-group-addon">ราคา</span>
+									<input type="text" v-model="billPrice" class="form-control" placeholder="ราคา">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button type="button" @click="bill" class="btn btn-effect-ripple btn-success" data-dismiss="modal" style="overflow: hidden; position: relative;">Save</button>
+						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div>
 			<div class="block full">
 				<div class="row">
@@ -37,12 +67,14 @@
 					<tr v-for="consignment in computedConsignments">
 						<td class="text-center">{{ consignment.stringDate }}</td>
 						<td class="hidden-sm hidden-xs">{{ consignment.customerName }}</td>
-						<th class="text-center">{{ consignment.quantity }}</th>
+						<th class="text-center">{{ consignment.bill ? consignment.bill.quantity : 0 }} / {{ consignment.quantity }}</th>
 						<th class="text-center">{{ consignment.price }}</th>
 						<th class="text-center">{{ consignment.total }}</th>
 						<td class="hidden-sm hidden-xs">{{ consignment.description }}</td>
 						<th class="text-center">
-							<button class="btn btn-info" @click="billConsignment(consignment._id)"><i class="fa fa-money"></i></button>
+							<a v-if="!consignment.bill || consignment.bill.quantity !== consignment.quantity" href="#modal-regular" @click="billConsignment(consignment._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
+								<i class="fa fa-money"></i>
+							</a>
 							<button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button>
 						</th>
 					</tr>
@@ -66,7 +98,10 @@ export default {
 			consignments: [],
 			batchStocks: [],
 			promotions: [],
-			customers: []
+			customers: [],
+			billQuantity: 0,
+			billPrice: 0,
+			currentConsignment: {}
 		};
 	},
 	computed: {
@@ -100,8 +135,24 @@ export default {
 		}
 	},
 	methods: {
-		billConsignment(id, quantity) {
+		bill() {
+			if (this.billQuantity <= 0 || this.billQuantity > this.currentConsignment.quantity) {
+				console.log("invalid quantity");
+				return;
+			}
 
+			console.log(this.billQuantity);
+			this.$http.post(`/api/sales/bill/${this.currentConsignment._id}`, {
+				quantity: this.billQuantity,
+				price: this.billPrice
+			}).then(response => {
+				console.log(response);
+			}).catch(response => console.log(response));
+		},
+		billConsignment(id) {
+			this.currentConsignment = this.consignments.find(consignment => consignment._id === id);
+			this.billQuantity = this.currentConsignment.quantity - (this.currentConsignment.bill ? this.currentConsignment.bill.quantity : 0);
+			this.billPrice = this.currentConsignment.price;
 		},
 		deleteConsignment(id) {
 			this.$http.delete('/api/sales/' + id).then(response => {

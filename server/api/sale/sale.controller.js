@@ -63,8 +63,7 @@ const migrate = function(req, res) {
 				console.log(sale);
 				if (sale.promotion && sale.quantity) {
 					sale.bill = {
-						price: sale.promotion.price,
-						bills: [{ quantity: sale.quantity }],
+						bills: [{ price: sale.promotion.price, quantity: sale.quantity }],
 						total: sale.promotion.price * sale.quantity
 					}
 					promises.push(sale.save());
@@ -133,6 +132,30 @@ const verifyOrder = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const bill = function(req, res) {
+	let saleId = new ObjectId(req.params.id);
+	let quantity = req.body.quantity;
+	let price = req.body.price;
+
+	if (quantity <= 0 || price <= 0) {
+		return res.status(400).json({ message: "quantity should be positive number"});
+	}
+
+	return Sale.findOneAndUpdate({ _id: saleId }, {
+		$push: {
+			"bill.bills": { quantity: quantity, price: price, date: new Date() }
+		},
+		$inc: {
+			"bill.total": quantity * price,
+			"bill.quantity": quantity
+		}
+	}).exec()
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 module.exports = {
 	view,
 	create,
@@ -140,5 +163,6 @@ module.exports = {
 	destroy,
 	summary,
 	verifyOrder,
-	migrate
+	migrate,
+	bill
 };
