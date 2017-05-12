@@ -49,14 +49,15 @@ const create = function(req, res) {
 const migrate = function(req, res) {
 	return Sale.find().exec()
 	.then(sales => {
-		console.log("Migrate " + sales.length + " rows");
 		if(!sales) {
 			return res.status(404).end();
 		}
+		console.log("Migrate " + sales.length + " rows");
 		let promises = [];
 		sales.forEach(sale => {
-			console.log(sale.promotion.group.toString())
+			console.log(sale.promotion);
 			if (sale.promotion.group.toString() === "Consignment") {
+				console.log("Found Consignment");;
 				sale.isConsignment = true;
 				promises.push(sale.save());
 			}
