@@ -8,10 +8,12 @@
 			<div class="widget-content themed-background-muted text-center">
 				<div class="form-group" :class="{ 'has-error': error }">
 					<div class="input-group">
-						<span class="input-group-addon">จำนวน</span>
+						<span class="input-group-addon">Q</span>
 						<input type="number" class="form-control" v-model="quantity"></input>
 						<span class="input-group-addon" @click="quantity++"><i class="fa fa-plus"></i></span>
 						<span class="input-group-addon" @click="quantity--"><i class="fa fa-minus"></i></span>
+						<input type="number" class="form-control" v-model="promotion.price"></input>
+						<span class="input-group-addon">&#x0E3F;</span>
 					</div>
 				</div>
 				<div class="row form-group">
@@ -33,10 +35,20 @@
 			<div class="widget-content widget-content-full-top-bottom border-bottom">
 				<div class="row text-center">
 					<div class="col-xs-6 push-inner-top-bottom border-right">
-						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>{{ (promotion.price / 100).toFixed(2) }} x {{ quantity }} = &#x0E3F;{{ (promotion.price * quantity / 100).toFixed(2) }}</small></h3>
+						<h3 class="widget-heading"><i class="hi hi-tag text-dark push"></i> <br><small>{{ (promotion.price / 100).toFixed(2) }} x {{ quantity }}</small></h3>
 					</div>
 					<div class="col-xs-6 push-inner-top-bottom">
-						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks <br>{{promotion.batchId.batchRef}}</small></h3>
+						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>&#x0E3F;{{ (promotion.price * quantity / 100).toFixed(2) }}</small></h3>
+					</div>
+				</div>
+			</div>
+			<div class="widget-content widget-content-full-top-bottom border-bottom">
+				<div class="row text-center">
+					<div class="col-xs-6 push-inner-top-bottom border-right">
+						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{promotion.batchId.batchRef}}</small></h3>
+					</div>
+					<div class="col-xs-6 push-inner-top-bottom">
+						<h3 class="widget-heading"><i class="gi gi-sort text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks</small></h3>
 					</div>
 				</div>
 			</div>
