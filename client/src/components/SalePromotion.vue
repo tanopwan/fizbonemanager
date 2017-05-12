@@ -14,6 +14,7 @@
 						<span class="input-group-addon" @click="quantity--"><i class="fa fa-minus"></i></span>
 						<input type="number" class="form-control" v-model="promotion.price"></input>
 					</div>
+					<span v-if="error">{{ errorMessage }}</span>
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-12">
@@ -88,6 +89,7 @@ export default {
 			quantity: this.promotion.quantity,
 			description: '',
 			error: false,
+			errorMessage: '',
 			selectedCustomer: '',
 			selectedBatch: '',
 			batchOptions: []
@@ -122,6 +124,18 @@ export default {
 				this.saleDate = moment();
 			}
 
+			if (this.promotion.price < 1000 && this.promotion.price != 0) {
+				this.error = true;
+				this.errorMessage = "Invalid price, 0 or at least 1000 (10 Baht)";
+				return false;
+			}
+
+			if (this.quantity > stock) {
+				this.error = true;
+				this.errorMessage = "Over stocks!";
+				return false;
+			}
+
 			let data = {
 				quantity: this.quantity,
 				description: this.description,
@@ -151,11 +165,6 @@ export default {
 				}
 			}
 
-			if (this.quantity > stock) {
-				console.log("Over stocks!");
-				this.error = true;
-				return false;
-			}
 			this.error = false;
 			EventBus.addSale(data).then(response => {
 				this.onAddSale(response.body);
