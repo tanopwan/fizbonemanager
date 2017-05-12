@@ -52,17 +52,27 @@ const migrate = function(req, res) {
 		if(!sales) {
 			return res.status(404).end();
 		}
-		console.log("Migrate " + sales.length + " rows");
+		console.log("Found " + sales.length + " rows");
 		let promises = [];
 		sales.forEach(sale => {
-			console.log(sale.promotion);
-			if (sale.promotion && sale.promotion.group && sale.promotion.group.toString() === "Consignment") {
-				console.log("Found Consignment");;
+			if (sale.isConsignment === true) {
+				console.log("Found Consignment");
 				sale.isConsignment = true;
-				promises.push(sale.save());
+			}
+			else {
+				console.log(sale);
+				if (sale.promotion && sale.quantity) {
+					sale.bill = {
+						price: sale.promotion.price,
+						bills: [{ quantity: sale.quantity }],
+						total: sale.promotion.price * sale.quantity
+					}
+					promises.push(sale.save());
+				}
 			}
 		});
-		Promise.all(promises).then(result => {
+		console.log("Migrate " + promises.length + " rows");
+		return Promise.all(promises).then(result => {
 			res.json(promises);
 		});
 	})
