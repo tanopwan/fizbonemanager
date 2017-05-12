@@ -47,7 +47,7 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	return Sale.find({ isConsignment: false }).exec()
+	return Sale.find().exec()
 	.then(sales => {
 		if(!sales) {
 			return res.status(404).end();
