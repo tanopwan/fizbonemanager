@@ -49,14 +49,13 @@ const create = function(req, res) {
 const migrate = function(req, res) {
 	return Sale.find({ isConsignment: true }).exec()
 	.then(sales => {
-		console.log(sales);
 		if(!sales) {
 			return res.status(404).end();
 		}
 		let promises = [];
 		sales.forEach(sale => {
-			console.log(sale.batch.batchId)
-			if (sale.promotion.group === "Consignment") {
+			console.log(sale.promotion.group.toString())
+			if (sale.promotion.group.toString() === "Consignment") {
 				sale.isConsignment = true;
 				promises.push(sale.save());
 			}
