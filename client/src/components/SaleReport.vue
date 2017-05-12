@@ -44,22 +44,27 @@
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center hidden-sm hidden-xs">Promotion</th>
+						<th class="text-center">Product / Promotion</th>
 						<th class="text-center">Date</th>
 						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal }}</span></th>
+						<th class="text-center">Customer</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="sale in computedSales">
-						<td class="hidden-sm hidden-xs">{{ sale.promotionName }}</td>
+						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.stringDate }}</td>
 						<th class="text-center">{{ sale.quantity }}</th>
-						<th class="text-center">{{ sale.price }}</th>
-						<th class="text-center">{{ sale.total }}</th>
+						<th class="text-center">{{ sale.price.toFixed(2) }}</th>
+						<th class="text-center">{{ sale.total.toFixed(2) }}</th>
+						<td class="text-center">
+							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''"><i class="fa fa-facebook"></i></button>
+							{{ sale.customer ? sale.customer.name : '' }}
+						</td>
 						<td class="hidden-sm hidden-xs">{{ sale.description }}</td>
 						<th class="text-center hidden-sm hidden-xs">
 							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
@@ -99,8 +104,8 @@ export default {
 			this.sumTotal = 0;
 			this.sales.forEach(sale => {
 				sale.promotionName = sale.promotion.name;
-				sale.price = sale.promotionId.price / 100;
-				sale.total = sale.promotionId.price * sale.quantity / 100;
+				sale.price = sale.promotion.price / 100;
+				sale.total = sale.promotion.price * sale.quantity / 100;
 				sale.stringDate = moment(sale.saleDate).format('LLL');
 				this.sumQuantity += sale.quantity;
 				this.sumTotal += sale.total;
