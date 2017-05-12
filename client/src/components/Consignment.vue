@@ -57,7 +57,6 @@
 						<th class="text-center">Date</th>
 						<th class="text-center hidden-sm hidden-xs">Customer</th>
 						<th class="text-center">Quantity</th>
-						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 						<th class="text-center">Manage</th>
@@ -68,14 +67,13 @@
 						<td class="text-center">{{ consignment.stringDate }}</td>
 						<td class="hidden-sm hidden-xs">{{ consignment.customerName }}</td>
 						<th class="text-center">{{ consignment.bill ? consignment.bill.quantity : 0 }} / {{ consignment.quantity }}</th>
-						<th class="text-center">{{ consignment.price }}</th>
-						<th class="text-center">{{ consignment.total }}</th>
+						<th class="text-center">{{ consignment.bill ? consignment.bill.total : 0 }}</th>
 						<td class="hidden-sm hidden-xs">{{ consignment.description }}</td>
 						<th class="text-center">
 							<a v-if="!consignment.bill || consignment.bill.quantity !== consignment.quantity" href="#modal-regular" @click="billConsignment(consignment._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
 								<i class="fa fa-money"></i>
 							</a>
-							<button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button>
+							<!-- <button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button> -->
 						</th>
 					</tr>
 				</tbody>
