@@ -71,7 +71,7 @@
 <script>
 import { EventBus } from '../bus';
 import moment from 'moment';
-import Select2 from './basic/Select2.vue'
+import Select2 from './basic/Select2.vue';
 
 export default {
 	props: ['batchStocks', 'promotion', 'isConsignment', 'index', 'onAddSale', 'customers'],
