@@ -13,23 +13,21 @@
 						<span class="input-group-addon" @click="quantity++"><i class="fa fa-plus"></i></span>
 						<span class="input-group-addon" @click="quantity--"><i class="fa fa-minus"></i></span>
 						<input type="number" class="form-control" v-model="promotion.price"></input>
-						<span class="input-group-addon">&#x0E3F;</span>
 					</div>
 				</div>
 				<div class="row form-group">
 					<div class="col-xs-12">
-						<select2 :options="customerOptions" v-model="selectedCustomer" placeholder="เลือก ลูกค้า...">
+						<select2 :options="customerOptions" v-model="selectedCustomer" placeholder="เลือก ลูกค้า..." allowClear="true">
 							<option></option>
 						</select2>
 					</div>
 				</div>
-				<!--<div class="row form-group">
+				<div class="row form-group">
 					<div class="col-xs-12">
-						<select2 :options="batchOptions" v-model="selectedBatch" placeholder="เลือก Batch...">
-							<option></option>
+						<select2 :options="batchOptions" v-model="selectedBatch" allowClear="false">
 						</select2>
 					</div>
-				</div>-->
+				</div>
 				<div class="form-group">
 					<div class="input-group">
 						<span class="input-group-addon">รายละเอียด</span>
@@ -52,11 +50,11 @@
 			</div>
 			<div class="widget-content widget-content-full-top-bottom border-bottom">
 				<div class="row text-center">
-					<div class="col-xs-6 push-inner-top-bottom border-right">
-						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{promotion.batchId.batchRef}}</small></h3>
-					</div>
 					<div class="col-xs-6 push-inner-top-bottom">
 						<h3 class="widget-heading"><i class="gi gi-sort text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks</small></h3>
+					</div>
+					<div class="col-xs-6 push-inner-top-bottom border-right">
+						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{promotion.batchId.batchRef}}</small></h3>
 					</div>
 				</div>
 			</div>
@@ -91,8 +89,20 @@ export default {
 			description: '',
 			error: false,
 			selectedCustomer: '',
-			selectedBatch: ''
+			selectedBatch: '',
+			batchOptions: []
 		}
+	},
+	watch: {
+		promotion: function (value) {
+			this.batchOptions = [];
+			if (this.promotion.batches) {
+				this.promotion.batches.forEach(batch => {
+					this.batchOptions.push({ text: batch.batchRef, id: batch._id });
+				});
+			}
+			this.selectedBatch = this.batchOptions[0].id;
+        }
 	},
 	computed: {
 		customerOptions: function() {
@@ -140,6 +150,7 @@ export default {
 					refUserId: customer.refUserId
 				}
 			}
+
 			if (this.quantity > stock) {
 				console.log("Over stocks!");
 				this.error = true;
@@ -171,7 +182,6 @@ export default {
 	},
 	mounted() {
 		let vm = this;
-		$('.select-select2').select2();
 		$('.input-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
 			$(this).datepicker('hide');
 			let changedDate = moment($(this).val(), "YYYY-MM-DD")

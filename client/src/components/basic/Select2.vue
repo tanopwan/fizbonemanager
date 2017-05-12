@@ -9,13 +9,12 @@ export default {
 	props: ['options', 'value', 'placeholder', 'allowClear'],
 	mounted: function () {
 		let allowClear = this.allowClear === "false" ? false : true;
+
 		var vm = this
 		$(this.$el)
 		.val(this.value)
 		// init select2
-		.select2({ data: this.options, allowClear: allowClear, placeholder: {
-			id: "-1"
-		}})
+		.select2({ data: this.options, allowClear: allowClear })
 		// emit event on change.
 		.on('change', function () {
 			vm.$emit('input', this.value)
@@ -24,11 +23,13 @@ export default {
 	watch: {
 		value: function (value) {
 			// update value
-			$(this.$el).val(value)
+			$(this.$el).val(value);
 		},
 		options: function (options) {
+			let allowClear = this.allowClear === "false" ? false : true;
+
 			// update options
-			$(this.$el).select2({ data: options, allowClear: true });
+			$(this.$el).select2({ data: this.options, allowClear: allowClear });
 		}
 	},
 	destroyed: function () {

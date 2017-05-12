@@ -7,17 +7,12 @@
 						<h2>{{ product.name }}</h2>
 					</div>
 					<div class="row form-group">
-						<div class="col-xs-6">
+						<div class="col-xs-12">
 							<div class="input-group">
-								<span class="input-group-addon"><i class="fa fa-sort"></i></span>
+								<span class="input-group-addon">จำนวน</span>
 								<input type="number" class="form-control" v-model="addPromotions[index].quantity" placeholder="จำนวนเริ่มต้น">
-							</div>
-						</div>
-						<div class="col-xs-6">
-							<div class="input-group">
-								<label class="csscheckbox csscheckbox-info">
-									<input type="checkbox" v-model="addPromotions[index].isBilled"> <span> </span> ขายขาด
-								</label>
+								<span class="input-group-addon">&#x0E3F;</span>
+								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
 							</div>
 						</div>
 					</div>
@@ -34,8 +29,6 @@
 					<div class="row form-group">
 						<div class="col-xs-12">
 							<div class="input-group">
-								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
-								<span class="input-group-addon">&#x0E3F;</span>
 								<input type="text" class="form-control" v-model="addPromotions[index].name" placeholder="ชื่อโปรโมชั่น">
 								<span class="input-group-btn">
 									<button type="button" @click="addPromotion(index)" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
@@ -121,12 +114,13 @@ export default {
 			}
 		},
 		addPromotion(index) {
+			console.log(this.addPromotions[index].group)
 			let promo = {
 				name: this.addPromotions[index].name,
 				price: this.addPromotions[index].price,
 				batchId: this.addPromotions[index].batchId,
 				quantity: this.addPromotions[index].quantity || 1,
-				isBilled: this.addPromotions[index].isBilled,
+				isBilled: this.addPromotions[index].group === "Consignment" ? false : true,
 				group: this.addPromotions[index].group
 			};
 			this.$http.post('/api/promotions', promo).then(response => {
@@ -197,19 +191,6 @@ export default {
 		}
 	},
 	computed: {
-		batchOptions: function() {
-			let batchOptions = [];
-			this.products.forEach(product => {
-				var options = [];
-				this.batches.filter(batch => {
-					return batch.product.name === product.name && batch.isFinish === false;
-				}).forEach(batch => {
-					options.push({ id: batch._id, text: batch.batchRef });
-				});
-				batchOptions.push(options);
-			});
-			return batchOptions;
-		},
 		sortedPromotions: function() {
 			let sorted = this.promotions.sort(function(s1, s2){
 				let isAfter = moment(s1.updatedAt).isAfter(s2.updatedAt);
@@ -237,7 +218,7 @@ export default {
 						productId: product._id,
 						isBilled: true,
 						quantity: 1,
-						group: 1,
+						group: "Booth",
 						batches: []
 					};
 					product.batches.forEach(batch => {

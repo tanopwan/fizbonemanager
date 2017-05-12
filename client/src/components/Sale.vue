@@ -12,7 +12,9 @@
 				</div>
 			</div>
 			<div class="row">
-				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="false" :onAddSale="onAddSale" :customers="customers"></sale-promotion>
+				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="false" :onAddSale="onAddSale" :customers="customers">
+					{{ promotion }}
+				</sale-promotion>
 			</div>
 		</div>
 		<div class="block full">
@@ -61,6 +63,7 @@ import moment from 'moment';
 import { EventBus } from '../bus';
 import salePromotion from './SalePromotion.vue';
 import Select2 from './basic/Select2.vue'
+import Vue from 'vue';
 
 export default {
 	data() {
@@ -139,7 +142,17 @@ export default {
 		.then(response => this.sales = response.body)
 		.catch(response => console.log(response));
 		EventBus.getPromotions()
-		.then(response => this.promotions = response.body)
+		.then(response => {
+			this.promotions = response.body;
+			return this.$http.get('/api/products/batches');
+		})
+		.then(response => {
+			let productWithBatches = response.body;
+			this.promotions.forEach((promotion, idx) => {
+				let batches = productWithBatches.find(product => product.name === promotion.batchId.product.name).batches;
+				Vue.set(this.promotions[idx], 'batches', batches);
+			});
+		})
 		.catch(response => console.log(response));
 		EventBus.getCustomers()
 		.then(response => this.customers = response.body)
