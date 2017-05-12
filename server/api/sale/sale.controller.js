@@ -56,14 +56,14 @@ const migrate = function(req, res) {
 		let promises = [];
 		sales.forEach(sale => {
 			console.log(sale.promotion);
-			if (sale.promotion.group.toString() === "Consignment") {
+			if (sale.promotion && sale.promotion.group && sale.promotion.group.toString() === "Consignment") {
 				console.log("Found Consignment");;
 				sale.isConsignment = true;
 				promises.push(sale.save());
 			}
 		});
 		Promise.all(promises).then(result => {
-			res.json(sales);
+			res.json(promises);
 		});
 	})
 	.catch(err => res.status(500).json(err));
