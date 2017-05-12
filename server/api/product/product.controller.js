@@ -77,19 +77,8 @@ const batch = function(req, res) {
 		//{ $match: { isFinish: { $eq: false } } },
 		{ $sort : { createdAt : -1 } },
 		{
-			$lookup: {
-				"from": "products",
-				"localField": "productId",
-				"foreignField": "_id",
-				"as": "product"
-			}
-		},
-		{
-			$unwind: '$product'
-		},
-		{
 			$group: {
-				_id: '$product._id',
+				_id: '$product.name',
 				name: { $first: '$product.name' },
 				batches: { $sum: 1 },
 				finishedBatches: {
@@ -103,7 +92,14 @@ const batch = function(req, res) {
 						]
 					}
 				},
-				batches: { $push:  { batchRef: "$batchRef", quantity: "$quantity", isFinish: "$isFinish" } }
+				batches: {
+					$push:  {
+						_id: "$_id",
+						batchRef: "$batchRef",
+						quantity: "$quantity",
+						isFinish: "$isFinish"
+					}
+				}
 			}
 		}
 	]).exec()

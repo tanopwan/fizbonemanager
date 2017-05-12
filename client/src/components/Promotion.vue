@@ -7,12 +7,6 @@
 						<h2>{{ product.name }}</h2>
 					</div>
 					<div class="row form-group">
-						<div class="col-xs-12">
-							<select2 :options="batchOptions[index]" v-model="addPromotions[index].batchId" placeholder="เลือก Batch...">
-							</select2>
-						</div>
-					</div>
-					<div class="row form-group">
 						<div class="col-xs-6">
 							<div class="input-group">
 								<span class="input-group-addon"><i class="fa fa-sort"></i></span>
@@ -28,22 +22,24 @@
 						</div>
 					</div>
 					<div class="row form-group">
-						<div class="col-xs-12">
-							<div class="input-group">
-								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
-								<span class="input-group-addon">&#x0E3F;</span>
-								<input type="text" class="form-control" v-model="addPromotions[index].name" placeholder="Name">
-								<span class="input-group-btn">
-									<button type="button" @click="addPromotion(index)" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
-								</span>
-							</div>
+						<div class="col-xs-6">
+							<select2 :options="addPromotions[index].batches" v-model="addPromotions[index].batchId" allowClear="false">
+							</select2>
+						</div>
+						<div class="col-xs-6">
+							<select2 :options="groups" v-model="addPromotions[index].group" allowClear="false">
+							</select2>
 						</div>
 					</div>
 					<div class="row form-group">
 						<div class="col-xs-12">
 							<div class="input-group">
-								<span class="input-group-addon">Group Tag</span>
-								<input type="text" class="form-control" v-model="addPromotions[index].group" placeholder="'Booth', 'Online', etc.">
+								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
+								<span class="input-group-addon">&#x0E3F;</span>
+								<input type="text" class="form-control" v-model="addPromotions[index].name" placeholder="ชื่อโปรโมชั่น">
+								<span class="input-group-btn">
+									<button type="button" @click="addPromotion(index)" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+								</span>
 							</div>
 						</div>
 					</div>
@@ -104,7 +100,13 @@ export default {
 			promotions: [],
 			addPromotions: [],
 			showEndedPromotion: false,
-			isRetrievedAllPromotions: false
+			isRetrievedAllPromotions: false,
+			groups: [
+				{ id: "Booth", text: "Booth" },
+				{ id: "Online", text: "Online" },
+				{ id: "Consignment", text: "Consignment" },
+				{ id: "Special", text: "Special" }
+			]
 		};
 	},
 	methods: {
@@ -129,6 +131,9 @@ export default {
 			};
 			this.$http.post('/api/promotions', promo).then(response => {
 				this.promotions.push(response.body);
+				this.addPromotions[index].name = "";
+				this.addPromotions[index].price = "";
+				this.addPromotions[index].quantity = "";
 			}).catch(response => console.log(response));
 		},
 		deletePromotion(id) {
@@ -223,11 +228,25 @@ export default {
 		}
 	},
 	created() {
-		EventBus.query("{ products { _id, name } }")
+		this.$http.get('/api/products/batches')
 			.then(response => {
-				this.products = response.body.data.products;
+				this.products = response.body;
 				this.products.forEach(product => {
-					this.addPromotions.push({ productId: product._id, isBilled: true, quantity: 1 });
+					// Default
+					let addPromotion = {
+						productId: product._id,
+						isBilled: true,
+						quantity: 1,
+						group: 1,
+						batches: []
+					};
+					product.batches.forEach(batch => {
+						if (!batch.batchRef.isFinish) {
+							addPromotion.batches.push({ id: batch._id, text: batch.batchRef });
+						}
+					});
+					addPromotion.batchId = addPromotion.batches[0].id;
+					this.addPromotions.push(addPromotion);
 				})
 			})
 			.catch(response => console.log(response));

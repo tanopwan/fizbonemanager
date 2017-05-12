@@ -19,9 +19,17 @@
 				<div class="row form-group">
 					<div class="col-xs-12">
 						<select2 :options="customerOptions" v-model="selectedCustomer" placeholder="เลือก ลูกค้า...">
+							<option></option>
 						</select2>
 					</div>
 				</div>
+				<!--<div class="row form-group">
+					<div class="col-xs-12">
+						<select2 :options="batchOptions" v-model="selectedBatch" placeholder="เลือก Batch...">
+							<option></option>
+						</select2>
+					</div>
+				</div>-->
 				<div class="form-group">
 					<div class="input-group">
 						<span class="input-group-addon">รายละเอียด</span>
@@ -38,7 +46,7 @@
 						<h3 class="widget-heading"><i class="hi hi-tag text-dark push"></i> <br><small>{{ (promotion.price / 100).toFixed(2) }} x {{ quantity }}</small></h3>
 					</div>
 					<div class="col-xs-6 push-inner-top-bottom">
-						<h3 class="widget-heading"><i class="gi gi-money text-dark push"></i> <br><small>&#x0E3F;{{ (promotion.price * quantity / 100).toFixed(2) }}</small></h3>
+						<h3 class="widget-heading"><i class="gi gi-calculator text-dark push"></i> <br><small>&#x0E3F;{{ (promotion.price * quantity / 100).toFixed(2) }}</small></h3>
 					</div>
 				</div>
 			</div>
@@ -82,7 +90,8 @@ export default {
 			quantity: this.promotion.quantity,
 			description: '',
 			error: false,
-			selectedCustomer: ''
+			selectedCustomer: '',
+			selectedBatch: ''
 		}
 	},
 	computed: {
