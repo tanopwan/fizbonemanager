@@ -135,7 +135,7 @@ export default {
 		}
 	},
 	created() {
-		EventBus.getSales(10)
+		this.$http.get('/api/sales?consignment=false&limit=10')
 		.then(response => this.sales = response.body)
 		.catch(response => console.log(response));
 		EventBus.getPromotions()
