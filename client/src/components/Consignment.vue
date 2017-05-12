@@ -75,7 +75,7 @@ export default {
 				consignment.price = consignment.promotion.price / 100;
 				consignment.total = consignment.promotion.price * consignment.quantity / 100;
 				consignment.stringDate = moment(consignment.saleDate).format('LLL');
-				consignment.customerName = consignment.customerId ? consignment.customerId.name : 'ทั่วไป';
+				consignment.customerName = consignment.customer ? consignment.customer.name : 'ทั่วไป';
 			})
 
 			return this.consignments.sort(function(s1, s2){
