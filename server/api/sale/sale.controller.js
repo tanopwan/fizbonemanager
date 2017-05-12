@@ -108,9 +108,9 @@ const summary = function(req, res) {
 		{ $sort : { saleDate : 1} },
 		{
 			$group: {
-				_id: { month: { $month: "$saleDate"}, year: { $year: "$saleDate" } },
+				_id: { month: { $month: "$saleDate" }, year: { $year: "$saleDate" } },
 				totalQuantity: { $sum: "$quantity" },
-				totalAmount: { $sum: { $multiply: [ "$promotion.price", "$quantity" ] } },
+				totalAmount: { $sum: "$bill.total" },
 				transaction: { $sum: 1 },
 				promotions: { $addToSet: "$promotion.name" }
 			}
