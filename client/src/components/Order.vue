@@ -17,85 +17,189 @@
 				</div>
 			</div>
 		</div>
-		<div v-if="viewOrder" class="block full">
-			<div class="block-title">
-				<ul class="nav nav-tabs" data-toggle="tabs">
-					<li class="active"><a @click="viewOrder=null">Back</a></li>
-				</ul>
-			</div>
-			<h4>
-				Order <small> {{ viewOrder._id }}</small>
-			</h4>
-			<table class="table table-striped table-borderless table-vcenter">
-				<tbody>
-					<tr class="info">
-						<td colspan="3">
-							<h4>Customer: {{ viewOrder.customer.name }} <small>({{ viewOrder.customer.refUserId }})</small></h4>
-						</td>
-						<td colspan="2">Date: {{ viewOrder.stringDate }}</td>
-					</tr>
-					<tr class="primary">
-						<td colspan="3">
-							<h4>จัดส่ง {{ viewOrder.address.name }}</h4>
-							<p>
-								{{ viewOrder.address.street }}<br>
-								{{ viewOrder.address.subDistrict }}, {{ viewOrder.address.district }}<br>
-								{{ viewOrder.address.province }} {{ viewOrder.address.postalCode }}
-							</p>
-						</td>
-						<td colspan="2"></td>
-					</tr>
-					<tr v-for="item in viewOrder.items">
-						<td>
-							<img :src="item.product.link" class="img-responsive center-block" style="max-width: 100px;">
-						</td>
-						<td>
-							{{ item.product.name }} / {{ item.batch.batchRef }}
-						</td>
-						<td class="text-right">
-							&#x0E3F; {{ (item.price / 100).toFixed(2) }} / unit
-						</td>
-						<td style="width: 60px;" class="text-center">
-							{{ item.quantity }}
-						</td>
-						<td class="text-right">
-							&#x0E3F; <strong>{{ (item.total / 100).toFixed(2) }}</strong>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">Subtotal</td>
-						<td class="text-right text-warning">
-							<strong>&#x0E3F; {{ (viewOrder.subTotal / 100).toFixed(2) }}</strong>
-						</td>
-					</tr>
-					<tr>
-						<td colspan="4">Shipping Fee</td>
-						<td class="text-right text-info">
-							<strong>&#x0E3F; {{ (viewOrder.shippingFee / 100).toFixed(2) }}</strong>
-						</td>
-					</tr>
-					<tr class="success">
-						<td colspan="4">Total</td>
-						<td class="text-right">
-							<strong>&#x0E3F; {{ (viewOrder.total / 100).toFixed(2) }}</strong>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-
-			<div class="block-section">
-				<h4 class="sub-header">Payment</h4>
-				<div class="block full">
-					<div class="text-center">
-						<a href="#modal-small" class="btn btn-effect-ripple btn-danger" data-toggle="modal" style="overflow: hidden; position: relative;">
-							<i class="fa fa-check"></i> Verified
-						</a>
-					</div><br>
-					<img v-for="attachment in viewOrder.payment.attachments" :src="attachment" class="img-responsive center-block" style="max-width: 500px;">
+		<div v-show="showOrder">
+			<div class="block full">
+				<div class="block-title">
+					<ul class="nav nav-tabs">
+						<li class="active"><a @click="viewOrder=null">Back</a></li>
+					</ul>
+				</div>
+				<div class="block-section">
+					<div class="row">
+						<div class="col-md-3">
+							<ul class="nav nav-pills nav-stacked" data-toggle="tabs">
+								<li class="active">
+									<a href="#tabs-detail"><i class="fa fa-fw fa-tasks icon-push"></i> Detail</a>
+								</li>
+								<li>
+									<a href="#tabs-payment"><span class="badge pull-right">!</span><i class="fa fa-fw fa-credit-card icon-push"></i> Payment</a>
+								</li>
+								<li>
+									<a href="#tabs-shipping"><i class="fa fa-fw fa-paper-plane-o icon-push"></i> Shipping</a>
+								</li>
+							</ul>
+						</div>
+						<div class="col-md-9 tab-content">
+							<div id="tabs-detail" class="tab-pane active">
+								<h4 class="sub-header">
+									Order <small> {{ viewOrder._id }}</small>
+								</h4>
+								<table class="table table-striped table-borderless table-vcenter">
+									<tbody>
+										<tr class="info">
+											<td colspan="3">
+												<button v-if="viewOrder.customer ? viewOrder.customer.type==='FacebookOnline' : false" class="btn btn-info"><i class="fa fa-facebook"></i></button>
+												<h4>Customer: {{ viewOrder.customer.name }} <small>(refUserId: {{ viewOrder.customer.refUserId }})</small></h4>
+											</td>
+											<td colspan="2">Date: {{ viewOrder.stringDate }}</td>
+										</tr>
+										<tr class="primary">
+											<td colspan="3">
+												<h4>จัดส่ง {{ viewOrder.address.name }}</h4>
+												<p>
+													{{ viewOrder.address.street }}<br>
+													{{ viewOrder.address.subDistrict }}, {{ viewOrder.address.district }}<br>
+													{{ viewOrder.address.province }} {{ viewOrder.address.postalCode }}
+												</p>
+											</td>
+											<td colspan="2"></td>
+										</tr>
+										<tr v-for="item in viewOrder.items">
+											<td>
+												<img :src="item.product.link" class="img-responsive center-block" style="max-width: 100px;">
+											</td>
+											<td>
+												{{ item.product.name }} / {{ item.batch ? item.batch.batchRef : '' }}
+											</td>
+											<td class="text-right">
+												&#x0E3F; {{ (item.price / 100).toFixed(2) }} / unit
+											</td>
+											<td style="width: 60px;" class="text-center">
+												{{ item.quantity }}
+											</td>
+											<td class="text-right">
+												&#x0E3F; <strong>{{ (item.total / 100).toFixed(2) }}</strong>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="4">Subtotal</td>
+											<td class="text-right text-warning">
+												<strong>&#x0E3F; {{ (viewOrder.subTotal / 100).toFixed(2) }}</strong>
+											</td>
+										</tr>
+										<tr>
+											<td colspan="4">Shipping Fee</td>
+											<td class="text-right text-info">
+												<strong>&#x0E3F; {{ (viewOrder.shippingFee / 100).toFixed(2) }}</strong>
+											</td>
+										</tr>
+										<tr class="success">
+											<td colspan="4">Total</td>
+											<td class="text-right">
+												<strong>&#x0E3F; {{ (viewOrder.total / 100).toFixed(2) }}</strong>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div id="tabs-payment" class="tab-pane">
+								<h4 class="sub-header">Payment</h4>
+								<div class="block full">
+									<div class="text-center">
+										<a href="#modal-small" class="btn btn-effect-ripple btn-danger" data-toggle="modal" style="overflow: hidden; position: relative;">
+											<i class="fa fa-check"></i> Verified
+										</a>
+									</div><br>
+									<img v-for="attachment in viewOrder.payment.attachments" :src="attachment" class="img-responsive center-block" style="max-width: 500px;">
+								</div>
+							</div>
+							<div id="tabs-shipping" class="tab-pane">
+								<h4 class="sub-header">Shipping</h4>
+								<div class="row">
+									<div class="col-xs-6">
+										<div class="form-group">
+											<div class="input-group">
+												<span class="input-group-addon">Drop-off Date</span>
+												<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" v-model="dropoffDate">
+											</div>
+										</div>
+									</div>
+									<div class="col-xs-6">
+										<div class="form-group">
+											<div class="input-group bootstrap-timepicker">
+												<div class="bootstrap-timepicker-widget dropdown-menu">
+													<table>
+														<tbody>
+															<tr>
+																<td><a href="#" data-action="incrementHour"><i class="fa fa-chevron-up"></i></a></td>
+																<td class="separator">&nbsp;</td>
+																<td><a href="#" data-action="incrementMinute"><i class="fa fa-chevron-up"></i></a></td>
+																<td class="separator">&nbsp;</td>
+																<td><a href="#" data-action="incrementSecond"><i class="fa fa-chevron-up"></i></a></td>
+															</tr>
+															<tr>
+																<td><input type="text" class="form-control bootstrap-timepicker-hour" maxlength="2"></td>
+																<td class="separator">:</td>
+																<td><input type="text" class="form-control bootstrap-timepicker-minute" maxlength="2"></td>
+																<td class="separator">:</td>
+																<td><input type="text" class="form-control bootstrap-timepicker-second" maxlength="2"></td>
+															</tr>
+															<tr>
+																<td><a href="#" data-action="decrementHour"><i class="fa fa-chevron-down"></i></a></td>
+																<td class="separator"></td>
+																<td><a href="#" data-action="decrementMinute"><i class="fa fa-chevron-down"></i></a></td>
+																<td class="separator">&nbsp;</td>
+																<td><a href="#" data-action="decrementSecond"><i class="fa fa-chevron-down"></i></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<input type="text" class="form-control input-timepicker24" v-model="dropoffTime">
+												<span class="input-group-btn">
+													<a href="javascript:void(0)" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;"><span class="btn-ripple animate" style="height: 38px; width: 38px; top: -1px; left: 4.75px;"></span><i class="fa fa-clock-o"></i></a>
+												</span>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-xs-12 form-inline">
+										<div class="form-group">
+											<div class="input-group">
+												<select2 :options="shippingOptions" v-model="selectedShipping" allowClear="false">
+												</select2>
+											</div>
+										</div>
+										<div class="form-group" :class="{ 'has-error': trackingNoError }">
+											<div class="input-group">
+												<span class="input-group-addon">{{ selectedShipping }}</span>
+												<input type="text" class="form-control" v-model="trackingNo">
+												<span class="input-group-addon">TH</span>
+											</div>
+										</div>
+										<div class="form-group">
+											<button type="submit" @click="setTrackingNo" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Submit</button>
+											<button type="submit" class="btn btn-effect-ripple btn-info" style="overflow: hidden; position: relative;">Resend Notification</button>
+										</div>
+									</div>
+								</div>
+								<h4 class="sub-header">Detail</h4>
+								<div class="row">
+									<div class="col-xs-6">
+										<div class="alert alert-info alert-dismissable">
+											<h4><strong>Shipping Information</strong></h4>
+											<p>{{ viewOrder.shipping ? viewOrder.shipping.trackingNo : '' }}</p>
+											@ {{ viewDropoffDateTime }}
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div v-show="!viewOrder" class="block full">
+		<div v-show="!showOrder" class="block full">
 			<div class="block-title">
 				<h4>
 					All Orders <small> Total: {{ orders.length }}</small>
@@ -117,7 +221,7 @@
 					<tr v-for="(order, index) in computedOrders" :key="'row' + index">
 						<td class="text-center">{{ order.stringDate }}</td>
 						<td class="text-center hidden-sm hidden-xs">
-							<a @click="viewOrder=order">{{ order._id }}</a>
+							<a @click="setOrder(order)">{{ order._id }}</a>
 						</td>
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
 						<td class="text-center">{{ order.noItems }}</td>
@@ -136,25 +240,69 @@
 
 <script>
 import moment from 'moment';
+import Select2 from './basic/Select2.vue';
 
 export default {
 	data() {
 		return {
 			orders: [],
-			viewOrder: null
+			showOrder: false,
+			viewOrder: {
+				customer: {},
+				address: {},
+				items: [],
+				payment: {}
+			},
+			viewDropoffDateTime: '',
+			dropoffDate: moment(new Date()).format("YYYY-MM-DD"),
+			dropoffTime: moment(new Date()).format("HH:mm"),
+			trackingNoError: false,
+			trackingNo: '',
+			selectedShipping: 'ER',
+			shippingOptions: [{ id: 'ER', text: 'EMS' }, { id: 'RL', text: 'RL' }]
 		};
 	},
 	methods: {
 		verify() {
 			this.$http.post('api/sales/order/' + this.viewOrder._id).then(response => {
 				let updatedOrder = response.body;
-				this.viewOrder = null;
 				this.orders.forEach((order) => {
 					if (order._id === updatedOrder._id) {
 						order.payment = updatedOrder.payment;
 					}
 				});
 			}).catch(response => console.log(response));
+		},
+		setOrder(order) {
+			this.viewOrder = order;
+			this.showOrder = true;
+			console.log(this.viewOrder);
+		},
+		setTrackingNo() {
+			let dropoffDateTime = moment(`${this.dropoffDate} ${this.dropoffTime}`, "YYYY-MM-DD HH:mm");
+			console.log(dropoffDateTime);
+			if (this.trackingNo.length === 9 && /^\d+$/.test(this.trackingNo)) {
+				this.trackingNoError = false;
+				this.$http.post(`/api/sales/order/${this.viewOrder._id}/tracking`, {
+					trackingNo: this.selectedShipping + this.trackingNo + 'TH',
+					type: this.selectedShipping,
+					dropoffDateTime: dropoffDateTime
+				}).then(response => {
+					this.viewOrder = response.body;
+					this.trackingNo = '';
+					this.selectedShipping = 'ER';
+					this.dropoffDate = moment(new Date()).format("YYYY-MM-DD");
+					this.dropoffTime = moment(new Date()).format("HH:mm");
+				}).catch(response => console.log(response));
+			}
+			else {
+				this.trackingNoError = true;
+			}
+		}
+	},
+	watch: {
+		'viewOrder.shipping.dropoffDateTime': function(val) {
+			this.viewDropoffDateTime = moment(new Date(val)).format('YYYY-MM-DD HH:mm');
 		}
 	},
 	computed: {
@@ -187,9 +335,12 @@ export default {
 				}\
 				shipping {\
 					status\
+					trackingNo\
+					dropoffDateTime\
 				}\
 				customer {\
 					name\
+					type\
 					refUserId\
 				}\
 				items {\
@@ -216,6 +367,27 @@ export default {
 		}"}).then(response => {
 			this.orders = response.body.data.orders;
 		}).catch(response => console.log(response));
+	},
+	mounted() {
+		let vm = this;
+		$('[data-toggle="tabs"] a, .enable-tabs a').click( function(e){
+			e.preventDefault();
+			$(this).tab('show');
+		});
+		$('.input-datepicker').datepicker().on('changeDate', function(e){
+			$(this).datepicker('hide');
+			vm.dropoffDate = $(this).val();
+		});
+		$('.input-timepicker24').timepicker({
+			minuteStep: 1,
+			//showSeconds: true,
+			showMeridian: false
+		}).on('changeTime.timepicker', function(e) {
+			vm.dropoffTime = e.time.value;
+		})
+	},
+	components: {
+		select2: Select2
 	}
 }
 </script>

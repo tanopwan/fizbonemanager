@@ -35,7 +35,7 @@ const SaleSchema = new Schema({
 	}, {
 		_id : false
 	}),
-	promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
+	//promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
 	promotion: new Schema({
 		name: String,
 		price: Number,
@@ -43,7 +43,7 @@ const SaleSchema = new Schema({
 	}, {
 		_id : false
 	}),
-	customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
+	//customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
 	customer: new Schema({
 		name: String,
 		type: String,

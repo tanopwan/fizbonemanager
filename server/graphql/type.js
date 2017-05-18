@@ -58,7 +58,8 @@ const OrderType = new graphql.GraphQLObjectType({
 					fields: function() {
 						return {
 							name: { type: graphql.GraphQLString },
-							refUserId: { type: graphql.GraphQLString }
+							refUserId: { type: graphql.GraphQLString },
+							type: { type: graphql.GraphQLString }
 						}
 					}
 				})
@@ -99,7 +100,9 @@ const OrderType = new graphql.GraphQLObjectType({
 					name: 'shipping',
 					fields: function() {
 						return {
-							status: { type: graphql.GraphQLString }
+							status: { type: graphql.GraphQLString },
+							trackingNo: { type: graphql.GraphQLString },
+							dropoffDateTime: { type: graphql.GraphQLString }
 						}
 					}
 				})

@@ -259,6 +259,23 @@ const sendReadyToShip = (recipientId, orderId) => {
 };
 
 /*
+* Send a message to tell user that package is dropoff
+*
+*/
+const sendDropOffUpdate = (order) => {
+	var messageData = {
+		recipient: {
+			id: order.customer.refUserId
+		},
+		message: {
+			text: `[ฟีนิกซ์] ${order.shipping.trackingNo}\nสามารถเช็คสถานะของพัสดุได้ที่ http://track.thailandpost.co.th/tracking/default.aspx\n\nขนมตับไก่ฟิซโบนกำลังเดินทางไปหาคุณลูกค้าและเจ้านายตัวน้อยแล้วนะคะ\nยังไงก็สามารถโพสแบ่งปันภาพความสุขของเจ้านายน้อยที่ได้ทานขนมฟิซโบนได้ที่\nhttps://www.facebook.com/fizbonethailand ค้าบ`
+		},
+		tag: "SHIPPING_UPDATE"
+	};
+	fbMessenger.callSendAPI(messageData);
+};
+
+/*
 * Send a message to ask user to open webview in order to save address
 *
 */
@@ -361,5 +378,6 @@ module.exports = {
 	sendMainMenu,
 	sendPaymentMethod,
 	sendReadyToShip,
+	sendDropOffUpdate,
 	sendText
 }

@@ -86,7 +86,6 @@
 import moment from 'moment';
 import { EventBus } from '../bus';
 import salePromotion from './SalePromotion.vue';
-import Select2 from './basic/Select2.vue';
 import Vue from 'vue';
 
 export default {
@@ -201,8 +200,7 @@ export default {
 		this.updateStock();
 	},
 	components: {
-		salePromotion,
-		select2: Select2
+		salePromotion
 	}
 }
 </script>

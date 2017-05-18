@@ -28,7 +28,8 @@ const OrderSchema = new Schema({
 	shipping: new Schema({
 		status: String, //WAIT_VERIFIED, READY, PACKING, DROPOFF, DELIVERED
 		type: String,
-		trackingNo: String
+		trackingNo: String,
+		dropoffDateTime: Date
 	}, { _id : false }),
 	payment: new Schema({
 		method: String,

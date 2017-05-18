@@ -34,7 +34,8 @@ const createOrder = (session, shippingFee) => {
 	orderData.total = orderData.subTotal + orderData.shippingFee;
 	orderData.customer = {
 		name: session.customer.name,
-		refUserId: session.customer.refUserId
+		refUserId: session.customer.refUserId,
+		type: session.customer.type
 	};
 	console.log("[Action] create order: " + JSON.stringify(orderData));
 	return Order.create(orderData);

@@ -3,7 +3,7 @@
 const Sale = require('../../model/sale.model');
 const Order = require('../../model/order.model');
 const config = require('../../config/environment');
-const messenger = require('../../service/bot/fbmessenger');
+const messenger = require('../../service/bot/fbmessenger.service');
 const moment = require('moment');
 
 const saleService = require('../../service/sale.service');
@@ -124,12 +124,38 @@ const summary = function(req, res) {
 const verifyOrder = function(req, res) {
 	let orderId = new ObjectId(req.params.id);
 
-	return Order.findOneAndUpdate({ _id: orderId }, { $set: { 'payment.status': 'VERIFIED' } }, { new: true }).exec()
+	return Order.findOneAndUpdate({ _id: orderId },{
+		$set: { 'payment.status': 'VERIFIED' }
+	}, { new: true }).exec()
 	.then(order => {
 		messenger.sendReadyToShipMessage(order.customer.refUserId, order._id);
 		res.json(order);
 	})
 	.catch(err => res.status(500).json(err));
+}
+
+const setTracking = function(req, res) {
+	let orderId = new ObjectId(req.params.id);
+	let trackingNo = req.body.trackingNo;
+	let type = req.body.type;
+	let dropoffDateTime = req.body.dropoffDateTime;
+	
+	if (orderId && trackingNo && type && dropoffDateTime) {
+		return Order.findOneAndUpdate({ _id: orderId }, {
+			$set: {
+				'shipping.trackingNo': trackingNo,
+				'shipping.type': type,
+				'shipping.status': 'DROPOFF',
+				'shipping.dropoffDateTime': dropoffDateTime
+			}
+		}, { new: true }).exec()
+		.then(order => {
+			messenger.sendDropOffUpdate(order);
+			res.json(order);
+		})
+		.catch(err => res.status(500).json(err));
+	}
+	res.status(400).json({ message: "Invalid Parameters" });
 }
 
 const bill = function(req, res) {
@@ -164,5 +190,6 @@ module.exports = {
 	summary,
 	verifyOrder,
 	migrate,
-	bill
+	bill,
+	setTracking
 };

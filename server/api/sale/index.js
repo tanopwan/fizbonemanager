@@ -15,6 +15,7 @@ router.use(auth.verifyMiddleware);
 
 router.post('/', ctrl.create);
 router.post('/order/:id', ctrl.verifyOrder);
+router.post('/order/:id/tracking', ctrl.setTracking);
 router.post('/bill/:id', ctrl.bill);
 router.delete('/:id', ctrl.destroy);
 

@@ -3,6 +3,7 @@
 const sessions = {};
 
 const productService = require('../product.service');
+const batchService = require('../batch.service');
 const customerService = require('../customer.service');
 
 function Session(senderID, recipientID, timeOfMessage) {
@@ -17,7 +18,10 @@ function Session(senderID, recipientID, timeOfMessage) {
 				let product = products.find(product => product.batchId == batchId);
 				if (product){
 					this.newItem = {
-						batchId,
+						batch: {
+							batchId,
+							batchRef: product.batchRef
+						},
 						price: product.price,
 						product: {
 							name: product._id,
