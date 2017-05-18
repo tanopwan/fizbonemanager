@@ -8,7 +8,7 @@
 						<h3 class="modal-title"><strong>Bill</strong></h3>
 					</div>
 					<div class="modal-body">
-						<div class="row form-group">
+						<div class="row form-group" :class="{ 'has-error': quantityError }">
 							<div class="col-sm-6">
 								<div class="input-group">
 									<span class="input-group-addon">จำนวน</span>
@@ -24,7 +24,7 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" @click="bill" class="btn btn-effect-ripple btn-success" data-dismiss="modal" style="overflow: hidden; position: relative;">Save</button>
+						<button type="button" @click="bill" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
 						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
 					</div>
 				</div>
@@ -65,7 +65,7 @@
 				<tbody>
 					<tr v-for="consignment in computedConsignments">
 						<td class="text-center">{{ consignment.stringDate }}</td>
-						<td class="hidden-sm hidden-xs">{{ consignment.customerName }}</td>
+						<td class="hidden-sm hidden-xs">{{ consignment.customerName }} / {{ consignment.product.name }}</td>
 						<th class="text-center">{{ consignment.bill ? consignment.bill.quantity : 0 }} / {{ consignment.quantity }}</th>
 						<th class="text-center">{{ consignment.bill ? consignment.bill.total : 0 }}</th>
 						<td class="hidden-sm hidden-xs">{{ consignment.description }}</td>
@@ -99,6 +99,7 @@ export default {
 			customers: [],
 			billQuantity: 0,
 			billPrice: 0,
+			quantityError: false,
 			currentConsignment: {}
 		};
 	},
@@ -134,17 +135,18 @@ export default {
 	},
 	methods: {
 		bill() {
-			if (this.billQuantity <= 0 || this.billQuantity > this.currentConsignment.quantity) {
-				console.log("invalid quantity");
+			this.quantityError = false;
+			if (this.billQuantity <= 0 || this.billQuantity > this.currentConsignment.quantity - (this.currentConsignment.bill ? this.currentConsignment.bill.quantity : 0)) {
+				this.quantityError = true;
 				return;
 			}
 
-			console.log(this.billQuantity);
 			this.$http.post(`/api/sales/bill/${this.currentConsignment._id}`, {
 				quantity: this.billQuantity,
 				price: this.billPrice
 			}).then(response => {
-				console.log(response);
+				$('#modal-regular').modal('hide');
+				Vue.set(this.currentConsignment, 'bill', response.body.bill);
 			}).catch(response => console.log(response));
 		},
 		billConsignment(id) {

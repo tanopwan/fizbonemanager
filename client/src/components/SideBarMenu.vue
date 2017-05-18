@@ -42,12 +42,6 @@
 									<span class="sidebar-nav-mini-hide">Create Sale</span>
 								</router-link>
 							</li>
-							<li>
-								<a href="page_layout_static.php">
-									<i class="gi gi-shopping_cart sidebar-nav-icon"></i>
-									<span class="sidebar-nav-mini-hide">Bill</span>
-								</a>
-							</li>
 						</ul>
 					</li>
 					<li>

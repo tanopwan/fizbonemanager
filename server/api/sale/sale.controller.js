@@ -149,7 +149,7 @@ const bill = function(req, res) {
 			"bill.total": quantity * price,
 			"bill.quantity": quantity
 		}
-	}).exec()
+	}, { new: true }).exec()
 	.then(result => {
 		res.json(result);
 	})
