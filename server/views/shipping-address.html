@@ -12,44 +12,17 @@
 	<script src="/semantic/semantic.js"></script>
 </head>
 <body>
-	<script>
-	var tanopwan = null;
-	var isSupported = false;
-	window.extAsyncInit = function() {
-		// the Messenger Extensions JS SDK is done loading
-		console.log("extAsyncInit");
-		isSupported = MessengerExtensions.isInExtension();
-		console.log("MessengerExtensions is " + isSupported);
-
-		MessengerExtensions.getContext('715440845305065', function success(result){
-			$('#log').text(JSON.stringify(result));
-			$('#signed_request').val(result.signed_request);
-			tanopwan = result.signed_request;
-		}, function error(result){
-			$('#log').text(JSON.stringify(result));
-		});
-	};
-
-	(function(d, s, id){
-		var js, fjs = d.getElementsByTagName(s)[0];
-		if (d.getElementById(id)) {return;}
-		js = d.createElement(s); js.id = id;
-		js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
-		fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'Messenger'));
-
-	</script>
 	<h3 class="ui center aligned header">Fizbone</h3>
-	<span id="log"></span>
-	<p id="message">
+	<p id="log"></p>
+	<div class="errormessage">
 		<center>
 			เนื่องจากตอนนี้ทาง Facebook Messenger ไม่ support การเปิดเว็บใน Browser<br>
 			กรุณาเปิดในมือถือ
 			<h4>ขออภัยในความไม่สะดวก</h4>
 		</center>
-	</p>
+	</div>
 
-	<form class="ui form container">
+	<form class="ui form container" id="form">
 		<h4 class="ui dividing header">ขอที่อยู่ด้วยคร้าบบ</h4>
 		<input type="hidden" name="signed_request" id="signed_request">
 		<div class="field">
@@ -79,40 +52,70 @@
 		</div>
 	</form>
 	<script>
-	$( "form" ).submit(function( event ) {
-		event.preventDefault();
-		$.ajax({
-			url: '/api/customers/shipping-address',
-			headers: {
-				'Authorization':'Basic ' + tanopwan,
-				'Content-Type':'application/json'
-			},
-			method: 'POST',
-			dataType: 'json',
-			data: JSON.stringify({
-				name: $('#fullName').val(),
-				street: $('#street').val(),
-				subDistrict: $('#subDistrict').val(),
-				district: $('#district').val(),
-				postalCode: $('#postalCode').val()
-			}),
-			success: function(){
-				MessengerExtensions.requestCloseBrowser(function success() {
+	$(document).ready(function() {
+		$("form").submit(function( event ) {
+			event.preventDefault();
+			$.ajax({
+				url: '/api/customers/shipping-address',
+				headers: {
+					'Authorization':'Basic ' + tanopwan,
+					'Content-Type':'application/json'
+				},
+				method: 'POST',
+				dataType: 'json',
+				data: JSON.stringify({
+					name: $('#fullName').val(),
+					street: $('#street').val(),
+					subDistrict: $('#subDistrict').val(),
+					district: $('#district').val(),
+					postalCode: $('#postalCode').val()
+				}),
+				success: function(){
+					MessengerExtensions.requestCloseBrowser(function success() {
 
-				}, function error(err) {
-					$('#log').text(JSON.stringify(result));
-				});
-			},
-			error: function(XMLHttpRequest, textStatus, errorThrown) {
-				//alert("Status: " + textStatus); alert("Error: " + errorThrown);
-			}
+					}, function error(err) {
+						$('#log').text(JSON.stringify(result));
+					});
+				},
+				error: function(XMLHttpRequest, textStatus, errorThrown) {
+					//alert("Status: " + textStatus); alert("Error: " + errorThrown);
+				}
+			});
 		});
-	});
 
-	if (!isSupported) {
-		$("form").hide();
-		$("message").show();
-	}
+		$("#form").hide();
+		$(".errormessage").show();
+
+		var tanopwan = null;
+		var isSupported = false;
+		window.extAsyncInit = function() {
+			// the Messenger Extensions JS SDK is done loading
+			console.log("extAsyncInit");
+			isSupported = MessengerExtensions.isInExtension();
+			console.log("MessengerExtensions is " + isSupported);
+
+			if (isSupported) {
+				$('.errormessage').hide();
+				$("#form").show();
+			}
+
+			MessengerExtensions.getContext('715440845305065', function success(result){
+				//$('#log').text(JSON.stringify(result));
+				$('#signed_request').val(result.signed_request);
+				tanopwan = result.signed_request;
+			}, function error(result){
+				$('#log').text(JSON.stringify(result));
+			});
+		};
+
+		(function(d, s, id){
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) {return;}
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.com/en_US/messenger.Extensions.js";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, 'script', 'Messenger'));
+	});
 	</script>
 </body>
 </html>
