@@ -41,7 +41,7 @@ function verifyRequestSignature(req, res, buf) {
 		var method = elements[0];
 		var signatureHash = elements[1];
 
-		var expectedHash = crypto.createHmac('sha1', messenger.appSecret)
+		var expectedHash = crypto.createHmac('sha1', APP_SECRET)
 		.update(buf)
 		.digest('hex');
 
@@ -58,7 +58,7 @@ function verifyRequestSignature(req, res, buf) {
 */
 const verifyWebhook = function(req, res) {
 	if (req.query['hub.mode'] === 'subscribe' &&
-	req.query['hub.verify_token'] === messenger.validationToken) {
+	req.query['hub.verify_token'] === VALIDATION_TOKEN) {
 		console.log("Validating webhook");
 		res.status(200).send(req.query['hub.challenge']);
 	} else {
