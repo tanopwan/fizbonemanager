@@ -4,9 +4,27 @@
 			<div class="block full">
 				<div class="row">
 					<div class="col-xs-12 col-sm-6 col-md-4">
-						<div class="input-group">
-							<span class="input-group-addon">Custom Date</span>
-							<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+						<div class="form-group">
+							<div class="input-group">
+								<span class="input-group-addon">Custom Date</span>
+								<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label>Filter Products</label>
+							<multi-select :options="products" placeholder="Filter by Products"></multi-select>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-xs-12">
+						<div class="form-group">
+							<label>Filter Promotions</label>
+							<multi-select :options="promotionGroups" placeholder="Filter by Promotions"></multi-select>
 						</div>
 					</div>
 				</div>
@@ -63,6 +81,7 @@ import moment from 'moment';
 import { EventBus } from '../bus';
 import salePromotion from './SalePromotion.vue';
 import Select2 from './basic/Select2.vue'
+import MultiSelect from './basic/MultiSelect.vue'
 import Vue from 'vue';
 
 export default {
@@ -74,7 +93,10 @@ export default {
 			promotions: [],
 			customers: [],
 			sumQuantity: 0,
-			sumTotal: 0
+			sumTotal: 0,
+			productFilters: [],
+			products: [],
+			promotionGroups: []
 		};
 	},
 	computed: {
@@ -101,7 +123,7 @@ export default {
 		activePromotions: function() {
 			if (this.promotions) {
 				return this.promotions.filter(promotion => {
-					if (promotion.isActive === false || promotion.isBilled === false) {
+					if (promotion.isActive === false || promotion.group === 'Consignment') {
 						return false;
 					}
 					return true;
@@ -150,8 +172,19 @@ export default {
 			let productWithBatches = response.body;
 			this.promotions.forEach((promotion, idx) => {
 				let batches = productWithBatches.find(product => product.name === promotion.batchId.product.name).batches;
+
+				if (this.products.indexOf(promotion.batchId.product.name) < 0) {
+					this.products.push(promotion.batchId.product.name);
+				}
+
+				if (this.promotionGroups.indexOf(promotion.group) < 0) {
+					this.promotionGroups.push(promotion.group);
+				}
+
 				Vue.set(this.promotions[idx], 'batches', batches);
 			});
+			console.log(this.products);
+			console.log(this.promotionGroups);
 		})
 		.catch(response => console.log(response));
 		EventBus.getCustomers()
@@ -161,7 +194,8 @@ export default {
 	},
 	components: {
 		salePromotion,
-		select2: Select2
+		select2: Select2,
+		multiSelect: MultiSelect
 	}
 }
 </script>

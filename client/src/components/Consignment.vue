@@ -123,7 +123,7 @@ export default {
 		activePromotions: function() {
 			if (this.promotions) {
 				return this.promotions.filter(promotion => {
-					if (promotion.isActive === false || promotion.isBilled === true) {
+					if (promotion.isActive === false || promotion.group !== 'Consignment') {
 						return false;
 					}
 					return true;

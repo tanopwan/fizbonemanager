@@ -1,11 +1,14 @@
 <template>
 	<div class="col-xs-12 col-sm-6 col-md-4">
-		<a href="javascript:void(0)" class="widget">
+		<div class="widget">
 			<div class="widget-content text-light-op" v-bind:class="bgClasses[index % 5]">
+				<a @click="viewMore=!viewMore" href="javascript:void(0)" class="pull-right text-light-op" style="overflow: hidden; position: relative;">
+					<span v-show="!viewMore">More <i class="fa fa-arrow-circle-o-right"></i></span>
+					<span v-show="viewMore">Less <i class="fa fa-arrow-circle-o-left"></i></span>
+				</a>
 				<i class="fa fa-fw fa-chevron-right"></i> <strong>{{ promotion.name }}</strong>
-				<span class="pull-right"><i class="fa fa-ticket"></i></span>
 			</div>
-			<div class="widget-content themed-background-muted text-center">
+			<div v-if="viewMore" class="widget-content themed-background-muted text-center">
 				<div class="form-group" :class="{ 'has-error': error }">
 					<div class="input-group">
 						<span class="input-group-addon">Q</span>
@@ -16,15 +19,15 @@
 					</div>
 					<span v-if="error">{{ errorMessage }}</span>
 				</div>
-				<div class="row form-group">
-					<div class="col-xs-12">
+				<div class="form-group">
+					<div class="input-group" style="width: 100%;">
 						<select2 :options="customerOptions" v-model="selectedCustomer" placeholder="เลือก ลูกค้า..." allowClear="true">
 							<option></option>
 						</select2>
 					</div>
 				</div>
-				<div class="row form-group">
-					<div class="col-xs-12">
+				<div class="form-group">
+					<div class="input-group" style="width: 100%;">
 						<select2 :options="batchOptions" v-model="selectedBatch" allowClear="false">
 						</select2>
 					</div>
@@ -39,7 +42,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="widget-content widget-content-full-top-bottom border-bottom">
+			<div v-show="viewMore" class="widget-content widget-content-full-top-bottom border-bottom">
 				<div class="row text-center">
 					<div class="col-xs-6 push-inner-top-bottom border-right">
 						<h3 class="widget-heading"><i class="hi hi-tag text-dark push"></i> <br><small>{{ (promotion.price / 100).toFixed(2) }} x {{ quantity }}</small></h3>
@@ -49,12 +52,12 @@
 					</div>
 				</div>
 			</div>
-			<div class="widget-content widget-content-full-top-bottom border-bottom">
+			<div v-show="viewMore" class="widget-content widget-content-full-top-bottom border-bottom">
 				<div class="row text-center">
-					<div class="col-xs-6 push-inner-top-bottom">
+					<div class="col-xs-6 push-inner-top-bottom border-right">
 						<h3 class="widget-heading"><i class="gi gi-sort text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks</small></h3>
 					</div>
-					<div class="col-xs-6 push-inner-top-bottom border-right">
+					<div class="col-xs-6 push-inner-top-bottom">
 						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{promotion.batchId.batchRef}}</small></h3>
 					</div>
 				</div>
@@ -64,7 +67,7 @@
 					{{ promotion.batchId.product.name }}
 				</h3>
 			</div>
-		</a>
+		</div>
 	</div>
 
 </template>
@@ -78,6 +81,7 @@ export default {
 	props: ['batchStocks', 'promotion', 'isConsignment', 'index', 'onAddSale', 'customers'],
 	data() {
 		return {
+			viewMore: this.isConsignment,
 			bgClasses: [
 				'themed-background',
 				'themed-background-dark',
