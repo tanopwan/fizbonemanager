@@ -1,6 +1,6 @@
 'use strict';
 
-const messenger = require('../../service/bot/fbmessenger');
+const messenger = require('../../service/bot/fbmessenger.service');
 const CustomerService = require('../../service/customer.service');
 const sessionManager = require('../../service/bot/session');
 
