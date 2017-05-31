@@ -12,6 +12,7 @@ router.use(auth.verifyMiddleware);
 
 router.get('/me', user.me);
 router.get('/', auth.hasRoleAdmin, user.index);
+router.put('/profile', user.profile);
 router.delete('/:id', auth.hasRoleAdmin, user.destroy);
 router.get('/logout', user.logout);
 

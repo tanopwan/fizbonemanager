@@ -88,10 +88,20 @@
 						</router-link>
 					</li>
 					<li>
-						<router-link to="/promotion">
-							<i class="gi gi-shopping_bag sidebar-nav-icon"></i>
+						<a href="#" class="sidebar-nav-menu">
+							<span class="sidebar-nav-ripple animate" style="height: 220px; width: 220px; top: -87px; left: 70px;"></span>
+							<i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
+							<i class="gi gi-more_items sidebar-nav-icon"></i>
 							<span class="sidebar-nav-mini-hide">Promotion</span>
-						</router-link>
+						</a>
+						<ul>
+							<li>
+								<router-link to="/promotion">
+									<i class="gi gi-shopping_bag sidebar-nav-icon"></i>
+									<span class="sidebar-nav-mini-hide">Price</span>
+								</router-link>
+							</li>
+						</ul>
 					</li>
 					<li>
 						<router-link to="/onlineshop">

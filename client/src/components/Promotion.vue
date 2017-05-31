@@ -1,249 +1,57 @@
 <template>
 	<div>
 		<div class="row">
-			<div class="col-xs-12 col-sm-6" v-for="product, index in products">
-				<div class="block full">
-					<div class="block-title">
-						<h2>{{ product.name }}</h2>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-12">
-							<div class="input-group">
-								<span class="input-group-addon">จำนวน</span>
-								<input type="number" class="form-control" v-model="addPromotions[index].quantity" placeholder="จำนวนเริ่มต้น">
-								<span class="input-group-addon">&#x0E3F;</span>
-								<input type="number" class="form-control" v-model="addPromotions[index].price" placeholder="ราคา">
-							</div>
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-6">
-							<select2 :options="addPromotions[index].batches" v-model="addPromotions[index].batchId" allowClear="false">
-							</select2>
-						</div>
-						<div class="col-xs-6">
-							<select2 :options="groups" v-model="addPromotions[index].group" allowClear="false">
-							</select2>
-						</div>
-					</div>
-					<div class="row form-group">
-						<div class="col-xs-12">
-							<div class="input-group">
-								<input type="text" class="form-control" v-model="addPromotions[index].name" placeholder="ชื่อโปรโมชั่น">
-								<span class="input-group-btn">
-									<button type="button" @click="addPromotion(index)" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
-								</span>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div class="col-xs-12 col-sm-6 col-md-4">
+				<promotion-widget :productsWithBatches="productWithBatches" v-on:addPromotion="onAddPromotion"></promotion-widget>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-xs-12">
-				<div class="block full">
-					<div class="block-title">
-						<h4>
-							All Promotions <small> Total: {{ promotions.length }}</small>
-						</h4>
-						<div class="block-options pull-right">
-							<a id="toggleButton" href="javascript:void(0)" class="btn btn-effect-ripple btn-danger" @click="toggleEndedPromotion" :class="{ 'active': showEndedPromotion }"><i class="fa fa-bookmark"></i></a>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-xs-12">
-							<template v-for="promotion in sortedPromotions">
-								<div>
-									<div class="pull-right">
-										<small>{{ promotion._id }}</small>
-										<button class="btn btn-danger" @click="deletePromotion(promotion._id)"><i class="fa fa-minus"></i></button>
-									</div>
-									<h4 class="sub-header">
-										{{ promotion.name }}
-									</h4>
-								</div>
-								<p>
-									<a href="javascript:void(0)" @click="setIsActive(promotion._id, !promotion.isActive)" class="label" :class="{ 'label-default': !promotion.isActive, 'label-success': promotion.isActive}">{{ promotion.isActive ? 'Active' : 'InActive' }}</a>
-									<a href="javascript:void(0)" @click="setIsBilled(promotion._id, !promotion.isBilled)" class="label" :class="{ 'label-primary': !promotion.isBilled, 'label-info': promotion.isBilled}">{{ promotion.isBilled ? 'ขายขาด' : 'ฝากขาย' }}</a>
-									<a href="javascript:void(0)" @click="setIsEnded(promotion._id, !promotion.isEnded)" class="label" :class="{ 'label-primary': !promotion.isEnded, 'label-default': promotion.isEnded}">{{ promotion.isEnded ? 'Promotion Ended' : 'On Promotion' }}</a>
-									<a href="javascript:void(0)" @click="setIsNeedDelivery(promotion._id, !promotion.isNeedDelivery)" class="label" :class="{ 'label-primary': !promotion.isNeedDelivery, 'label-info': promotion.isNeedDelivery}">{{ promotion.isNeedDelivery ? 'จัดสั่ง' : 'ไม่จัดส่ง' }}</a>
-
-									<small> Batch: {{ promotion.batchId.batchRef }}</small>
-									<h4>&#x0E3F; {{ promotion.price / 100 }}</h4>
-								</p>
-							</template>
-						</div>
-					</div>
-				</div>
+			<div class="col-xs-12 col-sm-6 col-md-4" v-for="promotion in sortedPromotions">
+				<promotion-widget :productsWithBatches="productWithBatches" :promotion="promotion"></promotion-widget>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import { EventBus } from '../bus';
-import Select2 from './basic/Select2.vue';
+import { EventBus } from '../bus'
 import moment from 'moment';
+import PromotionWidget from './PromotionWidget.vue';
 
 export default {
 	data() {
 		return {
-			batches: [],
-			products: [],
-			promotions: [],
-			addPromotions: [],
-			showEndedPromotion: false,
-			isRetrievedAllPromotions: false,
-			groups: [
-				{ id: "Booth", text: "Booth" },
-				{ id: "Online", text: "Online" },
-				{ id: "Consignment", text: "Consignment" },
-				{ id: "Special", text: "Special" }
-			]
+			productWithBatches: [],
+			promotions: []
 		};
 	},
 	methods: {
-		toggleEndedPromotion() {
-			$('#toggleButton').blur();
-			this.showEndedPromotion = !this.showEndedPromotion;
-			if (this.showEndedPromotion === true && this.isRetrievedAllPromotions === false) {
-				this.isRetrievedAllPromotions = true;
-				EventBus.getPromotions("?ended=all")
-					.then(response => this.promotions = response.body)
-					.catch(response => console.log(response));
-			}
-		},
-		addPromotion(index) {
-			console.log(this.addPromotions[index].group)
-			let promo = {
-				name: this.addPromotions[index].name,
-				price: this.addPromotions[index].price,
-				batchId: this.addPromotions[index].batchId,
-				quantity: this.addPromotions[index].quantity || 1,
-				isBilled: this.addPromotions[index].group === "Consignment" ? false : true,
-				group: this.addPromotions[index].group
-			};
-			this.$http.post('/api/promotions', promo).then(response => {
-				this.promotions.push(response.body);
-				this.addPromotions[index].name = "";
-				this.addPromotions[index].price = "";
-				this.addPromotions[index].quantity = "";
-			}).catch(response => console.log(response));
-		},
-		deletePromotion(id) {
-			this.$http.delete('/api/promotions/' + id).then(response => {
-				let index = -1;
-				this.promotions.forEach((promotion, idx) => {
-					if (promotion._id === id) {
-						index = idx;
-					}
-				});
-				if (index !== -1) {
-					this.promotions.splice(index, 1);
-				}
-			}, response => {
-				console.log(response);
-			});
-		},
-		setIsActive(id, isActive) {
-			this.$http.put(`/api/promotions/${id}/active/${isActive}`).then(response => {
-				this.promotions.forEach((promotion, idx) => {
-					if (promotion._id === id) {
-						promotion.isActive = isActive;
-					}
-				});
-			}, response => {
-				console.log(response);
-			});
-		},
-		setIsBilled(id, isBilled) {
-			this.$http.put(`/api/promotions/${id}/billed/${isBilled}`).then(response => {
-				this.promotions.forEach((promotion, idx) => {
-					if (promotion._id === id) {
-						promotion.isBilled = isBilled;
-					}
-				});
-			}, response => {
-				console.log(response);
-			});
-		},
-		setIsEnded(id, isEnded) {
-			this.$http.put(`/api/promotions/${id}/ended/${isEnded}`).then(response => {
-				this.promotions.forEach((promotion, idx) => {
-					if (promotion._id === id) {
-						promotion.isEnded = isEnded;
-					}
-				});
-			}, response => {
-				console.log(response);
-			});
-		},
-		setIsNeedDelivery(id, isNeedDelivery) {
-			this.$http.put(`/api/promotions/${id}/needDelivery/${isNeedDelivery}`).then(response => {
-				this.promotions.forEach((promotion, idx) => {
-					if (promotion._id === id) {
-						promotion.isNeedDelivery = isNeedDelivery;
-					}
-				});
-			}, response => {
-				console.log(response);
-			});
+		onAddPromotion(promotion) {
+			this.promotions.push(promotion);
 		}
 	},
 	computed: {
 		sortedPromotions: function() {
 			let sorted = this.promotions.sort(function(s1, s2){
-				let isAfter = moment(s1.updatedAt).isAfter(s2.updatedAt);
+				let isAfter = moment(s1.createdAt).isAfter(s2.createdAt);
 				if (isAfter) {
 					return -1;
 				}
 				return 1;
 			});
-			return sorted.filter(promotion => {
-				if (this.showEndedPromotion) {
-					return promotion.isEnded === true;
-				}
-
-				return !promotion.isEnded || promotion.isEnded === false
-			});
+			return sorted;
 		}
 	},
 	created() {
 		this.$http.get('/api/products/batches')
-			.then(response => {
-				this.products = response.body;
-				this.products.forEach(product => {
-					// Default
-					let addPromotion = {
-						productId: product._id,
-						isBilled: true,
-						quantity: 1,
-						group: "Booth",
-						batches: []
-					};
-					product.batches.forEach(batch => {
-						if (!batch.batchRef.isFinish) {
-							addPromotion.batches.push({ id: batch._id, text: batch.batchRef });
-						}
-					});
-					addPromotion.batchId = addPromotion.batches[0].id;
-					this.addPromotions.push(addPromotion);
-				})
-			})
-			.catch(response => console.log(response));
-		EventBus.getBatches()
-			.then(response => this.batches = response.body)
-			.catch(response => console.log(response));
+		.then(response => {
+			this.productWithBatches = response.body;
+		})
+		.catch(response => console.log(response));
 		EventBus.getPromotions()
-			.then(response => this.promotions = response.body)
-			.catch(response => console.log(response));
-	},
-	mounted() {
-		// Initialize Tooltips
-        $('[data-toggle="tooltip"], .enable-tooltip').tooltip({container: 'body', animation: false});
+		.then(response => this.promotions = response.body)
+		.catch(response => console.log(response));
 	},
 	components: {
-		'select2': Select2
+		'PromotionWidget': PromotionWidget
 	}
 }
 

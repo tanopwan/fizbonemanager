@@ -16,6 +16,7 @@ router.put('/:id/billed/:isBilled', ctrl.setIsBilled);
 router.put('/:id/ended/:isEnded', ctrl.setIsEnded);
 router.put('/:id/needDelivery/:isNeedDelivery', ctrl.setIsNeedDelivery);
 router.post('/', ctrl.create);
+router.post('/:id', ctrl.update);
 router.delete('/:id', ctrl.destroy);
 
 module.exports = router;

@@ -4,9 +4,9 @@ const User = require('./user.model');
 const config = require('../../config/environment');
 
 const me = function(req, res) {
-	let userId = req.decoded._doc._id;
+	let me = req.user._id;
 
-	return User.findOne({ _id: userId }).exec()
+	return User.findOne({ _id: me }).exec()
 	.then(user => {
 		if(!user) {
 			return res.status(500).end();
@@ -48,6 +48,16 @@ const show = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const profile = function(req, res) {
+	let me = req.user._id;
+	let body = req.body;
+
+	console.log(me);
+	console.log(body);
+
+	res.json({});
+}
+
 const logout = function(req, res) {
 	res.clearCookie('jwt-app', { path:'/' });
 	res.redirect('/');
@@ -58,5 +68,6 @@ module.exports = {
 	index,
 	destroy,
 	show,
-	logout
+	logout,
+	profile
 };

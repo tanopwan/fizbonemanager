@@ -21,10 +21,25 @@ const view = function(req, res) {
 }
 
 const create = function(req, res) {
-	let userId = new ObjectId(req.decoded._doc._id);
+	let userId = new ObjectId(req.user._id);
+	let promotionData = Object.assign({ updatedBy: userId }, req.body)
 
-	let promotionData = Object.assign({ createdBy: userId }, req.body)
 	return Promotion.create(promotionData)
+	.then(promotion => {
+		if(!promotion) {
+			return res.status(404).end();
+		}
+		res.json(promotion);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
+const update = function(req, res) {
+	let userId = new ObjectId(req.user._id);
+	let promotionId = req.params.id;
+
+	let promotionData = Object.assign({ updatedBy: userId }, req.body)
+	return Promotion.findOneAndUpdate({ _id: promotionId }, promotionData, { new: true })
 	.then(promotion => {
 		if(!promotion) {
 			return res.status(404).end();
@@ -52,13 +67,7 @@ const index = function(req, res) {
 		}
 	}
 
-	return Promotion.find({ isEnded: isEnded }).populate({
-		path: 'batchId'/*,
-		populate: {
-			path: 'productId',
-			model: 'Product'
-		}*/
-	}).exec()
+	return Promotion.find({ isEnded: isEnded }).exec()
 	.then(promotion => {
 		if(!promotion) {
 			return res.status(404).end();
@@ -71,13 +80,7 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let promotionId = new ObjectId(req.params.id);
 
-	Sale.findOne({ promotionId }).exec()
-	.then(sale => {
-		if (sale) {
-			return Promise.reject("Please remove Sales associated with this Promotion");
-		}
-		return Promotion.findOne({ _id: promotionId }).remove().exec()
-	})
+	Promotion.findOne({ _id: promotionId }).remove().exec()
 	.then(result => {
 		res.json(result);
 	})
@@ -133,6 +136,7 @@ const setIsNeedDelivery = function(req, res) {
 module.exports = {
 	view,
 	create,
+	update,
 	index,
 	destroy,
 	setIsActive,

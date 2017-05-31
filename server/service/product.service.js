@@ -11,28 +11,18 @@ const promiseOnlineProducts = Promotion.aggregate([
 	{ $match: { group: { $eq: 'Online' } } },
 	{ $sort : { createdAt : -1 } },
 	{
-		$lookup: {
-			"from": "batches",
-			"localField": "batchId",
-			"foreignField": "_id",
-			"as": "batch"
-		}
-	},
-	{
-		$unwind: '$batch'
-	},
-	{
 		$group: {
-			_id: '$batch.product.name',
-			link: { $first: '$batch.product.link' },
+			_id: '$product.name',
+			link: { $first: '$product.link' },
 			price: { $first: '$price' },
-			batchId: { $first: '$batch._id' },
+			batchId: { $first: '$batch.id' },
 			batchRef: { $first: '$batch.batchRef' },
 			promotionId: { $first: '$_id' },
 		}
 	}
 ]).exec().then(resolve => {
 	cacheOnlineProducts = resolve;
+	console.log(resolve);
 });
 
 const getOnlineProducts = () => {

@@ -15,10 +15,11 @@ const UserSchema = new Schema({
 		default: 'user'
 	},
 	email: String,
-	facebook: {}
+	facebook: {},
+	profile: {}
 },
 {
-  timestamps: true
+	timestamps: true
 });
 
 UserSchema.methods = {
