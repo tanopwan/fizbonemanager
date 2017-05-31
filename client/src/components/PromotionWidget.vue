@@ -1,7 +1,8 @@
 <template>
 	<div class="widget">
 		<div class="widget-content text-light-op" :class="[{'themed-background': promotion}, {'themed-background-success': !promotion}]">
-			Promotion
+			<span v-if="promotion">Promotion</span>
+			<span v-else>Add New</span>
 		</div>
 		<div class="widget-content themed-background-muted text-center">
 			<div class="row form-group">
@@ -43,8 +44,9 @@
 				<div class="col-xs-12">
 					<div class="input-group">
 						<span v-if="!(success || error)" class="input-group-btn">
-							<button type="button" @click="remove" class="btn btn-warning" style="overflow: hidden; position: relative;">Remove</button>
-							<button type="button" @click="save" class="btn btn-success" style="overflow: hidden; position: relative;">Save</button>
+							<button v-if="promotion" type="button" @click="remove" class="btn btn-warning" style="overflow: hidden; position: relative;">Remove</button>
+							<button v-if="promotion" type="button" @click="save" class="btn btn-success" style="overflow: hidden; position: relative;">Save</button>
+							<button v-else type="button" @click="save" class="btn btn-success" style="overflow: hidden; position: relative;">Add</button>
 						</span>
 						<span v-if="(success || error)" class="input-group-btn">
 							<button v-if="success" type="button" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">
