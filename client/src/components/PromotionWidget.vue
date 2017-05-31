@@ -87,6 +87,7 @@ export default {
 				{ id: "Online", text: "Online" },
 				{ id: "Consignment", text: "Consignment" },
 				{ id: "Special", text: "Special" },
+				{ id: "Sponsor", text: "Sponsor" },
 				{ id: "Wholesale", text: "Wholesale" }
 			]
 		}
