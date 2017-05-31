@@ -42,7 +42,8 @@
 			</div>
 			<div class="row form-group">
 				<div class="col-xs-12">
-					<div class="input-group">
+					<i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
+					<div v-else class="input-group">
 						<span v-if="!(success || error)" class="input-group-btn">
 							<button v-if="promotion" type="button" @click="remove" class="btn btn-warning" style="overflow: hidden; position: relative;">Remove</button>
 							<button v-if="promotion" type="button" @click="save" class="btn btn-success" style="overflow: hidden; position: relative;">Save</button>
@@ -57,7 +58,6 @@
 							</button>
 						</span>
 					</div>
-					<i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
 				</div>
 			</div>
 		</div>
@@ -86,7 +86,8 @@ export default {
 				{ id: "Booth", text: "Booth" },
 				{ id: "Online", text: "Online" },
 				{ id: "Consignment", text: "Consignment" },
-				{ id: "Special", text: "Special" }
+				{ id: "Special", text: "Special" },
+				{ id: "Wholesale", text: "Wholesale" }
 			]
 		}
 	},
