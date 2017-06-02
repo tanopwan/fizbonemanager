@@ -3,6 +3,7 @@
 import Product from './components/Product.vue';
 import Batch from './components/Batch.vue';
 import Sale from './components/Sale.vue';
+import CreateSale from './components/CreateSale.vue';
 import Order from './components/Order.vue';
 import SaleReport from './components/SaleReport.vue';
 import Promotion from './components/Promotion.vue';
@@ -22,9 +23,10 @@ const routes = [
 			{ path: '/promotion', component: Promotion },
 			{ path: '/consignment', component: Consignment },
 			{ path: '/sale', component: Sale },
+			{ path: '/create_sale', component: CreateSale },
 			{ path: '/order', component: Order },
 			{ path: '/customer', component: Customer },
-			{ path: '/saleReport', component: SaleReport },
+			{ path: '/sale_report', component: SaleReport },
 			{ path: '/onlineshop', component: OnlineShop },
 		]
 	},

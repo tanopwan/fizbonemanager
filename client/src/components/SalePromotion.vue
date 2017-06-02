@@ -26,9 +26,17 @@
 						</select2>
 					</div>
 				</div>
-				<div class="form-group">
-					<div class="input-group" style="width: 100%;">
-						<select2 :options="batchOptions" v-model="selectedBatch" allowClear="false">
+				<div class="row form-group">
+					<div class="col-xs-12">
+						<select2 :options="productOptions" v-model="selectedProduct" allowClear="false" placeholder="Select Product...">
+							<option></option>
+						</select2>
+					</div>
+				</div>
+				<div class="row form-group">
+					<div class="col-xs-12">
+						<select2 :options="batchOptions" v-model="selectedBatch" allowClear="false" placeholder="Select Batch...">
+							<option></option>
 						</select2>
 					</div>
 				</div>
@@ -37,7 +45,7 @@
 						<span class="input-group-addon">รายละเอียด</span>
 						<input type="text" class="form-control" v-model="description"></input>
 						<span class="input-group-btn">
-							<button @click="addSaleInternal(getAvaliableStock(promotion.batchId))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
+							<button @click="addSaleInternal(getAvaliableStock(promotion.batch.id))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
 						</span>
 					</div>
 				</div>
@@ -58,13 +66,13 @@
 						<h3 class="widget-heading"><i class="gi gi-sort text-dark push"></i> <br><small>{{ getAvaliableStock(promotion.batchId) }} in stocks</small></h3>
 					</div>
 					<div class="col-xs-6 push-inner-top-bottom">
-						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{promotion.batchId.batchRef}}</small></h3>
+						<h3 class="widget-heading"><i class="gi gi-more_items text-dark push"></i> <br><small>{{promotion.batch.batchRef}}</small></h3>
 					</div>
 				</div>
 			</div>
 			<div class="widget-content text-center">
 				<h3 class="widget-heading text-dark">
-					{{ promotion.batchId.product.name }}
+					{{ promotion.product.name }}
 				</h3>
 			</div>
 		</div>
@@ -78,7 +86,7 @@ import moment from 'moment';
 import Select2 from './basic/Select2.vue';
 
 export default {
-	props: ['batchStocks', 'promotion', 'isConsignment', 'index', 'onAddSale', 'customers'],
+	props: ['productsWithBatches', 'batchStocks', 'promotion', 'isConsignment', 'index', 'onAddSale', 'customers'],
 	data() {
 		return {
 			viewMore: this.isConsignment,
@@ -95,8 +103,7 @@ export default {
 			error: false,
 			errorMessage: '',
 			selectedCustomer: '',
-			selectedBatch: '',
-			batchOptions: []
+			selectedBatch: ''
 		}
 	},
 	watch: {
@@ -116,6 +123,27 @@ export default {
 			this.customers.forEach(customer => {
 				options.push({ text: customer.name, id: customer._id });
 			})
+			return options;
+		},
+		price() {
+			return this.priceBaht * 100;
+		},
+		productOptions() {
+			let options = [];
+			this.productsWithBatches.forEach(product => {
+				options.push({ id: product.name, text: product.name });
+			});
+			return options;
+		},
+		batchOptions() {
+			let options = [];
+			let productsWithBatch = this.productsWithBatches.find(product => product.name === this.selectedProduct);
+			if (productsWithBatch) {
+				productsWithBatch.batches.forEach(batch => {
+					let batchIdAndRef = batch._id + '/' + batch.batchRef;
+					options.push({ id: batchIdAndRef, text: batch.batchRef });
+				});
+			}
 			return options;
 		}
 	},
@@ -186,11 +214,14 @@ export default {
 			});
 			return batch;
 		},
-		getAvaliableStock(batch) {
-			let stock = batch.quantity;
-			let batchSummary = this.getBatchStock(batch._id);
-			let totalQuantity = batchSummary ? batchSummary.totalQuantity : 0;
-			return stock - totalQuantity;
+		getAvaliableStock(batchId) {
+			let batchSummary = this.getBatchStock(batchId);
+			if (batchSummary) {
+				let stock = batchSummary.totalStock;
+				let totalQuantity = batchSummary.totalQuantity;
+				return stock - totalQuantity;
+			}
+			return -1;
 		}
 	},
 	mounted() {

@@ -20,7 +20,7 @@
 						<i class="fa fa-ellipsis-h"></i>
 					</li>
 					<li>
-						<router-link to="/saleReport">
+						<router-link to="/sale_report">
 							<i class="hi hi-usd sidebar-nav-icon"></i>
 							<span class="sidebar-nav-mini-hide">SaleReport</span>
 						</router-link>
@@ -56,6 +56,12 @@
 								<router-link to="/sale">
 									<i class="gi gi-shopping_cart sidebar-nav-icon"></i>
 									<span class="sidebar-nav-mini-hide">Create Sale</span>
+								</router-link>
+							</li>
+							<li>
+								<router-link to="/create_sale">
+									<i class="gi gi-shopping_cart sidebar-nav-icon"></i>
+									<span class="sidebar-nav-mini-hide">[New] Create Sale</span>
 								</router-link>
 							</li>
 							<li>

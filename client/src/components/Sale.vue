@@ -164,27 +164,30 @@ export default {
 		.then(response => this.sales = response.body)
 		.catch(response => console.log(response));
 		EventBus.getPromotions()
+		// .then(response => {
+		// 	this.promotions = response.body;
+		// 	return this.$http.get('/api/products/batches');
+		// })
 		.then(response => {
-			this.promotions = response.body;
-			return this.$http.get('/api/products/batches');
-		})
-		.then(response => {
-			let productWithBatches = response.body;
+			// let productWithBatches = response.body;
 			this.promotions.forEach((promotion, idx) => {
-				let batches = productWithBatches.find(product => product.name === promotion.batchId.product.name).batches;
+				// let batches = productWithBatches.find(product => {
+				// 	console.log(product.name + ' = ' + promotion.product.name);
+				// 	console.log(product.name === promotion.product.name);
+				// 	return product.name === promotion.product.name;
+				// }).batches;
 
-				if (this.products.indexOf(promotion.batchId.product.name) < 0) {
-					this.products.push(promotion.batchId.product.name);
+				if (this.products.indexOf(promotion.product.name) < 0) {
+					this.products.push(promotion.product.name);
 				}
 
 				if (this.promotionGroups.indexOf(promotion.group) < 0) {
 					this.promotionGroups.push(promotion.group);
 				}
 
-				Vue.set(this.promotions[idx], 'batches', batches);
+				// Vue.set(this.promotions[idx], 'batches', batches);
 			});
-			console.log(this.products);
-			console.log(this.promotionGroups);
+
 		})
 		.catch(response => console.log(response));
 		EventBus.getCustomers()

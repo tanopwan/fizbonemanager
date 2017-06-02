@@ -44,6 +44,7 @@ export default {
 		this.$http.get('/api/products/batches')
 		.then(response => {
 			this.productWithBatches = response.body;
+			console.log(this.productWithBatches);
 		})
 		.catch(response => console.log(response));
 		EventBus.getPromotions()
