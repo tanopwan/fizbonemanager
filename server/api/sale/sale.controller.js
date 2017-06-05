@@ -79,7 +79,7 @@ const migrate = function(req, res) {
 }
 
 const index = function(req, res) {
-	return saleService.getSales(req.query ? req.query.limit : 0, req.query ? req.query.consignment : null)
+	return saleService.getSales(req.query ? req.query.limit : 0)
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();
@@ -139,7 +139,7 @@ const setTracking = function(req, res) {
 	let trackingNo = req.body.trackingNo;
 	let type = req.body.type;
 	let dropoffDateTime = req.body.dropoffDateTime;
-	
+
 	if (orderId && trackingNo && type && dropoffDateTime) {
 		return Order.findOneAndUpdate({ _id: orderId }, {
 			$set: {
