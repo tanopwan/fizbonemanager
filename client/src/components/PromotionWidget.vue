@@ -79,7 +79,7 @@ export default {
 			quantity: this.promotion ? this.promotion.quantity : 0,
 			priceBaht: this.promotion ? this.promotion.price / 100 : 0,
 			selectedProduct: this.promotion && this.promotion.product ? this.promotion.product.name : '',
-			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch._id + '/' + this.promotion.batch.batchRef : '',
+			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch.id + '/' + this.promotion.batch.batchRef : '',
 			selectedGroup: this.promotion ? this.promotion.group : 'Booth',
 
 			groups: [
@@ -122,7 +122,7 @@ export default {
 				this.quantity = promotion.quantity || 0;
 				this.priceBaht = promotion.price / 100 || 0;
 				this.selectedProduct = promotion ? promotion.product.name : '';
-				this.selectedBatch = promotion ? this.promotion.batch._id + '/' + promotion.batch.batchRef : '';
+				this.selectedBatch = promotion ? promotion.batch.id + '/' + promotion.batch.batchRef : '';
 				this.selectedGroup = promotion.group || 'Booth';
 			}
 		}
@@ -164,7 +164,6 @@ export default {
 			else {
 				// Save new
 				this.$http.post('/api/promotions', promotion).then(response => {
-					this.$emit('addPromotion', response.body);
 					this.success = true;
 					this.saving = false
 
@@ -174,10 +173,10 @@ export default {
 					this.selectedProduct = '';
 					this.selectedBatch = '';
 					this.selectedGroup = 'Booth';
-
 					setTimeout(() => {
 						this.success = false;
-					}, 2000);
+						this.$emit('addPromotion', response.body);
+					}, 1000);
 				}).catch(response => {
 					console.log(response);
 					this.saving = false
