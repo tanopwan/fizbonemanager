@@ -1,6 +1,6 @@
 <template>
 	<div class="widget">
-		<div class="widget-content text-light-op" :class="[{'themed-background': promotion}, {'themed-background-success': !promotion}]">
+		<div class="widget-content text-light-op" :class="[{'themed-background': promotion && !isDeleted}, {'themed-background-dark': promotion && isDeleted}, {'themed-background-success': !promotion}]">
 			<span v-if="promotion">Promotion</span>
 			<span v-else>Add New</span>
 		</div>
@@ -74,6 +74,7 @@ export default {
 			saving: false,
 			success: false,
 			error: false,
+			isDeleted: false,
 
 			name: this.promotion ? this.promotion.name : '',
 			quantity: this.promotion ? this.promotion.quantity : 0,
@@ -187,6 +188,7 @@ export default {
 		remove() {
 			this.$http.delete('/api/promotions/' + this.promotion._id).then(response => {
 				console.log(response);
+				this.isDeleted = true;
 			}).catch(response => {
 				console.log(response);
 			});

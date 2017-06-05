@@ -79,7 +79,7 @@ const migrate = function(req, res) {
 }
 
 const index = function(req, res) {
-	return saleService.getSales(req.query ? req.query.limit : 0)
+	return saleService.getSales(req.query ? req.query.limit : 0, req.query ? req.query.group : null)
 	.then(sale => {
 		if(!sale) {
 			return res.status(404).end();

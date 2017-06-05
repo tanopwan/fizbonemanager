@@ -9,7 +9,7 @@ const createSale = (saleData, userId) => {
 	return Sale.create(saleData);
 };
 
-const getSales = (limit, isConsignment) => {
+const getSales = (limit, group) => {
 	if(!isNaN(parseInt(limit))) {
 		limit = parseInt(limit);
 	}
@@ -17,18 +17,15 @@ const getSales = (limit, isConsignment) => {
 		limit = 0;
 	}
 
-	let consignment = null;
-	if (!isConsignment) {
-		consignment = { $in: [null, false, true] };
-	}
-	else if (isConsignment.toLowerCase() === 'true') {
-		consignment = true;
-	}
-	else {
-		consignment = { $in: [null, false] };
+	let criteria = {
+		isDeleted: false
+	};
+
+	if (group) {
+		criteria['promotion.group'] = group;
 	}
 
-	return Sale.find({ isDeleted: false, isConsignment: consignment }).sort({'createdAt': -1}).limit(limit).exec();
+	return Sale.find(criteria).sort({'createdAt': -1}).limit(limit).exec();
 };
 
 module.exports = {

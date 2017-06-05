@@ -43,7 +43,6 @@ export default {
 	created() {
 		this.$http.get('/api/products/online').then(response => {
 			this.products = response.body;
-			console.log(this.products);
 		});
 	}
 }
