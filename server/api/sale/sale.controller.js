@@ -25,19 +25,10 @@ const view = function(req, res) {
 }
 
 const create = function(req, res) {
-	let userId = new ObjectId(req.decoded._doc._id);
+	let userId = new ObjectId(req.user._id);
 
 	return saleService.createSale(req.body, userId)
 	.then(sale => {
-		if(!sale) {
-			return res.status(404).end();
-		}
-		return Sale.populate(sale, { path: 'promotionId'});
-	})
-	.then(sale => {
-		if(!sale) {
-			return res.status(404).end();
-		}
 		res.json(sale);
 	})
 	.catch(err => {
@@ -55,20 +46,8 @@ const migrate = function(req, res) {
 		console.log("Found " + sales.length + " rows");
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.isConsignment === true) {
-				console.log("Found Consignment");
-				sale.isConsignment = true;
-			}
-			else {
-				console.log(sale);
-				if (sale.promotion && sale.quantity) {
-					sale.bill = {
-						bills: [{ price: sale.promotion.price, quantity: sale.quantity }],
-						total: sale.promotion.price * sale.quantity
-					}
-					promises.push(sale.save());
-				}
-			}
+			sale.isConsignment = undefined;
+			promises.push(sale.save());
 		});
 		console.log("Migrate " + promises.length + " rows");
 		return Promise.all(promises).then(result => {

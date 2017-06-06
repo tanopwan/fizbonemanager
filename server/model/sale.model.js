@@ -10,8 +10,6 @@ const SaleSchema = new Schema({
 	description: String,
 	saleDate: Date,
 	orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
-	isConsignment: { type: Boolean, default: false },
-	isDeleted: { type: Boolean, default: false },
 	bill: new Schema({
 		bills: [new Schema({
 			quantity: Number,
@@ -35,7 +33,6 @@ const SaleSchema = new Schema({
 	}, {
 		_id : false
 	}),
-	//promotionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Promotion' },
 	promotion: new Schema({
 		name: String,
 		price: Number,
@@ -43,7 +40,6 @@ const SaleSchema = new Schema({
 	}, {
 		_id : false
 	}),
-	//customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' },
 	customer: new Schema({
 		name: String,
 		type: String,

@@ -4,8 +4,7 @@ const Sale = require('../model/sale.model');
 
 const createSale = (saleData, userId) => {
 	saleData.createdBy = userId;
-	saleData.isDeleted = false;
-
+	console.log(saleData);
 	return Sale.create(saleData);
 };
 
@@ -18,7 +17,7 @@ const getSales = (limit, group) => {
 	}
 
 	let criteria = {
-		isDeleted: false
+		// isDeleted: false
 	};
 
 	if (group) {

@@ -42,7 +42,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale" :customers="customers"></sale-promotion>
+				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale" :customers="customers" :productsWithBatches="productsWithBatches"></sale-promotion>
 			</div>
 		</div>
 		<div class="block full">
@@ -96,6 +96,7 @@ export default {
 			batchStocks: [],
 			promotions: [],
 			customers: [],
+			productsWithBatches: [],
 			billQuantity: 0,
 			billPrice: 0,
 			quantityError: false,
@@ -193,6 +194,13 @@ export default {
 			});*/
 		})
 		.catch(response => console.log(response));
+
+		EventBus.getProductsWithBatches()
+		.then(response => {
+			this.productsWithBatches = response.body;
+		})
+		.catch(response => console.log(response));
+
 		EventBus.getCustomers()
 		.then(response => this.customers = response.body)
 		.catch(response => console.log(response));

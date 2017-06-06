@@ -87,10 +87,9 @@ export default {
 			});
 		},
 		activePromotions: function() {
-			console.log(this.promotions);
 			if (this.promotions) {
 				return this.promotions.filter(promotion => {
-					if (promotion.isActive === false || promotion.group === 'Consignment') {
+					if (promotion.isActive === false /*|| promotion.group === 'Consignment'*/) {
 						return false;
 					}
 					return true;

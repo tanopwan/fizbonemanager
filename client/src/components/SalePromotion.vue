@@ -105,20 +105,9 @@ export default {
 			errorMessage: '',
 
 			selectedCustomer: '',
-			selectedBatch: '',
-			selectedProduct: ''
+			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch.batchId + '/' + this.promotion.batch.batchRef : '',
+			selectedProduct: this.promotion.product.name
 		}
-	},
-	watch: {
-		promotion: function (value) {
-			this.batchOptions = [];
-			if (this.promotion.batches) {
-				this.promotion.batches.forEach(batch => {
-					this.batchOptions.push({ text: batch.batchRef, id: batch._id });
-				});
-			}
-			this.selectedBatch = this.batchOptions[0].id;
-        }
 	},
 	computed: {
 		customerOptions: function() {
@@ -159,7 +148,6 @@ export default {
 				this.saleDate = moment();
 			}
 
-			console.log(stock);
 			if (this.quantity > stock) {
 				this.error = true;
 				this.errorMessage = "Over stocks!";
@@ -170,7 +158,6 @@ export default {
 				quantity: this.quantity,
 				description: this.description,
 				saleDate: this.saleDate,
-				//isConsignment: this.isConsignment,
 				product: {
 					name: this.selectedProduct
 				},
@@ -185,6 +172,18 @@ export default {
 				}
 			}
 
+			if (this.promotion.group !== "Consignment") {
+				data.bill = {
+					bills: {
+						quantity: this.quantity,
+						price: this.price,
+						date: moment()
+					},
+					total: this.quantity,
+					quantity: this.quantity * this.price
+				}
+			}
+
 			if (this.selectedCustomer) {
 				let customer = this.customers.find(customer => customer._id === this.selectedCustomer);
 				data.customer = {
@@ -196,13 +195,13 @@ export default {
 
 			this.error = false;
 			console.log(data);
-			/*
+
 			EventBus.addSale(data).then(response => {
 				this.onAddSale(response.body);
 				this.quantity = this.promotion.quantity;
 				this.description = "";
 			})
-			.catch(response => console.log(response));*/
+			.catch(response => console.log(response));
 		},
 		getBatchStock(batchId) {
 			let batch = null;
