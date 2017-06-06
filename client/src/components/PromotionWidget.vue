@@ -1,7 +1,7 @@
 <template>
 	<div class="widget">
 		<div class="widget-content text-light-op" :class="[{'themed-background': promotion && !isDeleted}, {'themed-background-dark': promotion && isDeleted}, {'themed-background-success': !promotion}]">
-			<span v-if="promotion">Promotion</span>
+			<span v-if="promotion">Promotion ({{ promotion._id }})</span>
 			<span v-else>Add New</span>
 		</div>
 		<div class="widget-content themed-background-muted text-center">
