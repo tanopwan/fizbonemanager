@@ -186,14 +186,11 @@ export default {
 		EventBus.getPromotions()
 		.then(response => {
 			this.promotions = response.body;
-			return this.$http.get('/api/products/batches');
-		})
-		.then(response => {
-			let productWithBatches = response.body;
+			/*let productWithBatches = response.body;
 			this.promotions.forEach((promotion, idx) => {
 				let batches = productWithBatches.find(product => product.name === promotion.batchId.product.name).batches;
 				Vue.set(this.promotions[idx], 'batches', batches);
-			});
+			});*/
 		})
 		.catch(response => console.log(response));
 		EventBus.getCustomers()

@@ -15,7 +15,7 @@
 						<input type="number" class="form-control" v-model="quantity"></input>
 						<span class="input-group-addon" @click="quantity++"><i class="fa fa-plus"></i></span>
 						<span class="input-group-addon" @click="quantity--"><i class="fa fa-minus"></i></span>
-						<input type="number" class="form-control" v-model="promotion.price"></input>
+						<input type="number" class="form-control" v-model="priceBaht"></input>
 					</div>
 					<span v-if="error">{{ errorMessage }}</span>
 				</div>
@@ -45,7 +45,7 @@
 						<span class="input-group-addon">รายละเอียด</span>
 						<input type="text" class="form-control" v-model="description"></input>
 						<span class="input-group-btn">
-							<button @click="addSaleInternal(getAvaliableStock(promotion.batch.id))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
+							<button @click="addSaleInternal(getAvaliableStock(promotion.batch.batchId))" type="button" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">Add</button>
 						</span>
 					</div>
 				</div>
@@ -98,12 +98,15 @@ export default {
 				'themed-background-danger'
 			],
 			saleDate: new Date(),
+			priceBaht: this.promotion.price / 100,
 			quantity: this.promotion.quantity,
 			description: '',
 			error: false,
 			errorMessage: '',
+
 			selectedCustomer: '',
-			selectedBatch: ''
+			selectedBatch: '',
+			selectedProduct: ''
 		}
 	},
 	watch: {
@@ -156,12 +159,7 @@ export default {
 				this.saleDate = moment();
 			}
 
-			if (this.promotion.price < 1000 && this.promotion.price != 0) {
-				this.error = true;
-				this.errorMessage = "Invalid price, 0 or at least 1000 (10 Baht)";
-				return false;
-			}
-
+			console.log(stock);
 			if (this.quantity > stock) {
 				this.error = true;
 				this.errorMessage = "Over stocks!";
@@ -172,18 +170,17 @@ export default {
 				quantity: this.quantity,
 				description: this.description,
 				saleDate: this.saleDate,
-				isConsignment: this.isConsignment,
+				//isConsignment: this.isConsignment,
 				product: {
-					name: this.promotion.batchId.product.name,
-					link: this.promotion.batchId.product.link
+					name: this.selectedProduct
 				},
 				batch: {
-					batchId: this.promotion.batchId._id,
-					batchRef: this.promotion.batchId.batchRef
+					batchId: this.selectedBatch.split('/')[0],
+					batchRef: this.selectedBatch.split('/')[1]
 				},
 				promotion: {
 					name: this.promotion.name,
-					price: this.promotion.price,
+					price: this.price,
 					group: this.promotion.group
 				}
 			}
@@ -198,12 +195,14 @@ export default {
 			}
 
 			this.error = false;
+			console.log(data);
+			/*
 			EventBus.addSale(data).then(response => {
 				this.onAddSale(response.body);
 				this.quantity = this.promotion.quantity;
 				this.description = "";
 			})
-			.catch(response => console.log(response));
+			.catch(response => console.log(response));*/
 		},
 		getBatchStock(batchId) {
 			let batch = null;

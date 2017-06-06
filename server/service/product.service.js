@@ -15,7 +15,7 @@ const promiseOnlineProducts = Promotion.aggregate([
 			_id: '$product.name',
 			link: { $first: '$product.link' },
 			price: { $first: '$price' },
-			batchId: { $first: '$batch.id' },
+			batchId: { $first: '$batch.batchId' },
 			batchRef: { $first: '$batch.batchRef' },
 			promotionId: { $first: '$_id' },
 		}

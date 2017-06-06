@@ -18,7 +18,7 @@ const PromotionSchema = new Schema({
 		_id: false
 	}),
 	batch: new Schema({
-		id: mongoose.Schema.Types.ObjectId,
+		batchId: mongoose.Schema.Types.ObjectId,
 		batchRef: String,
 	},
 	{

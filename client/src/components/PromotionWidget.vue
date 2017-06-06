@@ -80,7 +80,7 @@ export default {
 			quantity: this.promotion ? this.promotion.quantity : 0,
 			priceBaht: this.promotion ? this.promotion.price / 100 : 0,
 			selectedProduct: this.promotion && this.promotion.product ? this.promotion.product.name : '',
-			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch.id + '/' + this.promotion.batch.batchRef : '',
+			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch.batchId + '/' + this.promotion.batch.batchRef : '',
 			selectedGroup: this.promotion ? this.promotion.group : 'Booth',
 
 			groups: [
@@ -99,6 +99,7 @@ export default {
 		},
 		productOptions() {
 			let options = [];
+			console.log(this.productsWithBatches);
 			this.productsWithBatches.forEach(product => {
 				options.push({ id: product.name, text: product.name });
 			});
@@ -123,7 +124,7 @@ export default {
 				this.quantity = promotion.quantity || 0;
 				this.priceBaht = promotion.price / 100 || 0;
 				this.selectedProduct = promotion ? promotion.product.name : '';
-				this.selectedBatch = promotion ? promotion.batch.id + '/' + promotion.batch.batchRef : '';
+				this.selectedBatch = promotion ? promotion.batch.batchId + '/' + promotion.batch.batchRef : '';
 				this.selectedGroup = promotion.group || 'Booth';
 			}
 		}
@@ -142,7 +143,7 @@ export default {
 					name: this.selectedProduct
 				},
 				batch: {
-					id: this.selectedBatch.split('/')[0],
+					batchId: this.selectedBatch.split('/')[0],
 					batchRef: this.selectedBatch.split('/')[1]
 				},
 				group: this.selectedGroup

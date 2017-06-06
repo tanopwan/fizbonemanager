@@ -2,10 +2,10 @@
 	<div>
 		<div class="row">
 			<div class="col-xs-12 col-sm-6 col-md-4">
-				<promotion-widget :productsWithBatches="productWithBatches" v-on:addPromotion="onAddPromotion"></promotion-widget>
+				<promotion-widget :productsWithBatches="productsWithBatches" v-on:addPromotion="onAddPromotion"></promotion-widget>
 			</div>
 			<div class="col-xs-12 col-sm-6 col-md-4" v-for="promotion in sortedPromotions">
-				<promotion-widget :productsWithBatches="productWithBatches" :promotion="promotion"></promotion-widget>
+				<promotion-widget :productsWithBatches="productsWithBatches" :promotion="promotion"></promotion-widget>
 			</div>
 		</div>
 	</div>
@@ -19,7 +19,7 @@ import PromotionWidget from './PromotionWidget.vue';
 export default {
 	data() {
 		return {
-			productWithBatches: [],
+			productsWithBatches: [],
 			promotions: []
 		};
 	},
@@ -41,9 +41,10 @@ export default {
 		}
 	},
 	created() {
-		this.$http.get('/api/products/batches')
+		EventBus.getProductsWithBatches()
 		.then(response => {
-			this.productWithBatches = response.body;
+			console.log(response.body);
+			this.productsWithBatches = response.body;
 		})
 		.catch(response => console.log(response));
 		EventBus.getPromotions()
