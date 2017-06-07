@@ -17,7 +17,7 @@ const getSales = (limit, group) => {
 	}
 
 	let criteria = {
-		isDeleted: false
+		isDeleted: { $in: [false, null] }
 	};
 
 	if (group) {

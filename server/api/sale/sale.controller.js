@@ -38,7 +38,8 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	return Sale.find().exec()
+	return res.status(501);
+	/*return Sale.find().exec()
 	.then(sales => {
 		if(!sales) {
 			return res.status(404).end();
@@ -54,7 +55,7 @@ const migrate = function(req, res) {
 			res.json(promises);
 		});
 	})
-	.catch(err => res.status(500).json(err));
+	.catch(err => res.status(500).json(err));*/
 }
 
 const index = function(req, res) {
