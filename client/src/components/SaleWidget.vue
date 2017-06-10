@@ -78,7 +78,7 @@
 						<p>
 							Customer: <i class="gi gi-user text-muted"></i> {{ customerName }}<br>
 							Description: {{ description }}
-							<span v-for="tag in tags" class="label label-info">{{ tag }}</span>
+							<span style="margin-right: 5px" v-for="tag in tags" class="label label-info">{{ tag }}</span>
 						</p>
 					</div>
 				</div>
@@ -130,6 +130,9 @@ export default {
 		};
 	},
 	computed: {
+		tags() {
+			return this.tagString.split(' ');
+		},
 		price() {
 			return this.priceBaht * 100;
 		},
@@ -237,13 +240,13 @@ export default {
 			this.selectedCustomer = '';
 			this.priceBaht = 0;
 			this.quantity = 0;
+			this.tagString = '';
 		},
 		onSelectProduct(value) {
 			this.productLink = '';
 			this.selectedBatch = '';
 			this.selectedPromotion = '';
 			this.selectedGroup = '';
-			this.selectedCustomer = '';
 			this.priceBaht = 0;
 			this.quantity = 0;
 
