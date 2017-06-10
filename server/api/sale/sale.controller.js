@@ -72,7 +72,7 @@ const index = function(req, res) {
 const destroy = function(req, res) {
 	let saleId = new ObjectId(req.params.id);
 
-	return Sale.findOneAndUpdate({ _id: saleId }, { $set: { isDeleted: true }}).exec()
+	return Sale.findOne({ _id: saleId }).remove().exec()
 	.then(result => {
 		res.json(result);
 	})
