@@ -7,30 +7,25 @@
 <script>
 export default {
 	props: ['options', 'value', 'placeholder', 'allowClear'],
-	mounted: function () {
+	mounted() {
 		let allowClear = this.allowClear === "false" ? false : true;
 
-		var vm = this
-		$(this.$el)
-		// init select2
-		.select2({ data: this.options, allowClear: allowClear })
-		// emit event on change.
-		.on('change', function () {
-			vm.$emit('input', this.value)
+		// update options
+		var vm = this;
+		$(this.$el).select2({ data: this.options, allowClear: allowClear }).on('change', function () {
+			vm.$emit('input', this.value);
 		});
-
-		if (this.value) {
-			$(this.$el).val(this.value).trigger("change");
-		}
 	},
 	watch: {
-		value: function (value) {
-			// update value
-			$(this.$el).val(value).trigger("change");
+		value: function (value, oldValue) {
+			if (value !== oldValue && $(this.$el).val() !== value) {
+				this.value = value;
+				// update value
+				$(this.$el).val(value).trigger("change");
+			}
 		},
 		options: function (options) {
 			let allowClear = this.allowClear === "false" ? false : true;
-
 			// update options
 			$(this.$el).select2({ data: this.options, allowClear: allowClear });
 		}

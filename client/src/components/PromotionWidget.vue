@@ -99,7 +99,6 @@ export default {
 		},
 		productOptions() {
 			let options = [];
-			console.log(this.productsWithBatches);
 			this.productsWithBatches.forEach(product => {
 				options.push({ id: product.name, text: product.name });
 			});

@@ -10,6 +10,7 @@ const SaleSchema = new Schema({
 	description: String,
 	saleDate: Date,
 	orderId: { type: mongoose.Schema.Types.ObjectId, ref: 'Order' },
+	tags: [String],
 	bill: new Schema({
 		bills: [new Schema({
 			quantity: Number,

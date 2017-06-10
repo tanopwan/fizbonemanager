@@ -14,12 +14,6 @@ const ProductSchema = new Schema({
 	timestamps: true
 });
 
-let Product = null;
-try {
-	Product = mongoose.model('Product');
-}
-catch (error) {
-	Product = mongoose.model('Product', ProductSchema);
-}
+let Product = mongoose.model('Product', ProductSchema);
 
 module.exports = Product;

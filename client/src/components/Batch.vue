@@ -114,7 +114,8 @@ export default {
 			let body = {
 				batchRef: `${this.batchRefPrefix}_${this.batchRef}`,
 				product: {
-					name: product.name
+					name: product.name,
+					link: product.link
 				},
 				quantity: this.quantity
 			}
@@ -152,7 +153,7 @@ export default {
 		},
 	},
 	created() {
-		EventBus.query("{ products { _id, name } }")
+		EventBus.query("{ products { _id, name, link } }")
 			.then(response => {
 				this.products = response.body.data.products
 			})

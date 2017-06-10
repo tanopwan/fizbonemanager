@@ -1,12 +1,6 @@
 <template>
 	<div>
-		<div>
-			<div class="row">
-				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="false" :onAddSale="onAddSale" :customers="customers" :productsWithBatches="productsWithBatches">
-					{{ promotion }}
-				</sale-promotion>
-			</div>
-		</div>
+		<sale-widget :onAddSale="onAddSale"></sale-widget>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
@@ -51,18 +45,19 @@
 <script>
 import moment from 'moment';
 import { EventBus } from '../bus';
-import salePromotion from './SalePromotion.vue';
+import SaleWidget from './SaleWidget.vue';
 
 export default {
 	data() {
 		return {
 			sales: [],
 			batchStocks: [],
-			promotions: [],
-			customers: [],
 			sumQuantity: 0,
 			sumTotal: 0,
-			productsWithBatches: []
+
+			selectedProduct: '',
+			selectedBatch: '',
+			selectedPromotion: '',
 		};
 	},
 	computed: {
@@ -86,17 +81,6 @@ export default {
 				return 1;
 			});
 		},
-		activePromotions: function() {
-			if (this.promotions) {
-				return this.promotions.filter(promotion => {
-					if (promotion.isActive === false /*|| promotion.group === 'Consignment'*/) {
-						return false;
-					}
-					return true;
-				});
-			}
-			return [];
-		}
 	},
 	methods: {
 		deleteSale(id) {
@@ -129,25 +113,9 @@ export default {
 		this.$http.get('/api/sales?limit=10')
 		.then(response => this.sales = response.body)
 		.catch(response => console.log(response));
-
-		EventBus.getProductsWithBatches()
-		.then(response => {
-			this.productsWithBatches = response.body;
-		})
-		.catch(response => console.log(response));
-
-		EventBus.getPromotions()
-		.then(response => {
-			this.promotions = response.body;
-		})
-		.catch(response => console.log(response));
-		EventBus.getCustomers()
-		.then(response => this.customers = response.body)
-		.catch(response => console.log(response));
-		this.updateStock();
 	},
 	components: {
-		salePromotion
+		saleWidget: SaleWidget
 	}
 }
 </script>
