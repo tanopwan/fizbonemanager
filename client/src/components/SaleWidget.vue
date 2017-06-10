@@ -33,7 +33,7 @@
 						</div>
 					</div>
 					<div class="col-xs-6">
-						<input type="text" class="form-control" v-model="tag" placeholder="tag"></input>
+						<input type="text" class="form-control" v-model="tagString" placeholder="tags"></input>
 					</div>
 				</div>
 				<div class="form-group">
@@ -78,7 +78,7 @@
 						<p>
 							Customer: <i class="gi gi-user text-muted"></i> {{ customerName }}<br>
 							Description: {{ description }}
-							<span class="label label-info">{{ tag }}</span>
+							<span v-for="tag in tags" class="label label-info">{{ tag }}</span>
 						</p>
 					</div>
 				</div>
@@ -119,7 +119,7 @@ export default {
 			productLink: '',
 			customerName: '',
 			customerType: '',
-			tag: '',
+			tagString: '',
 			selectedProduct: '',
 			selectedBatch: '',
 			selectedPromotion: '',
@@ -197,9 +197,7 @@ export default {
 					price: this.price,
 					group: this.selectedGroup
 				},
-				tags: [
-					this.tag
-				]
+				tags: this.tagString.split(' ')
 			}
 
 			if (this.selectedGroup !== "Consignment") {

@@ -15,6 +15,10 @@ export default {
 		$(this.$el).select2({ data: this.options, allowClear: allowClear }).on('change', function () {
 			vm.$emit('input', this.value);
 		});
+
+		if ($(this.$el).val() !== this.value) {
+			$(this.$el).val(this.value).trigger("change");
+		}
 	},
 	watch: {
 		value: function (value, oldValue) {

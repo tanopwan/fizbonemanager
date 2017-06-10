@@ -1,7 +1,7 @@
 <template>
 	<div class="widget">
 		<div class="widget-content text-light-op" :class="[{'themed-background': promotion && !isDeleted}, {'themed-background-dark': promotion && isDeleted}, {'themed-background-success': !promotion}]">
-			<span v-if="promotion">Promotion ({{ promotion._id }})</span>
+			<span v-if="promotion">{{ promotion._id }}</span>
 			<span v-else>Add New</span>
 		</div>
 		<div class="widget-content themed-background-muted text-center">
@@ -79,7 +79,7 @@ export default {
 			name: this.promotion ? this.promotion.name : '',
 			quantity: this.promotion ? this.promotion.quantity : 0,
 			priceBaht: this.promotion ? this.promotion.price / 100 : 0,
-			selectedProduct: this.promotion && this.promotion.product ? this.promotion.product.name : '',
+			selectedProduct: (this.promotion && this.promotion.product) ? this.promotion.product.name : '',
 			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch.batchId + '/' + this.promotion.batch.batchRef : '',
 			selectedGroup: this.promotion ? this.promotion.group : 'Booth',
 
