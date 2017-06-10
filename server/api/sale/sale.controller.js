@@ -59,14 +59,27 @@ const migrate = function(req, res) {
 }
 
 const index = function(req, res) {
-	return saleService.getSales(req.query ? req.query.limit : 0, req.query ? req.query.group : null)
-	.then(sale => {
-		if(!sale) {
-			return res.status(404).end();
-		}
-		res.json(sale);
-	})
-	.catch(err => res.status(500).json(err));
+	if (req.query) {
+		return saleService.getSales(req.query.limit, req.query.group, req.query.range)
+		.then(sale => {
+			if(!sale) {
+				return res.status(404).end();
+			}
+			res.json(sale);
+		})
+		.catch(err => res.status(500).json(err));
+	}
+	else {
+		return saleService.getSales(0, null, null)
+		.then(sale => {
+			if(!sale) {
+				return res.status(404).end();
+			}
+			res.json(sale);
+		})
+		.catch(err => res.status(500).json(err));
+	}
+
 }
 
 const destroy = function(req, res) {

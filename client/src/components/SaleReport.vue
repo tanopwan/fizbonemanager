@@ -13,6 +13,7 @@
 							<label class="col-xs-3 control-label">Filter Promotion</label>
 							<div class="col-xs-9">
 								<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
+									<option></option>
 								</select2>
 							</div>
 						</div>
@@ -59,8 +60,8 @@
 						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.stringDate }}</td>
 						<th class="text-center">{{ sale.quantity }}</th>
-						<th class="text-center">{{ sale.price.toFixed(2) }}</th>
-						<th class="text-center">{{ sale.total.toFixed(2) }}</th>
+						<th class="text-center">{{ sale.price ? sale.price.toFixed(2) : 'N/A' }}</th>
+						<th class="text-center">{{ sale.price ? sale.total.toFixed(2) : 'N/A' }}</th>
 						<td class="text-center">
 							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''"><i class="fa fa-facebook"></i></button>
 							{{ sale.customer ? sale.customer.name : '' }}
@@ -103,12 +104,14 @@ export default {
 			this.sumQuantity = 0;
 			this.sumTotal = 0;
 			this.sales.forEach(sale => {
-				sale.promotionName = sale.promotion.name;
-				sale.price = sale.promotion.price / 100;
-				sale.total = sale.promotion.price * sale.quantity / 100;
+				if (sale.promotion) {
+					sale.promotionName = sale.promotion.name;
+					sale.price = sale.promotion.price / 100;
+					sale.total = sale.promotion.price * sale.quantity / 100;
+					this.sumQuantity += sale.quantity;
+					this.sumTotal += sale.total;
+				}
 				sale.stringDate = moment(sale.saleDate).format('LLL');
-				this.sumQuantity += sale.quantity;
-				this.sumTotal += sale.total;
 			});
 
 			let computed = this.sales.sort(function(s1, s2){

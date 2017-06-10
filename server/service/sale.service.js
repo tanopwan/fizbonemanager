@@ -1,6 +1,7 @@
 'use strict';
 
 const Sale = require('../model/sale.model');
+const moment = require('moment');
 
 const createSale = (saleData, userId) => {
 	saleData.createdBy = userId;
@@ -8,7 +9,7 @@ const createSale = (saleData, userId) => {
 	return Sale.create(saleData);
 };
 
-const getSales = (limit, group) => {
+const getSales = (limit, group, range) => {
 	if(!isNaN(parseInt(limit))) {
 		limit = parseInt(limit);
 	}
@@ -22,6 +23,15 @@ const getSales = (limit, group) => {
 
 	if (group) {
 		criteria['promotion.group'] = group;
+	}
+
+	if (range === 'today') {
+		var today = moment().startOf('day')
+		var tomorrow = moment(today).add(1, 'days')
+		criteria['saleDate'] = {
+			$gte: today.toDate(),
+			$lt: tomorrow.toDate()
+		}
 	}
 
 	return Sale.find(criteria).sort({'createdAt': -1}).limit(limit).exec();
