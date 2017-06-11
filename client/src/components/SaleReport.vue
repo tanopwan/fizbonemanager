@@ -8,7 +8,24 @@
 			</div>
 			<form class="form-horizontal">
 				<div class="row">
-					<div class="col-xs-12 col-md-4">
+
+					<div class="col-xs-12 col-md-6">
+						<div class="input-group">
+							<span class="input-group-addon">From Date</span>
+							<input type="text" id="from-datepicker" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" v-model="from">
+							<span class="input-group-addon">To Date</span>
+							<input type="text" id="to-datepicker" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="yyyy-mm-dd" v-model="to">
+						</div>
+					</div>
+					<div class="col-xs-12 col-md-6">
+						<label class="col-xs-6 col-md-3 control-label">Filter Date</label>
+						<ul class="pagination pagination-sm" style="margin-top: 3px;">
+							<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
+							<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
+							<li :class="{ active : customFilter }"><a href="javascript:void(0)" @click="thisCustomClick">Custom</a></li>
+						</ul>
+					</div>
+					<div class="col-xs-12 col-md-6">
 						<div class="form-group">
 							<label class="col-xs-3 control-label">Filter Promotion</label>
 							<div class="col-xs-9">
@@ -16,21 +33,6 @@
 									<option></option>
 								</select2>
 							</div>
-						</div>
-					</div>
-					<div class="col-xs-12 col-md-4">
-						<label class="col-xs-6 col-md-3 control-label">Filter Date</label>
-						<ul class="pagination pagination-sm" style="margin-top: 3px;">
-							<li :class="{ active : allFilter }"><a href="javascript:void(0)" @click="allClick">All</a></li>
-							<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
-							<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
-							<li :class="{ active : customFilter }"><a href="javascript:void(0)" @click="thisCustomClick">Custom</a></li>
-						</ul>
-					</div>
-					<div class="col-xs-12 col-md-4">
-						<div class="input-group">
-							<span class="input-group-addon">Custom Date</span>
-							<input type="text" id="report-datepicker" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
 						</div>
 					</div>
 				</div>
@@ -88,7 +90,6 @@ export default {
 		return {
 			description: '',
 			sales: [],
-			allFilter: true,
 			todayFilter: false,
 			thisWeekFilter: false,
 			customFilter: false,
@@ -96,11 +97,17 @@ export default {
 			promotions: [],
 			selectedFilterPromotion: '',
 			sumQuantity: 0,
-			sumTotal: 0
+			sumTotal: 0,
+			from: moment().startOf('day').format("YYYY-MM-DD HH:mm"),
+			to: moment().startOf('day').add(1, 'days').format("YYYY-MM-DD HH:mm")
 		};
 	},
 	computed: {
 		computedSales: function() {
+			console.log(this.sales);
+			if (!this.sales || this.sales.length == 0) {
+				return [];
+			}
 			this.sumQuantity = 0;
 			this.sumTotal = 0;
 			this.sales.forEach(sale => {
@@ -126,9 +133,7 @@ export default {
 				}
 				return sale.promotionName === this.selectedFilterPromotion;
 			}).filter(sale => {
-				if (this.allFilter) {
-					return true;
-				} else if (this.todayFilter) {
+				if (this.todayFilter) {
 					if (moment(sale.saleDate).isSame(new Date(), "day") &&
 					moment(sale.saleDate).isSame(new Date(), "month") &&
 					moment(sale.saleDate).isSame(new Date(), "year")) {
@@ -137,11 +142,6 @@ export default {
 					return false;
 				} else if (this.thisWeekFilter) {
 					if (moment(sale.saleDate).isBetween(moment().subtract(6, 'days').startOf('day'), moment().endOf('day'))) {
-						return true;
-					}
-					return false;
-				} else if (this.customFilter) {
-					if (moment(sale.saleDate).isSame(moment(this.datefilter), 'day')) {
 						return true;
 					}
 					return false;
@@ -182,23 +182,13 @@ export default {
 				console.log(response);
 			});
 		},
-		allClick() {
-			this.allFilter = true;
-			this.todayFilter = false;
-			this.thisWeekFilter = false;
-			this.customFilter = false;
-		},
 		todayClick() {
-			this.allFilter = false;
-			this.todayFilter = true;
-			this.thisWeekFilter = false;
-			this.customFilter = false;
+			this.from = moment().startOf('day').format("YYYY-MM-DD HH:mm");
+			this.to = moment().endOf('day').format("YYYY-MM-DD HH:mm");
 		},
 		thisWeekClick() {
-			this.allFilter = false;
-			this.todayFilter = false;
-			this.thisWeekFilter = true;
-			this.customFilter = false;
+			this.from = moment().startOf('day').add(-6, 'days').format("YYYY-MM-DD HH:mm");
+			this.to = moment().endOf('day').add(1, 'days').format("YYYY-MM-DD HH:mm");
 		},
 		thisCustomClick() {
 			this.allFilter = false;
@@ -208,7 +198,10 @@ export default {
 		}
 	},
 	created() {
-		EventBus.getSales()
+		// var today = moment().startOf('day');
+		// var tomorrow = moment(today).add(1, 'days');
+
+		this.$http.get(`/api/sales?from=${this.from}&to=${this.to}`)
 			.then(response => this.sales = response.body)
 			.catch(response => console.log(response));
 		EventBus.getPromotions()
@@ -222,11 +215,15 @@ export default {
 	mounted() {
 		$('.select-select2').select2();
 		let vm = this;
-		$('#report-datepicker').datepicker("setDate", new Date()).on('changeDate', function(e){
+		$('#from-datepicker').datepicker().on('changeDate', function(e){
 			$(this).datepicker('hide');
-			vm.datefilter = $(this).val();
+			vm.from = $(this).val();
 		});
-		this.datefilter = $('#report-datepicker').val();
+
+		$('#to-datepicker').datepicker("setDate", this.to).on('changeDate', function(e){
+			$(this).datepicker('hide');
+			vm.to = $(this).val();
+		});
 	}
 }
 </script>

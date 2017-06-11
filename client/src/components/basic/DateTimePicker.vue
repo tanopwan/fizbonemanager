@@ -66,6 +66,7 @@ export default {
 			vm.date = $(this).val();
 			vm.$emit('input', vm.date + ' ' + vm.time);
 		});
+
 		$('.input-timepicker24').timepicker({
 			minuteStep: 1,
 			//showSeconds: true,
@@ -74,10 +75,13 @@ export default {
 			vm.time = e.time.value;
 			vm.$emit('input', vm.date + ' ' + vm.time);
 		});
+
 		setInterval(function(){
 			vm.date = moment(new Date()).format("YYYY-MM-DD");
  			vm.time = moment(new Date()).format("HH:mm");
-		}, 60000);
+			$('.input-datepicker').datepicker('update', vm.date);
+			$('.input-timepicker24').timepicker('setTime', vm.time);
+		}, 10000);
 	}
 }
 </script>

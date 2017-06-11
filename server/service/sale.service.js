@@ -9,7 +9,7 @@ const createSale = (saleData, userId) => {
 	return Sale.create(saleData);
 };
 
-const getSales = (limit, group, range) => {
+const getSales = (limit, group, from, to) => {
 	if(!isNaN(parseInt(limit))) {
 		limit = parseInt(limit);
 	}
@@ -24,13 +24,11 @@ const getSales = (limit, group, range) => {
 	if (group) {
 		criteria['promotion.group'] = group;
 	}
-
-	if (range === 'today') {
-		var today = moment().startOf('day')
-		var tomorrow = moment(today).add(1, 'days')
+	
+	if (from || to) {
 		criteria['saleDate'] = {
-			$gte: today.toDate(),
-			$lt: tomorrow.toDate()
+			$gte: from,
+			$lt: to
 		}
 	}
 

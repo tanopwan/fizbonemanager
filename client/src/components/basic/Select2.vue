@@ -30,8 +30,9 @@ export default {
 		},
 		options: function (options) {
 			let allowClear = this.allowClear === "false" ? false : true;
+
 			// update options
-			$(this.$el).select2({ data: this.options, allowClear: allowClear });
+			$(this.$el).select2('destroy').empty().select2({ data: this.options, allowClear: allowClear });
 		}
 	},
 	destroyed: function () {
