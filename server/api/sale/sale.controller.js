@@ -159,6 +159,7 @@ const bill = function(req, res) {
 	let saleId = new ObjectId(req.params.id);
 	let quantity = req.body.quantity;
 	let price = req.body.price;
+	let date = req.body.date || new Date();
 
 	if (quantity <= 0 || price <= 0) {
 		return res.status(400).json({ message: "quantity should be positive number"});
@@ -166,7 +167,7 @@ const bill = function(req, res) {
 
 	return Sale.findOneAndUpdate({ _id: saleId }, {
 		$push: {
-			"bill.bills": { quantity: quantity, price: price, date: new Date() }
+			"bill.bills": { quantity: quantity, price: price, date: date }
 		},
 		$inc: {
 			"bill.total": quantity * price,

@@ -77,11 +77,11 @@ export default {
 		});
 
 		setInterval(function(){
-			vm.date = moment(new Date()).format("YYYY-MM-DD");
+			//vm.date = moment(new Date()).format("YYYY-MM-DD");
  			vm.time = moment(new Date()).format("HH:mm");
-			$('.input-datepicker').datepicker('update', vm.date);
+			//$('.input-datepicker').datepicker('update', vm.date);
 			$('.input-timepicker24').timepicker('setTime', vm.time);
-		}, 10000);
+		}, 60000);
 	}
 }
 </script>

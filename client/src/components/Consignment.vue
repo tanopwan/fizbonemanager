@@ -8,6 +8,7 @@
 						<h3 class="modal-title"><strong>Bill</strong></h3>
 					</div>
 					<div class="modal-body">
+						<date-time-picker v-on:input="onDatetime"></date-time-picker>
 						<div class="row form-group" :class="{ 'has-error': quantityError }">
 							<div class="col-sm-6">
 								<div class="input-group">
@@ -28,11 +29,6 @@
 						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
 					</div>
 				</div>
-			</div>
-		</div>
-		<div>
-			<div class="row">
-				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale" :customers="customers" :productsWithBatches="productsWithBatches"></sale-promotion>
 			</div>
 		</div>
 		<div class="block full">
@@ -75,18 +71,14 @@
 <script>
 import moment from 'moment';
 import { EventBus } from '../bus';
-import salePromotion from './SalePromotion.vue';
 import Vue from 'vue';
+import DateTimePicker from './basic/DateTimePicker.vue';
 
 export default {
 	data() {
 		return {
-			description: '',
+			datetime: null,
 			consignments: [],
-			batchStocks: [],
-			promotions: [],
-			customers: [],
-			productsWithBatches: [],
 			billQuantity: 0,
 			billPrice: 0,
 			quantityError: false,
@@ -110,17 +102,6 @@ export default {
 				}
 				return 1;
 			});
-		},
-		activePromotions: function() {
-			if (this.promotions) {
-				return this.promotions.filter(promotion => {
-					if (promotion.isActive === false || promotion.group !== 'Consignment') {
-						return false;
-					}
-					return true;
-				});
-			}
-			return [];
 		}
 	},
 	methods: {
@@ -131,10 +112,13 @@ export default {
 				return;
 			}
 
-			this.$http.post(`/api/sales/bill/${this.currentConsignment._id}`, {
+			let bill = {
 				quantity: this.billQuantity,
-				price: this.billPrice * 100
-			}).then(response => {
+				price: this.billPrice * 100,
+				date: moment(this.datetime, "YYYY-MM-DD HH:mm")
+			};
+
+			this.$http.post(`/api/sales/bill/${this.currentConsignment._id}`, bill).then(response => {
 				$('#modal-regular').modal('hide');
 				Vue.set(this.currentConsignment, 'bill', response.body.bill);
 			}).catch(response => console.log(response));
@@ -160,44 +144,17 @@ export default {
 				console.log(response);
 			});
 		},
-		onAddSale(sale) {
-			this.consignments.push(sale);
-			this.updateStock();
+		onDatetime(value) {
+			this.datetime = value;
 		},
-		updateStock() {
-			EventBus.getBatchStock()
-			.then(response => this.batchStocks = response.body)
-			.catch(response => console.log(response));
-		}
 	},
 	created() {
 		EventBus.getConsignments(10)
 		.then(response => this.consignments = response.body)
 		.catch(response => console.log(response));
-		EventBus.getPromotions()
-		.then(response => {
-			this.promotions = response.body;
-			/*let productWithBatches = response.body;
-			this.promotions.forEach((promotion, idx) => {
-				let batches = productWithBatches.find(product => product.name === promotion.batchId.product.name).batches;
-				Vue.set(this.promotions[idx], 'batches', batches);
-			});*/
-		})
-		.catch(response => console.log(response));
-
-		EventBus.getProductsWithBatches()
-		.then(response => {
-			this.productsWithBatches = response.body;
-		})
-		.catch(response => console.log(response));
-
-		EventBus.getCustomers()
-		.then(response => this.customers = response.body)
-		.catch(response => console.log(response));
-		this.updateStock();
 	},
 	components: {
-		salePromotion
+		dateTimePicker: DateTimePicker
 	}
 }
 </script>
