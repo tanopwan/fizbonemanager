@@ -28,22 +28,6 @@
 					<li class="sidebar-separator">
 						<i class="fa fa-ellipsis-h"></i>
 					</li>
-					<!-- <li>
-						<a href="#" class="sidebar-nav-menu">
-							<span class="sidebar-nav-ripple animate" style="height: 220px; width: 220px; top: -87px; left: 70px;"></span>
-							<i class="fa fa-chevron-left sidebar-nav-indicator sidebar-nav-mini-hide"></i>
-							<i class="gi gi-more_items sidebar-nav-icon"></i>
-							<span class="sidebar-nav-mini-hide">Consignment</span>
-						</a>
-						<ul>
-							<li>
-								<router-link to="/consignment">
-									<i class="gi gi-inbox sidebar-nav-icon"></i>
-									<span class="sidebar-nav-mini-hide">Create Sale</span>
-								</router-link>
-							</li>
-						</ul>
-					</li> -->
 					<li>
 						<a href="#" class="sidebar-nav-menu">
 							<span class="sidebar-nav-ripple animate" style="height: 220px; width: 220px; top: -87px; left: 70px;"></span>
@@ -59,9 +43,9 @@
 								</router-link>
 							</li>
 							<li>
-								<router-link to="/create_sale">
+								<router-link to="/consignment">
 									<i class="gi gi-shopping_cart sidebar-nav-icon"></i>
-									<span class="sidebar-nav-mini-hide">[New] Create Sale</span>
+									<span class="sidebar-nav-mini-hide">Consignment</span>
 								</router-link>
 							</li>
 							<li>

@@ -210,8 +210,8 @@ export default {
 						price: this.price,
 						date: moment()
 					},
-					total: this.quantity,
-					quantity: this.quantity * this.price
+					total: this.quantity * this.price,
+					quantity: this.quantity
 				}
 			}
 

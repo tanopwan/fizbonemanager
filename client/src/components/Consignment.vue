@@ -31,16 +31,6 @@
 			</div>
 		</div>
 		<div>
-			<div class="block full">
-				<div class="row">
-					<div class="col-xs-12 col-sm-6 col-md-4">
-						<div class="input-group">
-							<span class="input-group-addon">Custom Date</span>
-							<input type="text" class="form-control input-datepicker" data-date-format="yyyy-mm-dd" placeholder="dd-mm-yyyy">
-						</div>
-					</div>
-				</div>
-			</div>
 			<div class="row">
 				<sale-promotion v-for="(promotion, index) in activePromotions" :index="index" :batchStocks="batchStocks" :promotion="promotion" :isConsignment="true" :onAddSale="onAddSale" :customers="customers" :productsWithBatches="productsWithBatches"></sale-promotion>
 			</div>
@@ -67,10 +57,10 @@
 						<td class="text-center">{{ consignment.stringDate }}</td>
 						<td class="hidden-sm hidden-xs">{{ consignment.customerName }} / {{ consignment.product.name }}</td>
 						<th class="text-center">{{ consignment.bill ? consignment.bill.quantity : 0 }} / {{ consignment.quantity }}</th>
-						<th class="text-center">{{ consignment.bill ? consignment.bill.total : 0 }}</th>
+						<th class="text-center">{{ consignment.bill ? (consignment.bill.total / 100).toFixed(2) : 0 }}</th>
 						<td class="hidden-sm hidden-xs">{{ consignment.description }}</td>
 						<th class="text-center">
-							<a v-if="!consignment.bill || consignment.bill.quantity !== consignment.quantity" href="#modal-regular" @click="billConsignment(consignment._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
+							<a v-if="!consignment.bill || consignment.bill.quantity !== consignment.quantity" href="#modal-regular" @click="openConsignment(consignment._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
 								<i class="fa fa-money"></i>
 							</a>
 							<!-- <button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button> -->
@@ -143,13 +133,13 @@ export default {
 
 			this.$http.post(`/api/sales/bill/${this.currentConsignment._id}`, {
 				quantity: this.billQuantity,
-				price: this.billPrice
+				price: this.billPrice * 100
 			}).then(response => {
 				$('#modal-regular').modal('hide');
 				Vue.set(this.currentConsignment, 'bill', response.body.bill);
 			}).catch(response => console.log(response));
 		},
-		billConsignment(id) {
+		openConsignment(id) {
 			this.currentConsignment = this.consignments.find(consignment => consignment._id === id);
 			this.billQuantity = this.currentConsignment.quantity - (this.currentConsignment.bill ? this.currentConsignment.bill.quantity : 0);
 			this.billPrice = this.currentConsignment.price;

@@ -38,8 +38,8 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	return res.status(501);
-	/*return Sale.find().exec()
+	//return res.status(501);
+	return Sale.find().exec()
 	.then(sales => {
 		if(!sales) {
 			return res.status(404).end();
@@ -47,15 +47,19 @@ const migrate = function(req, res) {
 		console.log("Found " + sales.length + " rows");
 		let promises = [];
 		sales.forEach(sale => {
-			sale.isConsignment = undefined;
-			promises.push(sale.save());
+			if (sale.bill) {
+				let temp = sale.bill.total;
+				sale.bill.total = sale.bill.quantity;
+				sale.bill.quantity = temp;
+				promises.push(sale.save());
+			}
 		});
 		console.log("Migrate " + promises.length + " rows");
 		return Promise.all(promises).then(result => {
 			res.json(promises);
 		});
 	})
-	.catch(err => res.status(500).json(err));*/
+	.catch(err => res.status(500).json(err));
 }
 
 const index = function(req, res) {
