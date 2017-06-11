@@ -24,11 +24,11 @@ const getSales = (limit, group, from, to) => {
 	if (group) {
 		criteria['promotion.group'] = group;
 	}
-	
+
 	if (from || to) {
 		criteria['saleDate'] = {
 			$gte: from,
-			$lt: to
+			$lte: to
 		}
 	}
 

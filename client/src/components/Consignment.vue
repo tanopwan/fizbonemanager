@@ -33,6 +33,27 @@
 		</div>
 		<div class="block full">
 			<div class="block-title">
+				Search
+			</div>
+			<!-- <div>
+				<form class="form-horizontal">
+					<div class="row">
+						<div class="col-xs-12 col-md-6">
+							<div class="form-group">
+								<label class="col-xs-3 control-label">Filter Customer</label>
+								<div class="col-xs-9">
+									<select2 :options="customerOptions" v-model="selectedFilterPromotion" placeholder="Filter Customer...">
+										<option></option>
+									</select2>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div> -->
+		</div>
+		<div class="block full">
+			<div class="block-title">
 				<h4>
 					All Consignment <small> Total: {{ consignments.length }}</small>
 				</h4>
