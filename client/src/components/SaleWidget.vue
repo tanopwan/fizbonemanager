@@ -27,7 +27,7 @@
 				<div class="row">
 					<div class="col-xs-6">
 						<div class="form-group">
-							<select2 :options="customerOptions" v-model="selectedCustomer" allowClear="false" placeholder="Select Customer..." v-on:input="onSelectCustomer">
+							<select2 :options="customerOptions" v-model="selectedCustomer" allowClear="true" placeholder="Select Customer..." v-on:input="onSelectCustomer">
 								<option></option>
 							</select2>
 						</div>

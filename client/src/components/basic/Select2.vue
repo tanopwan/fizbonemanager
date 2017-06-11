@@ -28,11 +28,18 @@ export default {
 				$(this.$el).val(value).trigger("change");
 			}
 		},
-		options: function (options) {
+		options: function (options, oldOptions) {
 			let allowClear = this.allowClear === "false" ? false : true;
 
 			// update options
-			$(this.$el).select2('destroy').empty().select2({ data: this.options, allowClear: allowClear });
+			$(this.$el).select2('destroy').empty().select2({
+				placeholder: {
+					id: '-1', // the value of the option
+					text: this.placeholder
+				},
+				data: this.options,
+				allowClear: allowClear
+			}).val(this.value).trigger("change");
 		}
 	},
 	destroyed: function () {
@@ -42,7 +49,7 @@ export default {
 </script>
 
 <style scoped>
-select {
-	width: 100%
-}
+	select {
+		width: 100%
+	}
 </style>
