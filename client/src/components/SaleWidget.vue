@@ -156,6 +156,7 @@ export default {
 		},
 		promotionOptions() {
 			let options = [];
+			console.log("filter promotion for " + this.selectedProduct);
 			this.promotions.filter(promotion => {
 				return promotion.product.name === this.selectedProduct;
 			}).forEach(promotion => {
@@ -256,6 +257,7 @@ export default {
 			}
 		},
 		onSelectPromotion(value) {
+			console.log("selec promotion " + value);
 			if (value) {
 				this.selectedBatch = '';
 				this.selectedGroup = '';
