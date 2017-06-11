@@ -149,7 +149,7 @@ export default {
 		},
 	},
 	created() {
-		EventBus.getConsignments(10)
+		EventBus.getConsignments(20)
 		.then(response => this.consignments = response.body)
 		.catch(response => console.log(response));
 	},
