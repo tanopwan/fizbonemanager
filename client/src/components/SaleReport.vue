@@ -40,6 +40,11 @@
 						<option></option>
 					</select2>
 				</div>
+				<div class="col-xs-12 col-md-6">
+					<select2 :options="groupOptions" v-model="selectedFilterGroup" placeholder="Filter Group...">
+						<option></option>
+					</select2>
+				</div>
 			</div>
 		</div>
 		<div class="block full">
@@ -100,15 +105,23 @@ export default {
 			datefilter: '',
 			promotions: [],
 			selectedFilterPromotion: '',
+			selectedFilterGroup: '',
 			sumQuantity: 0,
 			sumTotal: 0,
 			from: moment().startOf('day').format("YYYY-MM-DD HH:mm"),
-			to: moment().endOf('day').format("YYYY-MM-DD HH:mm")
+			to: moment().endOf('day').format("YYYY-MM-DD HH:mm"),
+			groupOptions: [
+				{ id: "Booth", text: "Booth" },
+				{ id: "Online", text: "Online" },
+				{ id: "Consignment", text: "Consignment" },
+				{ id: "Special", text: "Special" },
+				{ id: "Sponsor", text: "Sponsor" },
+				{ id: "Wholesale", text: "Wholesale" }
+			]
 		};
 	},
 	computed: {
 		computedSales: function() {
-			console.log(this.sales);
 			if (!this.sales || this.sales.length == 0) {
 				return [];
 			}
@@ -136,8 +149,13 @@ export default {
 					return true; // All
 				}
 				return sale.promotionName === this.selectedFilterPromotion;
+			}).filter(sale => {
+				if (!this.selectedFilterGroup || this.selectedFilterGroup.length === 0) {
+					return true; // All
+				}
+				console.log(sale.promotion.group);
+				return sale.promotion.group === this.selectedFilterGroup;
 			});
-			;
 
 			this.sumQuantity = 0;
 			this.sumTotal = 0;
@@ -151,7 +169,9 @@ export default {
 		promotionOptions: function() {
 			let options = [];
 			this.promotions.forEach(promotion => {
-				options.push({ id: promotion.name, text: promotion.name });
+				if (!options.find(option => option.id === promotion.name)) {
+					options.push({ id: promotion.name, text: promotion.name });
+				}
 			})
 			return options;
 		}
