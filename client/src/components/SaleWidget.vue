@@ -85,7 +85,7 @@
 				<div class="widget-content">
 					<div class="row text-center">
 						<div class="col-xs-4">
-							<h3 class="widget-heading"><small>PRICE</small><br><a href="javascript:void(0)" class="themed-color-passion">{{ priceBaht.toFixed(2) }}</a></h3>
+							<h3 class="widget-heading"><small>PRICE</small><br><a href="javascript:void(0)" class="themed-color-passion">{{ priceBaht }}</a></h3>
 						</div>
 						<div class="col-xs-4">
 							<h3 class="widget-heading"><small>QUANTITY</small><br><a href="javascript:void(0)" class="themed-color-passion">{{ quantity }}</a></h3>
