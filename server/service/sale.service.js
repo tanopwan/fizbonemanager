@@ -56,7 +56,7 @@ const getSales = (params) => {
 	let count = 0;
 	return Sale.count(criteria).then(response => {
 		count = response;
-		return Sale.find(criteria).sort({'createdAt': -1}).limit(params.limit).skip(params.offset).exec();
+		return Sale.find(criteria).sort({'saleDate': -1}).limit(params.limit).skip(params.offset).exec();
 	}).then(sales => {
 		return {
 			total: count,

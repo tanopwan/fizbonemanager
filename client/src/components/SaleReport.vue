@@ -180,7 +180,7 @@ export default {
 		search() {
 			let from = moment(this.from).startOf('day').format("YYYY-MM-DD HH:mm");
 			let to = moment(this.to).endOf('day').format("YYYY-MM-DD HH:mm");
-			this.$http.get(`/api/sales?from=${this.from}&to=${this.to}`)
+			this.$http.get(`/api/sales?from=${from}&to=${to}`)
 			.then(response => this.sales = response.body.sales)
 			.catch(response => console.log(response));
 		},
