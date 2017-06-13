@@ -72,8 +72,8 @@
 						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.stringDate }}</td>
 						<th class="text-center">{{ sale.quantity }}</th>
-						<th class="text-center">{{ sale.price ? sale.price.toFixed(2) : 'N/A' }}</th>
-						<th class="text-center">{{ sale.price ? sale.total.toFixed(2) : 'N/A' }}</th>
+						<th class="text-center">{{ sale.price }}</th>
+						<th class="text-center">{{ sale.total }}</th>
 						<td class="text-center">
 							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''"><i class="fa fa-facebook"></i></button>
 							{{ sale.customer ? sale.customer.name : '' }}
@@ -131,10 +131,16 @@ export default {
 			this.sales.forEach(sale => {
 				if (sale.promotion) {
 					sale.promotionName = sale.promotion.name;
-					sale.price = sale.promotion.price / 100;
-					sale.total = sale.promotion.price * sale.quantity / 100;
-					this.sumQuantity += sale.quantity;
-					this.sumTotal += sale.total;
+					sale.price = (sale.promotion.price / 100).toFixed(2);
+					console.log(sale.bill);
+					if (sale.bill) {
+						sale.total = (sale.bill.total / 100).toFixed(2);
+						this.sumQuantity += sale.bill.quantity;
+						this.sumTotal += parseInt(sale.bill.total);
+					}
+					else {
+						sale.total = '0.00';
+					}
 				}
 				sale.stringDate = moment(sale.saleDate).format('LLL');
 			});
@@ -157,12 +163,12 @@ export default {
 				return sale.promotion.group === this.selectedFilterGroup;
 			});
 
-			this.sumQuantity = 0;
-			this.sumTotal = 0;
-			computed.forEach(sale => {
-				this.sumQuantity += sale.quantity;
-				this.sumTotal += sale.total;
-			});
+			// this.sumQuantity = 0;
+			// this.sumTotal = 0;
+			// computed.forEach(sale => {
+			// 	this.sumQuantity += sale.quantity;
+			// 	this.sumTotal += sale.total;
+			// });
 
 			return computed;
 		},
