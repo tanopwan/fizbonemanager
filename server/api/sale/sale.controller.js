@@ -40,7 +40,32 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	return res.json({ nothing: 'happend'});
+	//return res.json({ nothing: 'happend'});
+	let promises = [];
+
+	return Sale.find().exec()
+	.then(sales => {
+		if(!sales) {
+			return res.status(404).end();
+		}
+		console.log("Found " + sales.length + " rows");
+		let promises = [];
+		sales.forEach(sale => {
+			if (sale.bill) {
+				let temp = sale.bill.total;
+				sale.bill.total = sale.bill.quantity;
+				sale.bill.quantity = temp;
+
+				promises.push(sale.save());
+			}
+		});
+		console.log("Migrate " + promises.length + " rows");
+		return Promise.all(promises).then(result => {
+			res.json(promises);
+		});
+	})
+	.catch(err => res.status(500).json(err));
+
 }
 
 const index = function(req, res) {
