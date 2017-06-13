@@ -40,31 +40,31 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	//return res.json({ nothing: 'happend'});
-	let promises = [];
-
-	return Sale.find().exec()
-	.then(sales => {
-		if(!sales) {
-			return res.status(404).end();
-		}
-		console.log("Found " + sales.length + " rows");
-		let promises = [];
-		sales.forEach(sale => {
-			if (sale.bill) {
-				let temp = sale.bill.total;
-				sale.bill.total = sale.bill.quantity;
-				sale.bill.quantity = temp;
-
-				promises.push(sale.save());
-			}
-		});
-		console.log("Migrate " + promises.length + " rows");
-		return Promise.all(promises).then(result => {
-			res.json(promises);
-		});
-	})
-	.catch(err => res.status(500).json(err));
+	return res.json({ nothing: 'happend'});
+	// let promises = [];
+	//
+	// return Sale.find().exec()
+	// .then(sales => {
+	// 	if(!sales) {
+	// 		return res.status(404).end();
+	// 	}
+	// 	console.log("Found " + sales.length + " rows");
+	// 	let promises = [];
+	// 	sales.forEach(sale => {
+	// 		if (sale.bill) {
+	// 			let temp = sale.bill.total;
+	// 			sale.bill.total = sale.bill.quantity;
+	// 			sale.bill.quantity = temp;
+	//
+	// 			promises.push(sale.save());
+	// 		}
+	// 	});
+	// 	console.log("Migrate " + promises.length + " rows");
+	// 	return Promise.all(promises).then(result => {
+	// 		res.json(promises);
+	// 	});
+	// })
+	// .catch(err => res.status(500).json(err));
 
 }
 
@@ -113,7 +113,6 @@ const destroy = function(req, res) {
 
 const summary = function(req, res) {
 	Sale.aggregate([
-		{ $sort : { saleDate : 1 } },
 		{
 			$group: {
 				_id: { month: { $month: "$saleDate" }, year: { $year: "$saleDate" } },
@@ -122,7 +121,8 @@ const summary = function(req, res) {
 				transaction: { $sum: 1 },
 				promotions: { $addToSet: "$promotion.name" }
 			}
-		}
+		},
+		{ $sort : { _id : -1 } }
 	]).exec()
 	.then(result => {
 		res.json(result);
