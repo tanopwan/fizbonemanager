@@ -65,7 +65,6 @@ const destroy = function(req, res) {
 
 const stock = function(req, res) {
 	Sale.aggregate([
-		{ $match: { isDeleted: { $eq: false } } },
 		{ $sort : { saleDate : 1 } },
 		{
 			$lookup: {

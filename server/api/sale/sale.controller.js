@@ -40,37 +40,7 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
-	//return res.json({ length: sales.length});
-	let promises = [];
-	sales.forEach(sale => {
-		let createSale = sale.fulfillmentValue;
-		let s = new Sale(createSale);
-		promises.push(s.save());
-	});
-	return Promise.all(promises).then(result => {
-		res.json(promises);
-	});
-	//return res.status(501);
-	// return Sale.find().exec()
-	// .then(sales => {
-	// 	if(!sales) {
-	// 		return res.status(404).end();
-	// 	}
-	// 	console.log("Found " + sales.length + " rows");
-	// 	let promises = [];
-	// 	sales.forEach(sale => {
-	// 		if (sale.isDeleted = true) {
-	// 			promises.push(sale.remove());
-	// 		}
-	// 	});
-	// 	console.log("Migrate " + promises.length + " rows");
-	// 	return Promise.all(promises).then(result => {
-	// 		res.json(promises);
-	// 	});
-	// })
-	// .catch(err => res.status(500).json(err));
-
-
+	return res.json({ nothing: 'happend'});
 }
 
 const index = function(req, res) {
@@ -118,10 +88,7 @@ const destroy = function(req, res) {
 
 const summary = function(req, res) {
 	Sale.aggregate([
-		{
-			$match: { isDeleted: { $eq: false } }
-		},
-		{ $sort : { saleDate : 1} },
+		{ $sort : { saleDate : 1 } },
 		{
 			$group: {
 				_id: { month: { $month: "$saleDate" }, year: { $year: "$saleDate" } },
