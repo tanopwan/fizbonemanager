@@ -11,6 +11,8 @@ const saleService = require('../../service/sale.service');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
+var sales = require('../../../backup_sales.js');
+
 const view = function(req, res) {
 	let saleId = req.params.id;
 
@@ -38,25 +40,37 @@ const create = function(req, res) {
 }
 
 const migrate = function(req, res) {
+	//return res.json({ length: sales.length});
+	let promises = [];
+	sales.forEach(sale => {
+		let createSale = sale.fulfillmentValue;
+		let s = new Sale(createSale);
+		promises.push(s.save());
+	});
+	return Promise.all(promises).then(result => {
+		res.json(promises);
+	});
 	//return res.status(501);
-	return Sale.find().exec()
-	.then(sales => {
-		if(!sales) {
-			return res.status(404).end();
-		}
-		console.log("Found " + sales.length + " rows");
-		let promises = [];
-		sales.forEach(sale => {
-			if (sale.isDeleted = true) {
-				promises.push(sale.remove());
-			}
-		});
-		console.log("Migrate " + promises.length + " rows");
-		return Promise.all(promises).then(result => {
-			res.json(promises);
-		});
-	})
-	.catch(err => res.status(500).json(err));
+	// return Sale.find().exec()
+	// .then(sales => {
+	// 	if(!sales) {
+	// 		return res.status(404).end();
+	// 	}
+	// 	console.log("Found " + sales.length + " rows");
+	// 	let promises = [];
+	// 	sales.forEach(sale => {
+	// 		if (sale.isDeleted = true) {
+	// 			promises.push(sale.remove());
+	// 		}
+	// 	});
+	// 	console.log("Migrate " + promises.length + " rows");
+	// 	return Promise.all(promises).then(result => {
+	// 		res.json(promises);
+	// 	});
+	// })
+	// .catch(err => res.status(500).json(err));
+
+
 }
 
 const index = function(req, res) {
