@@ -97,7 +97,7 @@
 							<a v-if="!consignment.bill || consignment.bill.quantity !== consignment.quantity" href="#modal-regular" @click="openConsignment(consignment._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
 								<i class="fa fa-money"></i>
 							</a>
-							<!-- <button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button> -->
+							<button class="btn btn-danger" @click="deleteConsignment(consignment._id)"><i class="fa fa-minus"></i></button>
 						</th>
 					</tr>
 				</tbody>
@@ -236,7 +236,6 @@ export default {
 				});
 				if (index !== -1) {
 					this.consignments.splice(index, 1);
-					this.updateStock();
 				}
 			}, response => {
 				console.log(response);

@@ -51,7 +51,6 @@ export default {
 	data() {
 		return {
 			sales: [],
-			batchStocks: [],
 			sumQuantity: 0,
 			sumTotal: 0,
 
@@ -93,7 +92,6 @@ export default {
 				});
 				if (index !== -1) {
 					this.sales.splice(index, 1);
-					this.updateStock();
 				}
 			}, response => {
 				console.log(response);
@@ -101,12 +99,6 @@ export default {
 		},
 		onAddSale(sale) {
 			this.sales.push(sale);
-			this.updateStock();
-		},
-		updateStock() {
-			EventBus.getBatchStock()
-			.then(response => this.batchStocks = response.body)
-			.catch(response => console.log(response));
 		}
 	},
 	created() {

@@ -24,9 +24,7 @@ const getSales = (params) => {
 		params.offset = 0;
 	}
 
-	let criteria = {
-		isDeleted: { $in: [false, null] }
-	};
+	let criteria = {};
 
 	if (params.group) {
 		criteria['promotion.group'] = { $regex : new RegExp(params.group, "i") };
