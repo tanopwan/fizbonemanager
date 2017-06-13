@@ -48,7 +48,7 @@ const migrate = function(req, res) {
 		let promises = [];
 		sales.forEach(sale => {
 			if (sale.isDeleted) {
-				sale.isDeleted = undefined;
+				sale.set('isDeleted', undefined)
 				promises.push(sale.save());
 			}
 		});
