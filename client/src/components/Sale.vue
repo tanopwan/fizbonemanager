@@ -111,7 +111,7 @@ export default {
 	},
 	created() {
 		this.$http.get('/api/sales?limit=10')
-		.then(response => this.sales = response.body)
+		.then(response => this.sales = response.body.sales)
 		.catch(response => console.log(response));
 	},
 	components: {

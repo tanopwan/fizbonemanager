@@ -64,7 +64,16 @@ const migrate = function(req, res) {
 
 const index = function(req, res) {
 	if (req.query) {
-		return saleService.getSales(req.query.limit, req.query.group, req.query.from, req.query.to)
+		let params = {
+			limit: req.query.limit,
+			offset: req.query.offset,
+			group: req.query.group,
+			customer: req.query.customer,
+			from: req.query.from,
+			to: req.query.to,
+			includeBilledSales: req.query.includeBilledSales
+		}
+		return saleService.getSales(params)
 		.then(sale => {
 			if(!sale) {
 				return res.status(404).end();

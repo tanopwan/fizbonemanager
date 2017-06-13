@@ -28,7 +28,7 @@ export const EventBus = new Vue({
 		},
 		getConsignments(limit) {
 			if (isNaN(parseInt(limit))) {
-				return this.$http.get(`${this.saleURL}?group=Consignment`);
+				return this.$http.get(`${this.saleURL}?group=Consignment&includeBilledSales=false`);
 			}
 			else {
 				return this.$http.get(`${this.saleURL}?group=Consignment&limit=${parseInt(limit)}`);

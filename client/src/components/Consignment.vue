@@ -8,7 +8,7 @@
 						<h3 class="modal-title"><strong>Bill</strong></h3>
 					</div>
 					<div class="modal-body">
-						<date-time-picker v-on:input="onDatetime"></date-time-picker>
+						<date-time-picker update="false" v-on:input="onDatetime"></date-time-picker>
 						<div class="row form-group" :class="{ 'has-error': quantityError }">
 							<div class="col-sm-6">
 								<div class="input-group">
@@ -33,30 +33,47 @@
 		</div>
 		<div class="block full">
 			<div class="block-title">
-				Search
+				<h4>
+					Search
+				</h4>
 			</div>
-			<!-- <div>
+			<div>
 				<form class="form-horizontal">
 					<div class="row">
 						<div class="col-xs-12 col-md-6">
 							<div class="form-group">
-								<label class="col-xs-3 control-label">Filter Customer</label>
+								<label class="col-xs-3 control-label">Customer</label>
 								<div class="col-xs-9">
-									<select2 :options="customerOptions" v-model="selectedFilterPromotion" placeholder="Filter Customer...">
+									<select2 :options="customerOptions" v-model="selectedCustomer" placeholder="Filter Customer...">
 										<option></option>
 									</select2>
 								</div>
 							</div>
 						</div>
+						<div class="col-xs-12 col-md-6">
+							<label class="csscheckbox csscheckbox-danger">
+								<input type="checkbox" v-model="includeBilledSales"><span></span> Include billed sales
+							</label>
+							<button type="button" @click="search" class="btn btn-success" style="overflow: hidden; position: relative;">Search</button>
+						</div>
 					</div>
 				</form>
-			</div> -->
+			</div>
 		</div>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
-					All Consignment <small> Total: {{ consignments.length }}</small>
+					Consignment(s) <small> Total: {{ consignments.length }}, Page: {{ currentPage + 1 }} / {{ totalPage }}</small>
 				</h4>
+			</div>
+			<div class="text-center">
+				<ul class="pagination">
+					<li><a href="javascript:void(0)"><i class="fa fa-chevron-left"></i></a></li>
+					<li v-for="page in Array.from(Array(totalPage).keys())">
+						<a href="javascript:void(0)">{{ page + 1 }}</a>
+					</li>
+					<li><a href="javascript:void(0)"><i class="fa fa-chevron-right"></i></a></li>
+				</ul>
 			</div>
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
@@ -94,38 +111,82 @@ import moment from 'moment';
 import { EventBus } from '../bus';
 import Vue from 'vue';
 import DateTimePicker from './basic/DateTimePicker.vue';
+import Select2 from './basic/Select2.vue';
 
 export default {
 	data() {
 		return {
-			datetime: null,
+			// Search
 			consignments: [],
+			totalConsignments: 0,
+			// Filter
+			customers: [],
+			selectedCustomer: '',
+			includeBilledSales: false,
+			// Paging
+			currentPage: 0,
+			pageSize: 10,
+			// Bill a sale
+			currentConsignment: {},
+			datetime: null,
 			billQuantity: 0,
 			billPrice: 0,
 			quantityError: false,
-			currentConsignment: {}
 		};
 	},
 	computed: {
+		totalPage: function() {
+			return Math.ceil(this.totalConsignments / this.pageSize);
+		},
 		computedConsignments: function() {
-			this.consignments.forEach(consignment => {
-				consignment.promotionName = consignment.promotion.name;
-				consignment.price = consignment.promotion.price / 100;
-				consignment.total = consignment.promotion.price * consignment.quantity / 100;
-				consignment.stringDate = moment(consignment.saleDate).format('LLL');
-				consignment.customerName = consignment.customer ? consignment.customer.name : 'ทั่วไป';
-			})
+			if (this.consignments) {
+				this.consignments.forEach(consignment => {
+					consignment.promotionName = consignment.promotion.name;
+					consignment.price = consignment.promotion.price / 100;
+					consignment.total = consignment.promotion.price * consignment.quantity / 100;
+					consignment.stringDate = moment(consignment.saleDate).format('LLL');
+					consignment.customerName = consignment.customer ? consignment.customer.name : 'ทั่วไป';
+				})
 
-			return this.consignments.sort(function(s1, s2){
-				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
-				if (isAfter) {
-					return -1;
-				}
-				return 1;
-			});
-		}
+				return this.consignments.sort(function(s1, s2){
+					let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
+					if (isAfter) {
+						return -1;
+					}
+					return 1;
+				});
+			}
+
+			return [];
+		},
+		customerOptions: function() {
+			let options = [];
+			if (this.customers) {
+				this.customers.forEach(customer => {
+					options.push({ text: customer.name, id: customer.name });
+				})
+			}
+
+			return options;
+		},
 	},
 	methods: {
+		search() {
+			let uri = '';
+			if (this.selectedCustomer) {
+				uri = `/api/sales?group=Consignment&includeBilledSales=${this.includeBilledSales}&customer=${this.selectedCustomer}&limit=${this.pageSize}&offset=${this.pageSize * this.currentPage}`;
+			}
+			else {
+				uri = `/api/sales?group=Consignment&includeBilledSales=${this.includeBilledSales}&limit=${this.pageSize}&offset=${this.pageSize * this.currentPage}`
+			}
+
+			this.$http.get(uri)
+			.then(response => {
+				this.consignments = response.body.sales;
+				this.totalConsignments = response.body.total;
+			})
+			.catch(response => console.log(response));
+		},
 		bill() {
 			this.quantityError = false;
 			if (this.billQuantity <= 0 || this.billQuantity > this.currentConsignment.quantity - (this.currentConsignment.bill ? this.currentConsignment.bill.quantity : 0)) {
@@ -170,12 +231,15 @@ export default {
 		},
 	},
 	created() {
-		EventBus.getConsignments()
-		.then(response => this.consignments = response.body)
+
+		EventBus.getCustomers().then(response => {
+			this.customers = response.body;
+		})
 		.catch(response => console.log(response));
 	},
 	components: {
-		dateTimePicker: DateTimePicker
+		dateTimePicker: DateTimePicker,
+		select2: Select2
 	}
 }
 </script>

@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-xs-12 col-sm-6">
 			<div class="block">
-				<date-time-picker v-on:input="onDatetime"></date-time-picker>
+				<date-time-picker update="true" v-on:input="onDatetime"></date-time-picker>
 				<div class="form-group">
 					<select2 :options="productOptions" v-model="selectedProduct" allowClear="false" placeholder="Select Product..." v-on:input="onSelectProduct">
 						<option></option>

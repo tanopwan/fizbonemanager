@@ -51,6 +51,7 @@
 <script>
 
 export default {
+	props: ['update'],
 	data() {
 		return {
 			date: moment(new Date()).format("YYYY-MM-DD"),
@@ -76,12 +77,14 @@ export default {
 			vm.$emit('input', vm.date + ' ' + vm.time);
 		});
 
-		setInterval(function(){
-			//vm.date = moment(new Date()).format("YYYY-MM-DD");
- 			vm.time = moment(new Date()).format("HH:mm");
-			//$('.input-datepicker').datepicker('update', vm.date);
-			$('.input-timepicker24').timepicker('setTime', vm.time);
-		}, 60000);
+		if (this.update == "true") {
+			setInterval(function(){
+				//vm.date = moment(new Date()).format("YYYY-MM-DD");
+	 			vm.time = moment(new Date()).format("HH:mm");
+				//$('.input-datepicker').datepicker('update', vm.date);
+				$('.input-timepicker24').timepicker('setTime', vm.time);
+			}, 60000);
+		}
 	}
 }
 </script>

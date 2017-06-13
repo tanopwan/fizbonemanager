@@ -9,30 +9,63 @@ const createSale = (saleData, userId) => {
 	return Sale.create(saleData);
 };
 
-const getSales = (limit, group, from, to) => {
-	if(!isNaN(parseInt(limit))) {
-		limit = parseInt(limit);
+const getSales = (params) => {
+	if(!isNaN(parseInt(params.limit))) {
+		params.limit = parseInt(params.limit);
 	}
 	else {
-		limit = 0;
+		params.limit = 0;
+	}
+
+	if(!isNaN(parseInt(params.offset))) {
+		params.offset = parseInt(params.offset);
+	}
+	else {
+		params.offset = 0;
 	}
 
 	let criteria = {
 		isDeleted: { $in: [false, null] }
 	};
 
-	if (group) {
-		criteria['promotion.group'] = group;
+	if (params.group) {
+		criteria['promotion.group'] = { $regex : new RegExp(params.group, "i") };
 	}
 
-	if (from || to) {
+	if (params.customer) {
+		criteria['customer.name'] = params.customer;
+	}
+
+	if (params.from || params.to) {
 		criteria['saleDate'] = {
-			$gte: from,
-			$lte: to
+			$gte: params.from,
+			$lte: params.to
 		}
 	}
 
-	return Sale.find(criteria).sort({'createdAt': -1}).limit(limit).exec();
+	if (params.includeBilledSales == "false") {
+		criteria['$where'] = function() {
+			if (!this.bill) {
+				return true;
+			}
+
+			return this.quantity > this.bill.quantity;
+		}
+	}
+
+	//console.log(criteria);
+
+	let count = 0;
+	return Sale.count(criteria).then(response => {
+		count = response;
+		return Sale.find(criteria).sort({'createdAt': -1}).limit(params.limit).skip(params.offset).exec();
+	}).then(sales => {
+		return {
+			total: count,
+			sales
+		}
+	});
+
 };
 
 module.exports = {
