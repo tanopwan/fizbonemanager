@@ -63,16 +63,16 @@
 		<div class="block full">
 			<div class="block-title">
 				<h4>
-					Consignment(s) <small> Total: {{ consignments.length }}, Page: {{ currentPage + 1 }} / {{ totalPage }}</small>
+					Consignment(s) <small> Total: {{ totalConsignments }}, Count: {{ consignments.length }}, Page: {{ currentPage + 1 }} / {{ totalPage }}</small>
 				</h4>
 			</div>
 			<div class="text-center">
 				<ul class="pagination">
-					<li><a href="javascript:void(0)"><i class="fa fa-chevron-left"></i></a></li>
-					<li v-for="page in Array.from(Array(totalPage).keys())">
-						<a href="javascript:void(0)">{{ page + 1 }}</a>
+					<li><a @click="gotoPrev"><i class="fa fa-chevron-left"></i></a></li>
+					<li v-for="page in Array.from(Array(totalPage).keys())"  :class="{ 'active': (page === currentPage) }">
+						<a @click="goto(page)">{{ page + 1 }}</a>
 					</li>
-					<li><a href="javascript:void(0)"><i class="fa fa-chevron-right"></i></a></li>
+					<li><a @click="gotoNext"><i class="fa fa-chevron-right"></i></a></li>
 				</ul>
 			</div>
 			<table class="table table-striped table-borderless table-vcenter">
@@ -171,6 +171,22 @@ export default {
 		},
 	},
 	methods: {
+		goto(page) {
+			if (this.currentPage != page) {
+				this.currentPage = page;
+				this.search();
+			}
+		},
+		gotoPrev() {
+			if (this.currentPage > 0) {
+				this.goto(this.currentPage - 1);
+			}
+		},
+		gotoNext() {
+			if (this.currentPage < this.totalPage - 1) {
+				this.goto(this.currentPage + 1);
+			}
+		},
 		search() {
 			let uri = '';
 			if (this.selectedCustomer) {
