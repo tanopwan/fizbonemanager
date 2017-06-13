@@ -47,10 +47,8 @@ const migrate = function(req, res) {
 		console.log("Found " + sales.length + " rows");
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.bill) {
-				let temp = sale.bill.total;
-				sale.bill.total = sale.bill.quantity;
-				sale.bill.quantity = temp;
+			if (sale.isDeleted) {
+				sale.isDeleted = undefined;
 				promises.push(sale.save());
 			}
 		});
