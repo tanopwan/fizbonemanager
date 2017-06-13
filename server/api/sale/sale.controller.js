@@ -47,9 +47,8 @@ const migrate = function(req, res) {
 		console.log("Found " + sales.length + " rows");
 		let promises = [];
 		sales.forEach(sale => {
-			if (sale.isDeleted) {
-				sale.set('isDeleted', undefined)
-				promises.push(sale.save());
+			if (sale.isDeleted = true) {
+				promises.push(sale.remove());
 			}
 		});
 		console.log("Migrate " + promises.length + " rows");
