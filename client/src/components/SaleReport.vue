@@ -61,7 +61,7 @@
 						<th class="text-center">Date</th>
 						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
 						<th class="text-center">Price (&#x0E3F;)</th>
-						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal }}</span></th>
+						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal.toFixed(2) }}</span></th>
 						<th class="text-center">Customer</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
@@ -132,11 +132,10 @@ export default {
 				if (sale.promotion) {
 					sale.promotionName = sale.promotion.name;
 					sale.price = (sale.promotion.price / 100).toFixed(2);
-					console.log(sale.bill);
 					if (sale.bill) {
 						sale.total = (sale.bill.total / 100).toFixed(2);
-						this.sumQuantity += sale.bill.quantity;
-						this.sumTotal += parseInt(sale.bill.total);
+						this.sumQuantity += parseInt(sale.bill.quantity);
+						this.sumTotal += parseInt(sale.bill.total) / 100;
 					}
 					else {
 						sale.total = '0.00';
@@ -162,13 +161,6 @@ export default {
 				}
 				return sale.promotion.group === this.selectedFilterGroup;
 			});
-
-			// this.sumQuantity = 0;
-			// this.sumTotal = 0;
-			// computed.forEach(sale => {
-			// 	this.sumQuantity += sale.quantity;
-			// 	this.sumTotal += sale.total;
-			// });
 
 			return computed;
 		},
