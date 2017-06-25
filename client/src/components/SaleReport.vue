@@ -126,23 +126,6 @@ export default {
 			if (!this.sales || this.sales.length == 0) {
 				return [];
 			}
-			this.sumQuantity = 0;
-			this.sumTotal = 0;
-			this.sales.forEach(sale => {
-				if (sale.promotion) {
-					sale.promotionName = sale.promotion.name;
-					sale.price = (sale.promotion.price / 100).toFixed(2);
-					if (sale.bill) {
-						sale.total = (sale.bill.total / 100).toFixed(2);
-						this.sumQuantity += parseInt(sale.bill.quantity);
-						this.sumTotal += parseInt(sale.bill.total) / 100;
-					}
-					else {
-						sale.total = '0.00';
-					}
-				}
-				sale.stringDate = moment(sale.saleDate).format('LLL');
-			});
 
 			let computed = this.sales.sort(function(s1, s2){
 				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
@@ -160,6 +143,34 @@ export default {
 					return true; // All
 				}
 				return sale.promotion.group === this.selectedFilterGroup;
+			});
+
+			this.sumQuantity = 0;
+			this.sumTotal = 0;
+			this.comupted.forEach(sale => {
+				if (sale.promotion) {
+					sale.promotionName = sale.promotion.name;
+					sale.price = (sale.promotion.price / 100).toFixed(2);
+					if (sale.bill) {
+						sale.total = (sale.bill.total / 100).toFixed(2);
+						if (sale.bill.quantity) {
+							this.sumQuantity += parseInt(sale.bill.quantity);
+						}
+						else if (sale.bill.bills) {
+							this.sumQuantity += sale.bill.bills.reduce(function(a, b) {
+								return a.quantity + b.quantity;
+							}, {
+								quantity: 0
+							});
+						}
+
+						this.sumTotal += parseInt(sale.bill.total) / 100;
+					}
+					else {
+						sale.total = '0.00';
+					}
+				}
+				sale.stringDate = moment(sale.saleDate).format('LLL');
 			});
 
 			return computed;
