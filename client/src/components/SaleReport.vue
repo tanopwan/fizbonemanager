@@ -147,7 +147,7 @@ export default {
 
 			this.sumQuantity = 0;
 			this.sumTotal = 0;
-			this.comupted.forEach(sale => {
+			computed.forEach(sale => {
 				if (sale.promotion) {
 					sale.promotionName = sale.promotion.name;
 					sale.price = (sale.promotion.price / 100).toFixed(2);
