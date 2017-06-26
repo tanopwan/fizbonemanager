@@ -37,12 +37,17 @@
 			</div>
 			<div class="row">
 				<div class="col-xs-12 col-md-6">
-					<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
+					<select2 :options="groupOptions" v-model="selectedFilterGroup" placeholder="Filter Group...">
 						<option></option>
 					</select2>
 				</div>
 				<div class="col-xs-12 col-md-6">
-					<select2 :options="groupOptions" v-model="selectedFilterGroup" placeholder="Filter Group...">
+					<select2 :options="productOptions" v-model="selectedFilterProduct" placeholder="Filter Product...">
+						<option></option>
+					</select2>
+				</div>
+				<div class="col-xs-12 col-md-6">
+					<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
 						<option></option>
 					</select2>
 				</div>
@@ -107,6 +112,7 @@ export default {
 			promotions: [],
 			selectedFilterPromotion: '',
 			selectedFilterGroup: '',
+			selectedFilterProduct: '',
 			sumQuantity: 0,
 			sumTotal: 0,
 			from: moment().startOf('day').format("YYYY-MM-DD"),
@@ -133,6 +139,11 @@ export default {
 					return -1;
 				}
 				return 1;
+			}).filter(sale => {
+				if (!this.selectedFilterProduct || this.selectedFilterProduct.length === 0) {
+					return true;
+				}
+				return sale.product.name === this.selectedFilterProduct;
 			}).filter(sale => {
 				if (!this.selectedFilterPromotion || this.selectedFilterPromotion.length === 0) {
 					return true; // All
@@ -181,7 +192,16 @@ export default {
 				if (!options.find(option => option.id === promotion.name)) {
 					options.push({ id: promotion.name, text: promotion.name });
 				}
-			})
+			});
+			return options;
+		},
+		productOptions: function() {
+			let options = [];
+			this.promotions.forEach(promotion => {
+				if (!options.find(option => option.id === promotion.product.name)) {
+					options.push({ id: promotion.product.name, text: promotion.product.name });
+				}
+			});
 			return options;
 		}
 	},
