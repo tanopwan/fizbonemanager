@@ -74,7 +74,7 @@ const destroy = function(req, res) {
 
 const batch = function(req, res) {
 	Batch.aggregate([
-		//{ $match: { isFinish: { $eq: false } } },
+		{ $match: { isFinish: { $eq: false } } },
 		{ $sort : { createdAt : -1 } },
 		{
 			$group: {
