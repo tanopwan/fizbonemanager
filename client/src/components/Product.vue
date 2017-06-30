@@ -4,6 +4,14 @@
 			<div class="col-md-6">
 				<div class="block">
 					<div class="form-group" :class="{ 'has-error': productImageError }">
+						<div class="input-group">
+							<span class="input-group-addon">Product Code</span>
+							<input type="text" v-model="productCode" class="form-control" placeholder="FBxxA">
+							<span class="input-group-addon">Barcode</span>
+							<input type="text" v-model="barcode" class="form-control" placeholder="88594037">
+						</div>
+					</div>
+					<div class="form-group" :class="{ 'has-error': productImageError }">
 						<input type="text" v-model="productImage" class="form-control" placeholder="http://">
 					</div>
 					<div class="form-group" :class="{ 'has-error': productNameError }">

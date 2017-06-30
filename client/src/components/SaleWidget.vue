@@ -2,7 +2,16 @@
 	<div class="row">
 		<div class="col-xs-12 col-sm-6">
 			<div class="block">
-				<date-time-picker update="true" v-on:input="onDatetime"></date-time-picker>
+				<div class="row">
+					<div class="col-xs-9">
+						<date-time-picker update="false" v-on:input="onDatetime"></date-time-picker>
+					</div>
+					<div class="col-xs-3">
+						<label class="csscheckbox csscheckbox-info">
+							<input type="checkbox" v-model="now"><span></span> Now
+						</label>
+					</div>
+				</div>
 				<div class="form-group">
 					<select2 :options="productOptions" v-model="selectedProduct" allowClear="false" placeholder="Select Product..." v-on:input="onSelectProduct">
 						<option></option>
@@ -126,7 +135,8 @@ export default {
 			selectedGroup: '',
 			selectedCustomer: '',
 			datetime: null,
-			errorMessage: ''
+			errorMessage: '',
+			now: true
 		};
 	},
 	computed: {
@@ -187,7 +197,7 @@ export default {
 			let data = {
 				quantity: this.quantity,
 				description: this.description,
-				saleDate: moment(this.datetime, "YYYY-MM-DD HH:mm"),
+				saleDate: this.now ? moment() : moment(this.datetime, "YYYY-MM-DD HH:mm"),
 				product: {
 					name: this.selectedProduct
 				},

@@ -9,6 +9,8 @@ const ProductSchema = new Schema({
 	name: { type: String, unique : true, required : true },
 	link: String,
 	description: String,
+	productCode: String,
+	barcode: String
 },
 {
 	timestamps: true
