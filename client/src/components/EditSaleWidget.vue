@@ -1,5 +1,8 @@
 <template>
 	<div>
+		<a href="#edit-sale-modal" @click="openEditSale(sale._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
+			<i class="fa fa-money"></i>
+		</a>
 		<div id="edit-sale-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -33,3 +36,15 @@
 		</div>
 	</div>
 </template>
+
+<script>
+
+export default {
+	props: ['sale'],
+	methods: {
+		openEditSale(id) {
+
+		},
+	}
+}
+</script>

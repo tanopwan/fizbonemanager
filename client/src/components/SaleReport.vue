@@ -36,18 +36,23 @@
 				</h4>
 			</div>
 			<div class="row">
-				<div class="col-xs-12 col-md-6">
-					<select2 :options="groupOptions" v-model="selectedFilterGroup" placeholder="Filter Group...">
-						<option></option>
-					</select2>
-				</div>
-				<div class="col-xs-12 col-md-6">
+				<div class="col-xs-12 col-md-6 form-group">
 					<select2 :options="productOptions" v-model="selectedFilterProduct" placeholder="Filter Product...">
 						<option></option>
 					</select2>
 				</div>
-				<div class="col-xs-12 col-md-6">
+				<div class="col-xs-12 col-md-6 form-group">
+					<select2 :options="batchOptions" v-model="selectedFilterBatch" placeholder="Filter Batch...">
+						<option></option>
+					</select2>
+				</div>
+				<div class="col-xs-12 col-md-6 form-group">
 					<select2 :options="promotionOptions" v-model="selectedFilterPromotion" placeholder="Filter Promotion...">
+						<option></option>
+					</select2>
+				</div>
+				<div class="col-xs-12 col-md-6 form-group">
+					<select2 :options="groupOptions" v-model="selectedFilterGroup" placeholder="Filter Group...">
 						<option></option>
 					</select2>
 				</div>
@@ -113,6 +118,7 @@ export default {
 			selectedFilterPromotion: '',
 			selectedFilterGroup: '',
 			selectedFilterProduct: '',
+			selectedFilterBatch: '',
 			sumQuantity: 0,
 			sumTotal: 0,
 			from: moment().startOf('day').format("YYYY-MM-DD"),
@@ -140,20 +146,26 @@ export default {
 				}
 				return 1;
 			}).filter(sale => {
-				if (!this.selectedFilterProduct || this.selectedFilterProduct.length === 0) {
-					return true;
+				let result = true;
+				if (this.selectedFilterProduct) {
+					result = result & sale.product.name === this.selectedFilterProduct;
 				}
-				return sale.product.name === this.selectedFilterProduct;
-			}).filter(sale => {
-				if (!this.selectedFilterPromotion || this.selectedFilterPromotion.length === 0) {
-					return true; // All
+
+				if (this.selectedFilterBatch) {
+					console.log(this.selectedFilterBatch);
+					console.log(sale.batch);
+					result = result & sale.batch.batchRef === this.selectedFilterBatch.split('/')[1];
 				}
-				return sale.promotionName === this.selectedFilterPromotion;
-			}).filter(sale => {
-				if (!this.selectedFilterGroup || this.selectedFilterGroup.length === 0) {
-					return true; // All
+
+				if (this.selectedFilterPromotion) {
+					result = result & sale.promotionName === this.selectedFilterPromotion;
 				}
-				return sale.promotion.group === this.selectedFilterGroup;
+
+				if (this.selectedFilterGroup) {
+					result = result & sale.promotion.group === this.selectedFilterGroup;
+				}
+
+				return result;
 			});
 
 			this.sumQuantity = 0;
@@ -200,6 +212,15 @@ export default {
 			this.promotions.forEach(promotion => {
 				if (!options.find(option => option.id === promotion.product.name)) {
 					options.push({ id: promotion.product.name, text: promotion.product.name });
+				}
+			});
+			return options;
+		},
+		batchOptions: function() {
+			let options = [];
+			this.promotions.forEach(promotion => {
+				if (!options.find(option => option.id === promotion.product.name + '/' + promotion.batch.batchRef)) {
+					options.push({ id: promotion.product.name + '/' + promotion.batch.batchRef, text: promotion.product.name + '/' + promotion.batch.batchRef });
 				}
 			});
 			return options;
