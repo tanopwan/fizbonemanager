@@ -12,6 +12,22 @@
 					</div>
 					<div class="modal-body">
 						<date-time-picker update="false" v-on:input="onDatetime"></date-time-picker>
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="form-group">
+									<select2 :options="promotionOptions" v-model="selectedPromotion" allowClear="false" placeholder="Select Promotion..." v-on:input="onSelectPromotion">
+										<option></option>
+									</select2>
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="form-group">
+									<select2 :options="batchOptions" v-model="selectedBatch" allowClear="false" placeholder="Select Batch...">
+										<option></option>
+									</select2>
+								</div>
+							</div>
+						</div>
 						<div class="row form-group" :class="{ 'has-error': quantityError }">
 							<div class="col-sm-6">
 								<div class="input-group">
@@ -38,13 +54,61 @@
 </template>
 
 <script>
+import { EventBus } from '../bus';
 
 export default {
 	props: ['sale'],
+	data() {
+		return {
+			promotions: [],
+			productWithBatches: [],
+			selectedPromotion: '',
+			selectedBatch: '',
+			datetime: null
+		}
+	},
 	methods: {
 		openEditSale(id) {
 
 		},
+		onDatetime(value) {
+			this.datetime = value;
+		},
+	},
+	computed: {
+		batchOptions() {
+			let options = [];
+			let productWithBatches = this.productsWithBatches.find(product => product.name === this.selectedProduct);
+			if (productWithBatches) {
+				productWithBatches.batches.forEach(batch => {
+					let batchIdAndRef = batch._id + '/' + batch.batchRef;
+					options.push({ id: batchIdAndRef, text: batch.batchRef });
+				});
+			}
+			return options;
+		},
+		promotionOptions() {
+			let options = [];
+			this.promotions.filter(promotion => {
+				return promotion.product.name === this.selectedProduct;
+			}).forEach(promotion => {
+				options.push({ id: promotion.name, text: promotion.name + " [Group: " + promotion.group + "]" });
+			});
+			return options;
+		},
+	},
+	created() {
+		EventBus.getProductsWithBatches()
+		.then(response => {
+			this.productsWithBatches = response.body;
+		})
+		.catch(response => console.log(response));
+
+		EventBus.getPromotions()
+		.then(response => {
+			this.promotions = response.body;
+		})
+		.catch(response => console.log(response));
 	}
 }
 </script>

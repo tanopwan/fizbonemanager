@@ -60,6 +60,8 @@ export default {
 		return {
 			productName: '',
 			productImage: '',
+			productCode: '',
+			barcode: '',
 			products: [],
 			productNameError: false,
 			productImageError: false

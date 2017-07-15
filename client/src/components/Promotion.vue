@@ -43,7 +43,6 @@ export default {
 	created() {
 		EventBus.getProductsWithBatches()
 		.then(response => {
-			console.log(response.body);
 			this.productsWithBatches = response.body;
 		})
 		.catch(response => console.log(response));

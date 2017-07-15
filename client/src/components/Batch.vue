@@ -159,7 +159,9 @@ export default {
 			})
 			.catch(response => console.log(response));
 		EventBus.getBatches()
-			.then(response => this.batches = response.body)
+			.then(response => {
+				this.batches = response.body;
+			})
 			.catch(response => console.log(response));
 	},
 	mounted() {
