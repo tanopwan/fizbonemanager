@@ -33,7 +33,10 @@
 						</td>
 						<td>{{ sale.description }}</td>
 						<td class="text-center hidden-sm hidden-xs">
-							<edit-sale-widget :sale="sale"></edit-sale-widget>
+							<a href="#edit-sale-modal" @click="openEditSale(sale._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
+								<i class="fa fa-money"></i>
+							</a>
+							<edit-sale-widget :saleProp="saleStringify" :onUpdateSale="onUpdateSale"></edit-sale-widget>
 							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
 						</td>
 					</tr>
@@ -55,7 +58,7 @@ export default {
 			sales: [],
 			sumQuantity: 0,
 			sumTotal: 0,
-
+			saleStringify: '{}',
 			selectedProduct: '',
 			selectedBatch: '',
 			selectedPromotion: '',
@@ -84,6 +87,9 @@ export default {
 		},
 	},
 	methods: {
+		openEditSale(id) {
+			this.saleStringify = JSON.stringify(this.sales.find(sale => sale._id === id));
+		},
 		deleteSale(id) {
 			this.$http.delete('/api/sales/' + id).then(response => {
 				let index = -1;
@@ -101,6 +107,17 @@ export default {
 		},
 		onAddSale(sale) {
 			this.sales.push(sale);
+		},
+		onUpdateSale(updatedSale) {
+			this.sales.forEach((sale) => {
+				if (sale._id === updatedSale._id) {
+					for(var propertyName in updatedSale) {
+						if (updatedSale.hasOwnProperty(propertyName)) {
+							sale[propertyName] = updatedSale[propertyName];
+						}
+					}
+				}
+			});
 		}
 	},
 	created() {

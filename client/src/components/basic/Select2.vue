@@ -13,7 +13,7 @@ export default {
 		// update options
 		var vm = this;
 		$(this.$el).select2({ data: this.options, allowClear: allowClear }).on('change', function () {
-			vm.$emit('input', this.value);
+			vm.$emit('input', vm.value);
 		}).val(this.value).trigger("change");
 	},
 	watch: {

@@ -19,28 +19,27 @@ Vue.http.interceptors.push((request, next) => {
 
 let nonCacheList = ['/graphql', '/api/users/me', '/api/users/logout']
 Vue.http.interceptors.push((request, next) => {
-	console.log(request.url);
 	let isInNonCacheList = nonCacheList.find(url => request.url === url);
 	if (request.method.toLowerCase() === 'get' && !isInNonCacheList) {
 		var cache = localStorage.getItem(`CACHE_${request.url}`);
 
 		if (cache) {
-			console.log('cache hit', request.url);
+			//console.log('cache hit', request.url);
 			next(request.respondWith(JSON.parse(cache), { status: 200, statusText: 'Ok' }));
 		} else {
-			console.log('cache miss', request.url);
+			//console.log('cache miss', request.url);
 		}
 	}
 
 	next( function (response) {
 		let {status, statusText, body} = response;
 		if (status === 200 && request.method.toLowerCase() === 'get' && !isInNonCacheList) {
-			console.log('cache save', request.url);
+			//console.log('cache save', request.url);
 			localStorage.setItem(`CACHE_${request.url}`, JSON.stringify(body));
 			setTimeout(() => {
-				console.log('cache expired', request.url);
+				//console.log('cache expired', request.url);
 				localStorage.removeItem(`CACHE_${request.url}`)
-			}, 10000);
+			}, 600000);
 		}
 
 		request.respondWith(body, {status, statusText});

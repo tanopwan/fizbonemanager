@@ -39,6 +39,19 @@ const create = function(req, res) {
 	});
 }
 
+const update = function(req, res) {
+	let saleId = new ObjectId(req.params.id);
+
+	return saleService.updateSale(req.body, saleId)
+	.then(sale => {
+		res.json(sale);
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(500).json(err);
+	});
+}
+
 const migrate = function(req, res) {
 	return res.json({ nothing: 'happend'});
 	// let promises = [];
@@ -195,6 +208,7 @@ const bill = function(req, res) {
 module.exports = {
 	view,
 	create,
+	update,
 	index,
 	destroy,
 	summary,

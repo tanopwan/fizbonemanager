@@ -9,6 +9,9 @@ export const EventBus = new Vue({
 		customerURL: '/api/customers'
 	},
 	methods: {
+		expireCache(key) {
+			localStorage.removeItem(`CACHE_${key}`);
+		},
 		query(query) {
 			return this.$http.post('/graphql', {"query": `${query}`});
 		},

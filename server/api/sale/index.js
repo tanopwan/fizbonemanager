@@ -17,6 +17,7 @@ router.post('/', ctrl.create);
 router.post('/order/:id', ctrl.verifyOrder);
 router.post('/order/:id/tracking', ctrl.setTracking);
 router.post('/bill/:id', ctrl.bill);
+router.post('/:id', ctrl.update);
 router.delete('/:id', ctrl.destroy);
 
 module.exports = router;

@@ -5,8 +5,12 @@ const moment = require('moment');
 
 const createSale = (saleData, userId) => {
 	saleData.createdBy = userId;
-	console.log(saleData);
 	return Sale.create(saleData);
+};
+
+const updateSale = (saleData, saleId) => {
+	console.log(saleData);
+	return Sale.findOneAndUpdate({ _id: saleId }, saleData, {new: true});
 };
 
 const getSales = (params) => {
@@ -68,5 +72,6 @@ const getSales = (params) => {
 
 module.exports = {
 	createSale,
+	updateSale,
 	getSales
 };

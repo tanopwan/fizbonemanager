@@ -273,7 +273,6 @@ export default {
 				this.quantity = 0;
 				let promotion = this.promotions.find(promotion => promotion.name === value && promotion.product.name === this.selectedProduct);
 				if (promotion) {
-					console.log(promotion);
 					let batchIdAndRef = promotion.batch.batchId + '/' + promotion.batch.batchRef;
 					this.selectedBatch = batchIdAndRef;
 					this.selectedGroup = promotion.group;

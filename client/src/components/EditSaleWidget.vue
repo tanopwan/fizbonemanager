@@ -1,14 +1,11 @@
 <template>
 	<div>
-		<a href="#edit-sale-modal" @click="openEditSale(sale._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
-			<i class="fa fa-money"></i>
-		</a>
 		<div id="edit-sale-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h3 class="modal-title"><strong>Sale</strong></h3>
+						<h3 class="modal-title"><strong>Sale </strong><small>{{ this.sale._id }}</small></h3>
 					</div>
 					<div class="modal-body">
 						<date-time-picker update="false" v-on:input="onDatetime"></date-time-picker>
@@ -28,23 +25,41 @@
 								</div>
 							</div>
 						</div>
-						<div class="row form-group" :class="{ 'has-error': quantityError }">
-							<div class="col-sm-6">
+						<div class="row form-group">
+							<div class="col-xs-6">
 								<div class="input-group">
 									<span class="input-group-addon">จำนวน</span>
-									<input type="text" v-model="billQuantity" class="form-control" placeholder="จำนวน">
+									<input type="text" v-model="quantity" class="form-control" placeholder="จำนวน">
 								</div>
 							</div>
-							<div class="col-sm-6">
+							<div class="col-xs-6">
 								<div class="input-group">
 									<span class="input-group-addon">ราคา</span>
-									<input type="text" v-model="billPrice" class="form-control" placeholder="ราคา">
+									<input type="text" v-model="priceBaht" class="form-control" placeholder="ราคา">
+								</div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-6">
+								<select2 :options="customerOptions" v-model="selectedCustomer" allowClear="true" placeholder="Select Customer..." v-on:input="onSelectCustomer">
+									<option></option>
+								</select2>
+							</div>
+							<div class="col-xs-6">
+								<input type="text" class="form-control" v-model="tagString" placeholder="tags"></input>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">Desc</span>
+									<input type="text" class="form-control" v-model="description"></input>
 								</div>
 							</div>
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" @click="bill" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
+						<button type="button" @click="save" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
 						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
 					</div>
 				</div>
@@ -55,29 +70,142 @@
 
 <script>
 import { EventBus } from '../bus';
+import Select2 from './basic/Select2.vue';
+import DateTimePicker from './basic/DateTimePicker.vue'
 
 export default {
-	props: ['sale'],
+	props: ['saleProp', 'onUpdateSale'],
 	data() {
 		return {
+			sale: JSON.parse(this.saleProp),
+			sale1: this.saleProp,
 			promotions: [],
-			productWithBatches: [],
+			productsWithBatches: [],
+			selectedProduct: '',
 			selectedPromotion: '',
 			selectedBatch: '',
+			selectedCustomer: '',
+			customerName: '',
+			customerType: '',
+			tagString: '',
+			description: '',
+			quantity: 0,
+			priceBaht: 0,
 			datetime: null
 		}
 	},
+	watch: {
+		saleProp: function(val) {
+			this.sale = JSON.parse(this.saleProp);
+			this.selectedProduct = this.sale.product.name;
+			this.selectedPromotion = this.sale.promotion.name;
+			this.selectedBatch = this.sale.batch.batchId + '/' + this.sale.batch.batchRef;
+			this.priceBaht = this.sale.promotion.price / 100;
+			this.quantity = this.sale.quantity;
+			this.description = this.sale.description;
+			if (this.sale.tags) {
+				this.tagString = this.sale.tags.join(' ');
+			}
+		}
+	},
 	methods: {
-		openEditSale(id) {
+		save() {
+			console.log(this.sale);
+			this.errorMessage = '';
+			if (!this.selectedProduct || !this.selectedBatch || !this.selectedPromotion) {
+				this.errorMessage = 'Missing fields';
+				return;
+			}
 
+			if (this.quantity <= 0) {
+				this.errorMessage = 'Quantity should be positive';
+				return;
+			}
+
+			let data = {
+				quantity: this.quantity,
+				description: this.description,
+				saleDate: this.now ? moment() : moment(this.datetime, "YYYY-MM-DD HH:mm"),
+				product: {
+					name: this.selectedProduct
+				},
+				batch: {
+					batchId: this.selectedBatch.split('/')[0],
+					batchRef: this.selectedBatch.split('/')[1]
+				},
+				promotion: {
+					name: this.selectedPromotion,
+					price: this.price,
+					group: this.selectedGroup
+				},
+				tags: this.tagString.split(' ')
+			}
+
+			if (this.selectedGroup !== "Consignment") {
+				data.bill = {
+					bills: {
+						quantity: this.quantity,
+						price: this.price,
+						date: moment()
+					},
+					total: this.quantity * this.price,
+					quantity: this.quantity
+				}
+			}
+
+			if (this.selectedCustomer) {
+				let customer = this.customers.find(customer => customer._id === this.selectedCustomer);
+				data.customer = {
+					name: customer.name,
+					type: customer.type,
+					refUserId: customer.refUserId
+				}
+			}
+			console.log(data);
+
+			this.$http.post('/api/sales/' + this.sale._id, data).then(response => {
+				this.onUpdateSale(response.body);
+				EventBus.expireCache('/api/sales');
+			})
+			.catch(response => console.log(response));
 		},
 		onDatetime(value) {
 			this.datetime = value;
 		},
+		onSelectPromotion(value) {
+			if (value) {
+				this.selectedBatch = '';
+				this.selectedGroup = '';
+				let promotion = this.promotions.find(promotion => promotion.name === value && promotion.product.name === this.selectedProduct);
+				if (promotion) {
+					let batchIdAndRef = promotion.batch.batchId + '/' + promotion.batch.batchRef;
+					this.selectedBatch = batchIdAndRef;
+					this.selectedGroup = promotion.group;
+				}
+			}
+		},
+		onSelectCustomer(value) {
+			if (value) {
+				let customer = this.customers.find(customer => customer._id === value);
+				this.customerName = customer.name;
+				this.customerType = customer.type;
+			}
+		},
+		updateStock() {
+			EventBus.getBatchStock()
+			.then(response => this.batchStocks = response.body)
+			.catch(response => console.log(response));
+		}
 	},
 	computed: {
+		price() {
+			return this.priceBaht * 100;
+		},
 		batchOptions() {
 			let options = [];
+			if (!this.productsWithBatches) {
+				return [];
+			}
 			let productWithBatches = this.productsWithBatches.find(product => product.name === this.selectedProduct);
 			if (productWithBatches) {
 				productWithBatches.batches.forEach(batch => {
@@ -96,6 +224,16 @@ export default {
 			});
 			return options;
 		},
+		customerOptions: function() {
+			if (!this.customers) {
+				return [];
+			}
+			let options = [];
+			this.customers.forEach(customer => {
+				options.push({ text: customer.name, id: customer._id });
+			})
+			return options;
+		},
 	},
 	created() {
 		EventBus.getProductsWithBatches()
@@ -109,6 +247,15 @@ export default {
 			this.promotions = response.body;
 		})
 		.catch(response => console.log(response));
+
+		EventBus.getCustomers()
+		.then(response => this.customers = response.body)
+		.catch(response => console.log(response));
+		this.updateStock();
+	},
+	components: {
+		select2: Select2,
+		dateTimePicker: DateTimePicker
 	}
 }
 </script>
