@@ -78,7 +78,7 @@
 					<div class="pull-left">
 						<img :src="productLink" class="img-thumbnail img-thumbnail-avatar-2x">
 					</div>
-					<h3 class="widget-heading text-primary">{{ selectedProduct }}<br><small>{{ selectedBatch.split('/')[1] }}</small></h3>
+					<h3 class="widget-heading text-primary">{{ selectedProduct }}<br><small>{{ selectedBatch ? selectedBatch.split('/')[1] : '' }}</small></h3>
 					<h4 class="widget-heading text-warning">{{ selectedPromotion }} <small>Group: {{ selectedGroup }}</small></h4>
 					<h5 class="widget-heading text-muted">{{ datetime }}</h5>
 				</div>

@@ -89,7 +89,19 @@ export default {
 			});
 		},
 		deleteProduct(id) {
-
+			this.$http.delete('/api/products/' + id).then(response => {
+				let index = -1;
+				this.products.forEach((product, idx) => {
+					if (product._id === id) {
+						index = idx;
+					}
+				});
+				if (index !== -1) {
+					this.products.splice(index, 1);
+				}
+			}, response => {
+				console.log(response);
+			});
 		}
 	},
 	created() {

@@ -126,6 +126,16 @@ export default {
 				this.selectedBatch = promotion ? promotion.batch.batchId + '/' + promotion.batch.batchRef : '';
 				this.selectedGroup = promotion.group || 'Booth';
 			}
+		},
+		selectedProduct() {
+			let productsWithBatch = this.productsWithBatches.find(product => product.name === this.selectedProduct);
+			if (productsWithBatch) {
+				let batch = productsWithBatch.batches[0];
+				let batchIdAndRef = batch._id + '/' + batch.batchRef;
+				this.selectedBatch = batchIdAndRef;
+				console.log("set selectedBatch");
+			}
+			console.log(this.selectedBatch);
 		}
 	},
 	methods: {

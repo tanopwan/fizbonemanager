@@ -44,6 +44,7 @@ export default {
 		EventBus.getProductsWithBatches()
 		.then(response => {
 			this.productsWithBatches = response.body;
+			console.log(this.productsWithBatches);
 		})
 		.catch(response => console.log(response));
 		EventBus.getPromotions()

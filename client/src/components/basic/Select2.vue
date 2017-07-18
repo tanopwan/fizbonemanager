@@ -8,25 +8,31 @@
 export default {
 	props: ['options', 'value', 'placeholder', 'allowClear'],
 	mounted() {
+		console.log("mounted value", this.value);
 		let allowClear = this.allowClear === "false" ? false : true;
 
 		// update options
 		var vm = this;
 		$(this.$el).select2({ data: this.options, allowClear: allowClear }).on('change', function () {
-			vm.$emit('input', vm.value);
+			// Change from select2
+			console.log("Change from select input", $(vm.$el).val());
+			console.log(this);
+			console.log("---------------");
+			vm.$emit('input', $(vm.$el).val());
 		}).val(this.value).trigger("change");
 	},
 	watch: {
 		value: function (value, oldValue) {
-			if (value !== oldValue && $(this.$el).val() !== value) {
-				this.value = value;
-				// update value
-				$(this.$el).val(value).trigger("change");
-			}
+			// Change from v-model
+			console.log("Change from v-model", oldValue, value);
+			// if (value !== oldValue && $(this.$el).val() !== value) {
+			// 	// update value
+			// 	$(this.$el).val(value).trigger("change");
+			// }
 		},
 		options: function (options, oldOptions) {
 			let allowClear = this.allowClear === "false" ? false : true;
-
+			console.log("New options trigger change with current value", this.value);
 			// update options
 			$(this.$el).select2('destroy').empty().select2({
 				placeholder: {
