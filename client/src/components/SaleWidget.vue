@@ -221,7 +221,6 @@ export default {
 						date: moment()
 					},
 					total: this.quantity * this.price,
-					quantity: this.quantity
 				}
 			}
 
@@ -242,10 +241,10 @@ export default {
 			.catch(response => console.log(response));
 		},
 		clear() {
-			this.selectedProduct = '';
-			this.productLink = '';
 			this.selectedBatch = '';
 			this.selectedPromotion = '';
+			this.selectedProduct = '';
+			this.productLink = '';
 			this.selectedGroup = '';
 			this.selectedCustomer = '';
 			this.priceBaht = 0;

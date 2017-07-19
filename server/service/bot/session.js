@@ -74,10 +74,12 @@ module.exports = {
 				console.log("session.js - New customer");
 				return customerService.createFacebookCustomer(senderID);
 			}
-			else {
-				console.log("session.js - Existing customer");
+			else if (customer.role === 'super') {
+				console.log("session.js - Super customer");
 				return Promise.resolve(customer);
 			}
+			console.log("session.js - Existing customer");
+			return Promise.resolve(customer);
 		}).then(customer => {
 			let key = `${recipientID}_${senderID}`;
 			let session = sessions[key];

@@ -22,7 +22,6 @@ const promiseOnlineProducts = Promotion.aggregate([
 	}
 ]).exec().then(resolve => {
 	cacheOnlineProducts = resolve;
-	console.log(resolve);
 });
 
 const getOnlineProducts = () => {
@@ -38,7 +37,7 @@ const getProduct = (productId) => {
 	return Product.findOne({ _id: productId }).exec();
 }
 
-const getProducts = (productId) => {
+const getProducts = () => {
 	return Product.find().exec();
 }
 

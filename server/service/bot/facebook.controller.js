@@ -3,7 +3,8 @@
 const crypto = require('crypto');
 const messenger = require('./fbmessenger.service');
 const sessionService = require('./session');
-const orderService = require('../order.service');
+const saleService = require('../sale.service');
+const superCustomerService = require('./supercustomer.service');
 const attachmentService = require('../attachment.service');
 
 /*
@@ -120,7 +121,7 @@ const receivedPostback = (event) => {
 			case 'CHECK_OUT':
 			if (session.addressConfirm) {
 				if (session.items && session.items.length > 0) {
-					return orderService.createOrder(session).then(order => {
+					return orderService.createOrderFromSession(session).then(order => {
 						messenger.sendReceipt(session, order);
 						messenger.sendPaymentMethod(session, 3000);
 					});
@@ -238,15 +239,27 @@ const receivedMessage = (event) => {
 			return;
 		}
 
-		if (messageText) {
+		if (messageText && session.customer.role === 'super') {
 
+			let intention = superCustomerService.processIntention(messageText);
 			// If we receive a text message, check to see if it matches any special
 			// keywords and send back the corresponding example. Otherwise, just echo
 			// the text we received.
-			switch (messageText) {
+			switch (intention) {
+				case 'Sale':
+				superCustomerService.parseSaleIntention(messageText).then(saleIntention => {
+					if (saleIntention) {
+						return saleService.createSaleIntention(saleIntention);
+					}
+				}).then(sale => {
+					messenger.sendText(senderID, '[Super] Sell ' + sale._id + ' Success');
+				}).catch(error => {
+					messenger.sendText(senderID, '[Super] Sell ' + error + ' Failed');
+				});
 
+				break;
 				default:
-				//messenger.sendText(senderID, messageText + ' [bot]');
+				messenger.sendText(senderID, '[Super] ' + messageText);
 			}
 		} else if (messageAttachments) {
 			if (messageAttachments.length > 0) {

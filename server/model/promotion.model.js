@@ -30,7 +30,7 @@ const PromotionSchema = new Schema({
 	isNeedDelivery: { type: Boolean, default: true },
 	isEnded: { type: Boolean, default: false },
 	remark: { type: String },
-	//batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' }, // TODO remove
+	keywords: [String],
 	updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 },
 {

@@ -2,7 +2,11 @@
 
 const Order = require('../model/order.model');
 
-const createOrder = (session, shippingFee) => {
+const createOrder = (data) => {
+	
+}
+
+const createOrderFromSession = (session, shippingFee) => {
 
 	if (!session || !session.customer.address) {
 		return Promise.reject({});
@@ -52,5 +56,6 @@ const getWaitPaymentOrders = (refUserId) => {
 module.exports = {
 	createOrder,
 	getOrders,
-	getWaitPaymentOrders
+	getWaitPaymentOrders,
+	createOrderFromSession
 }

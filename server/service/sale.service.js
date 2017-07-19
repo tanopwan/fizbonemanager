@@ -13,6 +13,40 @@ const updateSale = (saleData, saleId) => {
 	return Sale.findOneAndUpdate({ _id: saleId }, saleData, {new: true});
 };
 
+const createSaleIntention = (saleIntention) => {
+	let data = {
+		quantity: saleIntention.quantity,
+		description: "",
+		saleDate: moment(),
+		product: {
+			name: saleIntention.product.name,
+		},
+		batch: {
+			batchId: saleIntention.promotion.batch.batchId,
+			batchRef: saleIntention.promotion.batch.batchRef,
+		},
+		promotion: {
+			name: saleIntention.promotion.name,
+			price: saleIntention.promotion.price,
+			group: saleIntention.promotion.group,
+		},
+		tags: saleIntention.tags,
+	}
+
+	if (saleIntention.promotion.group !== "Consignment") {
+		data.bill = {
+			bills: {
+				quantity: saleIntention.quantity,
+				price: saleIntention.promotion.price,
+				date: moment(),
+			},
+			total: saleIntention.quantity * saleIntention.promotion.price,
+		}
+	}
+
+	return Sale.create(data);
+}
+
 const getSales = (params) => {
 	if(!isNaN(parseInt(params.limit))) {
 		params.limit = parseInt(params.limit);
@@ -55,8 +89,6 @@ const getSales = (params) => {
 		}
 	}
 
-	//console.log(criteria);
-
 	let count = 0;
 	return Sale.count(criteria).then(response => {
 		count = response;
@@ -73,5 +105,6 @@ const getSales = (params) => {
 module.exports = {
 	createSale,
 	updateSale,
-	getSales
+	getSales,
+	createSaleIntention,
 };

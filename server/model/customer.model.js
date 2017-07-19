@@ -16,6 +16,7 @@ const CustomerSchema = new Schema({
 		postalCode: String
 	},
 	type: String,
+	role: String,
 	refUserId: String,
 	ref: new Schema({}, { strict: false })
 },
