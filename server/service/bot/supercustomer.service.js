@@ -76,7 +76,6 @@ const getPromotion = (words) => {
             promotions.forEach(promotion => {
                 console.log(promotion.keywords.join(), word);
                 if (promotion.keywords.includes(word)) {
-                    console.log("found");
                     index = idx;
                     promotionObject = promotion;
                 }

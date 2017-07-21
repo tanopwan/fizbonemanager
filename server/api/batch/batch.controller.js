@@ -112,7 +112,6 @@ const stockById = function(req, res) {
 	Sale.aggregate(
 		{
 			$match: {
-				isDeleted: { $eq: false },
 				'batch.batchId': { $eq: batchId }
 			}
 		},

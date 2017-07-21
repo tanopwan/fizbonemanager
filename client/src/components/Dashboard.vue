@@ -245,6 +245,7 @@ export default {
 			.then(response => {
 				let labels = [];
 				let piecolors = [];
+				console.log(response.data);
 				let pie = response.data.reduce(function(res, obj) {
 					if (!obj.promotionGroup) {
 						obj.promotionGroup = 'None';
@@ -257,6 +258,7 @@ export default {
 					return res;
 				}, {});
 
+				console.log(pie);
 				for (var key in pie){
 					if (pie.hasOwnProperty(key)) {
 						labels.push({ label: key, data: pie[key] });
