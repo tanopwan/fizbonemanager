@@ -15,7 +15,7 @@ export default {
 		var vm = this;
 		$(this.$el).select2({ data: this.options, allowClear: allowClear }).on('change', function () {
 			// Change from select2
-			console.log("Change from select input", $(vm.$el).val());
+			console.log("on Change is Trigger from select input", $(vm.$el).val());
 			console.log(this);
 			console.log("---------------");
 			vm.$emit('input', $(vm.$el).val());
@@ -25,10 +25,10 @@ export default {
 		value: function (value, oldValue) {
 			// Change from v-model
 			console.log("Change from v-model", oldValue, value);
-			// if (value !== oldValue && $(this.$el).val() !== value) {
-			// 	// update value
-			// 	$(this.$el).val(value).trigger("change");
-			// }
+			if (value !== oldValue && $(this.$el).val() !== value) {
+				// update value
+				$(this.$el).val(value).trigger("change");
+			}
 		},
 		options: function (options, oldOptions) {
 			let allowClear = this.allowClear === "false" ? false : true;

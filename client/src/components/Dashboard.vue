@@ -245,7 +245,6 @@ export default {
 			.then(response => {
 				let labels = [];
 				let piecolors = [];
-				console.log(response.data);
 				let pie = response.data.reduce(function(res, obj) {
 					if (!obj.promotionGroup) {
 						obj.promotionGroup = 'None';
