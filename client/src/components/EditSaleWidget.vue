@@ -81,6 +81,7 @@ export default {
 			sale1: this.saleProp,
 			promotions: [],
 			productsWithBatches: [],
+			customers: [],
 			selectedProduct: '',
 			selectedPromotion: '',
 			selectedBatch: '',
@@ -96,6 +97,7 @@ export default {
 	},
 	watch: {
 		saleProp: function(val) {
+			console.log("saleProp");
 			this.sale = JSON.parse(this.saleProp);
 			this.selectedProduct = this.sale.product.name;
 			this.selectedPromotion = this.sale.promotion.name;
@@ -106,11 +108,13 @@ export default {
 			if (this.sale.tags) {
 				this.tagString = this.sale.tags.join(' ');
 			}
+		},
+		selectedPromotion: function(oldVal, val) {
+			console.log("[EditSaleWidget] selectedPromotion model change from", val, "to", oldVal);
 		}
 	},
 	methods: {
 		save() {
-			console.log(this.sale);
 			this.errorMessage = '';
 			if (!this.selectedProduct || !this.selectedBatch || !this.selectedPromotion) {
 				this.errorMessage = 'Missing fields';
@@ -174,12 +178,9 @@ export default {
 		},
 		onSelectPromotion(value) {
 			if (value) {
-				this.selectedBatch = '';
 				this.selectedGroup = '';
 				let promotion = this.promotions.find(promotion => promotion.name === value && promotion.product.name === this.selectedProduct);
 				if (promotion) {
-					let batchIdAndRef = promotion.batch.batchId + '/' + promotion.batch.batchRef;
-					this.selectedBatch = batchIdAndRef;
 					this.selectedGroup = promotion.group;
 				}
 			}
@@ -225,9 +226,6 @@ export default {
 			return options;
 		},
 		customerOptions: function() {
-			if (!this.customers) {
-				return [];
-			}
 			let options = [];
 			this.customers.forEach(customer => {
 				options.push({ text: customer.name, id: customer._id });
@@ -244,12 +242,14 @@ export default {
 
 		EventBus.getPromotions()
 		.then(response => {
-			this.promotions = response.body;
+			this.promotions = response.body
 		})
 		.catch(response => console.log(response));
 
 		EventBus.getCustomers()
-		.then(response => this.customers = response.body)
+		.then(response => {
+			this.customers = response.body;
+		})
 		.catch(response => console.log(response));
 		this.updateStock();
 	},

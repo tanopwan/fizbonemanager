@@ -6,13 +6,19 @@
 					<div class="form-group" :class="{ 'has-error': productImageError }">
 						<div class="input-group">
 							<span class="input-group-addon">Product Code</span>
-							<input type="text" v-model="productCode" class="form-control" placeholder="FBxxA">
+							<input type="text" v-model="productCode" class="form-control" placeholder="FZxxA">
 							<span class="input-group-addon">Barcode</span>
 							<input type="text" v-model="barcode" class="form-control" placeholder="88594037">
 						</div>
 					</div>
 					<div class="form-group" :class="{ 'has-error': productImageError }">
 						<input type="text" v-model="productImage" class="form-control" placeholder="http://">
+					</div>
+					<div class="form-group">
+						<div class="input-group">
+							<span class="input-group-addon">keywords</span>
+							<input type="text" v-model="keywords" class="form-control">
+						</div>
 					</div>
 					<div class="form-group" :class="{ 'has-error': productNameError }">
 						<div class="input-group">
@@ -62,6 +68,7 @@ export default {
 			productImage: '',
 			productCode: '',
 			barcode: '',
+			keywords: '',
 			products: [],
 			productNameError: false,
 			productImageError: false
@@ -79,11 +86,23 @@ export default {
 			}
 			this.productNameError = false;
 			this.productImageError = false;
-			this.$http.post('/api/products', { name: this.productName, link: this.productImage })
+
+			let data = {
+				name: this.productName,
+				link: this.productImage,
+				productCode: this.productCode,
+				barcode: this.barcode,
+				keywords: this.keywords.split(' '),
+			}
+
+			this.$http.post('/api/products', data)
 			.then(response => {
 				this.products.push(response.body);
 				this.productName = '';
 				this.productImage = '';
+				this.productCode = '';
+				this.barcode = '';
+				this.keywords = '';
 			}, response => {
 				console.log(response);
 			});

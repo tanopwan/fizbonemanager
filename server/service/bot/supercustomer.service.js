@@ -31,10 +31,11 @@ let promotionsPromise = promotionService.getPromotions().then(promotions => {
 
 let productsPromise = productService.getProducts().then(products => {
     console.log("Get Product Promise........");
-    products.forEach(product => {
-        let productKeyword = productKeywords.find(productKeyword => productKeyword.productCode === product.productCode);
-        product.keywords = productKeyword.keywords;
-    });
+    console.log(products);
+    // products.forEach(product => {
+    //     let productKeyword = productKeywords.find(productKeyword => productKeyword.productCode === product.productCode);
+    //     product.keywords = productKeyword.keywords;
+    // });
     return Promise.resolve(products);
 });
 
