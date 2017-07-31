@@ -146,6 +146,13 @@ export default {
 					consignment.total = consignment.promotion.price * consignment.quantity / 100;
 					consignment.stringDate = moment(consignment.saleDate).format('LLL');
 					consignment.customerName = consignment.customer ? consignment.customer.name : 'ทั่วไป';
+
+					if (consignment.bill) {
+						consignment.bill.quantity = consignment.bill.bills.reduce((a, b) => {
+							return { quantity: a.quantity + b.quantity };
+						}, { quantity: 0 }).quantity;
+					}
+
 				})
 
 				return this.consignments.sort(function(s1, s2){

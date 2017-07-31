@@ -53,6 +53,13 @@ export default {
 			this.isLoggedIn = false;
 			location.href = '/login';
 		});
+
+		$.each(localStorage, function(key, value){
+			if (key.startsWith('CACHE_')) {
+				localStorage.removeItem(key);
+			}
+		});
+
 	},
 	methods: {
 		logout: function(e) {
