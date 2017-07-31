@@ -1,9 +1,19 @@
 'use strict';
 
 const Order = require('../model/order.model');
+const Sale = require('../model/sale.model');
 
 const createOrder = (data) => {
-	
+	let sales = [];
+	return Order.create(data).then(order => {
+		data.saleItems.forEach(saleItem => {
+			saleItem.saleDate = order.saleDate;
+			saleItem.orderId = order._id;
+			let sale = new Sale(saleItem);
+			sales.push(sale);
+		});
+		return Sale.insertMany(sales);
+	});
 }
 
 const createOrderFromSession = (session, shippingFee) => {
@@ -49,6 +59,14 @@ const getOrders = () => {
 	return Order.find().exec();
 }
 
+const getOrder = (orderId) => {
+	return Order.findOne({ _id: orderId }).exec().then(order => {
+		return Sale.find({ orderId: order._id }).exec().then(sales => {
+			return Promise.resolve(Object.assign({}, order.toObject(), { items: sales }));
+		});
+	})
+}
+
 const getWaitPaymentOrders = (refUserId) => {
 	return Order.find({ 'customer.refUserId': refUserId, 'payment.status': 'WAIT', 'payment.method': 'BANK_TRANSFER' }).exec();
 }
@@ -56,6 +74,7 @@ const getWaitPaymentOrders = (refUserId) => {
 module.exports = {
 	createOrder,
 	getOrders,
+	getOrder,
 	getWaitPaymentOrders,
-	createOrderFromSession
+	createOrderFromSession,
 }

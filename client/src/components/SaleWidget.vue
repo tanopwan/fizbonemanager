@@ -113,7 +113,7 @@
 import moment from 'moment';
 import { EventBus } from '../bus';
 import Select2 from './basic/Select2.vue';
-import DateTimePicker from './basic/DateTimePicker.vue'
+import DateTimePicker from './basic/DateTimePicker.vue';
 
 export default {
 	props: ['onAddSale'],
@@ -288,6 +288,10 @@ export default {
 			}
 		},
 		onDatetime(value) {
+			if (this.datetime) {
+                // No need to update first time
+                this.now = false;
+            }
 			this.datetime = value;
 		},
 		deleteSale(id) {

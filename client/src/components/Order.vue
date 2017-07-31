@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<order-widget></order-widget>
 		<div id="modal-small" class="modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
@@ -21,7 +22,7 @@
 			<div class="block full">
 				<div class="block-title">
 					<ul class="nav nav-tabs">
-						<li class="active"><a @click="viewOrder=null">Back</a></li>
+						<li class="active"><a @click="viewOrder={}">Back</a></li>
 					</ul>
 				</div>
 				<div class="block-section">
@@ -48,17 +49,19 @@
 									<tbody>
 										<tr class="info">
 											<td colspan="3">
-												<button v-if="viewOrder.customer ? viewOrder.customer.type==='FacebookOnline' : false" class="btn btn-info"><i class="fa fa-facebook"></i></button>
-												<h4>Customer: {{ viewOrder.customer.name }} <small>(refUserId: {{ viewOrder.customer.refUserId }})</small></h4>
+												<h4>
+													<button v-if="viewOrder.customer ? viewOrder.customer.type==='FacebookOnline' : false" class="btn btn-info"><i class="fa fa-facebook"></i></button>
+													 {{ viewOrder.customer ? viewOrder.customer.name : '' }} <small>(refUserId: {{ viewOrder.customer ? viewOrder.customer.refUserId : '' }})</small>
+												</h4>
 											</td>
-											<td colspan="2">Date: {{ viewOrder.stringDate }}</td>
+											<td colspan="2">Date: {{ viewOrder.saleDate }}</td>
 										</tr>
 										<tr class="primary">
 											<td colspan="3">
 												<h4>จัดส่ง {{ viewOrder.address.name }}</h4>
 												<p>
 													{{ viewOrder.address.street }}<br>
-													{{ viewOrder.address.subDistrict }}, {{ viewOrder.address.district }}<br>
+													{{ viewOrder.address.subDistrict }}<span v-if="viewOrder.address.district">, {{ viewOrder.address.district }}</span><br>
 													{{ viewOrder.address.province }} {{ viewOrder.address.postalCode }}
 												</p>
 											</td>
@@ -72,7 +75,7 @@
 												{{ item.product.name }} / {{ item.batch ? item.batch.batchRef : '' }}
 											</td>
 											<td class="text-right">
-												&#x0E3F; {{ (item.price / 100).toFixed(2) }} / unit
+												&#x0E3F; {{ (item.promotion.price / 100).toFixed(2) }}
 											</td>
 											<td style="width: 60px;" class="text-center">
 												{{ item.quantity }}
@@ -87,7 +90,7 @@
 												<strong>&#x0E3F; {{ (viewOrder.subTotal / 100).toFixed(2) }}</strong>
 											</td>
 										</tr>
-										<tr>
+										<tr v-if="viewOrder.shippingFee">
 											<td colspan="4">Shipping Fee</td>
 											<td class="text-right text-info">
 												<strong>&#x0E3F; {{ (viewOrder.shippingFee / 100).toFixed(2) }}</strong>
@@ -96,7 +99,7 @@
 										<tr class="success">
 											<td colspan="4">Total</td>
 											<td class="text-right">
-												<strong>&#x0E3F; {{ (viewOrder.total / 100).toFixed(2) }}</strong>
+												<strong>&#x0E3F; {{ ((viewOrder.subTotal + (viewOrder.shippingFee ? viewOrder.shippingFee : 0)) / 100).toFixed(2) }}</strong>
 											</td>
 										</tr>
 									</tbody>
@@ -110,7 +113,7 @@
 											<i class="fa fa-check"></i> Verified
 										</a>
 									</div><br>
-									<img v-for="attachment in viewOrder.payment.attachments" :src="attachment" class="img-responsive center-block" style="max-width: 500px;">
+									<img v-for="attachment in (viewOrder.payment ? viewOrder.payment.attachments : [])" :src="attachment" class="img-responsive center-block" style="max-width: 500px;">
 								</div>
 							</div>
 							<div id="tabs-shipping" class="tab-pane">
@@ -221,7 +224,7 @@
 					<tr v-for="(order, index) in computedOrders" :key="'row' + index">
 						<td class="text-center">{{ order.stringDate }}</td>
 						<td class="text-center hidden-sm hidden-xs">
-							<a @click="setOrder(order)">{{ order._id }}</a>
+							<a @click="setOrder(order._id)">{{ order._id }}</a>
 						</td>
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
 						<td class="text-center">{{ order.noItems }}</td>
@@ -229,7 +232,7 @@
 						<td class="text-center">{{ order.payment ? order.payment.status : 0 }}</td>
 						<td class="text-center">
 							{{ order.shipping ? order.shipping.status: 0 }}
-							<button v-if="order.shipping.status==='WAIT_VERIFIED'" class="btn btn-danger"><i class="fa fa-exclamation-circle"></i></button>
+							<button v-if="order.shipping && order.shipping.status==='WAIT_VERIFIED'" class="btn btn-danger"><i class="fa fa-exclamation-circle"></i></button>
 						</td>
 					</tr>
 				</tbody>
@@ -241,6 +244,7 @@
 <script>
 import moment from 'moment';
 import Select2 from './basic/Select2.vue';
+import OrderWidget from './OrderWidget.vue'
 
 export default {
 	data() {
@@ -273,14 +277,27 @@ export default {
 				});
 			}).catch(response => console.log(response));
 		},
-		setOrder(order) {
-			this.viewOrder = order;
-			this.showOrder = true;
-			console.log(this.viewOrder);
+		setOrder(orderId) {
+			this.$http.get('/api/sales/orders/' + orderId).then(order => {
+				this.viewOrder = Object.assign({
+					customer: {},
+					address: {},
+					items: [],
+					payment: {}
+				}, order.body);
+				this.showOrder = true;
+				this.viewOrder.items.forEach(item => {
+
+					item.total = item.promotion.price * item.quantity;
+				});
+				this.viewOrder.subTotal = this.viewOrder.items.reduce((a, b) => {
+					return { total: a.total + b.total };
+
+				}, { total: 0 }).total;
+			});
 		},
 		setTrackingNo() {
 			let dropoffDateTime = moment(`${this.dropoffDate} ${this.dropoffTime}`, "YYYY-MM-DD HH:mm");
-			console.log(dropoffDateTime);
 			if (this.trackingNo.length === 9 && /^\d+$/.test(this.trackingNo)) {
 				this.trackingNoError = false;
 				this.$http.post(`/api/sales/order/${this.viewOrder._id}/tracking`, {
@@ -387,7 +404,8 @@ export default {
 		})
 	},
 	components: {
-		select2: Select2
+		select2: Select2,
+		orderWidget: OrderWidget,
 	}
 }
 </script>

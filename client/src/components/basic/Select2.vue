@@ -13,7 +13,7 @@ export default {
 
 		// update options
 		var vm = this;
-		$(this.$el).select2({ data: this.options, allowClear: allowClear }).on('change', function (e) {
+		$(this.$el).select2({ data: this.options, allowClear: allowClear, width: 'resolve', }).on('change', function (e) {
 			// Change from select2
 			console.log("[Select2] on Change is Trigger from select input:", $(vm.$el).val());
 			console.log("[Select2] v-model value:", vm.value);
@@ -45,7 +45,8 @@ export default {
 					text: this.placeholder
 				},
 				data: this.options,
-				allowClear: allowClear
+				allowClear: allowClear,
+				width: 'resolve',
 			}).val(this.value).trigger("change");
 		}
 	},

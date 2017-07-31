@@ -7,6 +7,7 @@ const messenger = require('../../service/bot/fbmessenger.service');
 const moment = require('moment');
 
 const saleService = require('../../service/sale.service');
+const orderService = require('../../service/order.service');
 
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
@@ -26,10 +27,36 @@ const view = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const viewOrder = function(req, res) {
+	let orderId = req.params.id;
+
+	return orderService.getOrder(orderId)
+	.then(order => {
+		if(!order) {
+			return res.status(404).end();
+		}
+		res.json(order);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
 const create = function(req, res) {
 	let userId = new ObjectId(req.user._id);
 
 	return saleService.createSale(req.body, userId)
+	.then(sale => {
+		res.json(sale);
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(500).json(err);
+	});
+}
+
+const createOrder = function(req, res) {
+	let userId = new ObjectId(req.user._id);
+
+	return orderService.createOrder(req.body)
 	.then(sale => {
 		res.json(sale);
 	})
@@ -112,6 +139,18 @@ const index = function(req, res) {
 		.catch(err => res.status(500).json(err));
 	}
 
+}
+
+const indexOrders = function(req, res) {
+	console.log("indexOrders");
+	return orderService.getOrders()
+	.then(sale => {
+		if(!sale) {
+			return res.status(404).end();
+		}
+		res.json(sale);
+	})
+	.catch(err => res.status(500).json(err));
 }
 
 const destroy = function(req, res) {
@@ -215,5 +254,8 @@ module.exports = {
 	verifyOrder,
 	migrate,
 	bill,
-	setTracking
+	setTracking,
+	createOrder,
+	indexOrders,
+	viewOrder,
 };

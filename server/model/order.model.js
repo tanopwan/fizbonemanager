@@ -6,17 +6,11 @@ const Schema = mongoose.Schema;
 mongoose.Promise = require('bluebird');
 
 const OrderSchema = new Schema({
-	items: [{
-		saleId: { type: mongoose.Schema.Types.ObjectId, ref: 'Sale' },
-		batchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Batch' },
-		quantity: Number,
-		price: Number,
-		product: {
-			name: String,
-			link: String
-		},
-		total: Number
-	}],
+	customer: new Schema({
+		name: String,
+		refUserId: String,
+		type: String,
+	}, { _id : false }),
 	address: {
 		name: String,
 		street: String,
@@ -40,10 +34,7 @@ const OrderSchema = new Schema({
 	shippingFee: Number,
 	total: Number,
 	status: String, //OPEN, CLOSE, FINISH
-	customer: {
-		name: String,
-		refUserId: String
-	}
+	saleDate: Date,
 },
 {
 	timestamps: true
