@@ -117,7 +117,8 @@ const index = function(req, res) {
 			customer: req.query.customer,
 			from: req.query.from,
 			to: req.query.to,
-			includeBilledSales: req.query.includeBilledSales
+			includeBilledSales: req.query.includeBilledSales,
+			batchId: req.query.batchId,
 		}
 		return saleService.getSales(params)
 		.then(sale => {

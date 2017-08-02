@@ -216,7 +216,7 @@ export default {
 
 			let saleTimeSeries = [];
 			let latestPoint = {};
-			batchStock.transactions.forEach(transaction => {
+			batchStock.sales.forEach(transaction => {
 				if (saleTimeSeries.length == 0) {
 					latestPoint = { date: transaction.saleDate, data: transaction.quantity}
 					saleTimeSeries.push(latestPoint);

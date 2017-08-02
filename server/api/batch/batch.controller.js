@@ -96,7 +96,12 @@ const stock = function(req, res) {
 						]
 					}
 				},
-				transactions: { $push:  { saleDate: "$saleDate", quantity: "$quantity" } }
+				sales: {
+					$push: {
+						saleDate: "$saleDate",
+						quantity: "$quantity",
+					}
+				}
 			}
 		}
 	]).exec()

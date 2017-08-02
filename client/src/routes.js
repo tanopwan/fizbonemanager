@@ -5,6 +5,7 @@ import Batch from './components/Batch.vue';
 import Sale from './components/Sale.vue';
 import Order from './components/Order.vue';
 import SaleReport from './components/SaleReport.vue';
+import BatchReport from './components/BatchReport.vue';
 import Promotion from './components/Promotion.vue';
 import Consignment from './components/Consignment.vue';
 import Customer from './components/Customer.vue';
@@ -25,6 +26,7 @@ const routes = [
 			{ path: '/order', component: Order },
 			{ path: '/customer', component: Customer },
 			{ path: '/sale_report', component: SaleReport },
+			{ path: '/batch_report', component: BatchReport },
 			{ path: '/onlineshop', component: OnlineShop },
 		]
 	},

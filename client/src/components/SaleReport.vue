@@ -103,7 +103,7 @@
 import moment from 'moment';
 import { EventBus } from '../bus';
 import salePromotion from './SalePromotion.vue';
-import Select2 from './basic/Select2.vue'
+import Select2 from './basic/Select2.vue';
 
 export default {
 	data() {

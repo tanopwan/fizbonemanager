@@ -22,7 +22,13 @@
 					<li>
 						<router-link to="/sale_report">
 							<i class="hi hi-usd sidebar-nav-icon"></i>
-							<span class="sidebar-nav-mini-hide">SaleReport</span>
+							<span class="sidebar-nav-mini-hide">Sale Report</span>
+						</router-link>
+					</li>
+					<li>
+						<router-link to="/batch_report">
+							<i class="hi hi-usd sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Batch Report</span>
 						</router-link>
 					</li>
 					<li class="sidebar-separator">

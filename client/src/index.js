@@ -46,6 +46,19 @@ Vue.http.interceptors.push((request, next) => {
 });
 
 import routes from './routes';
+import moment from 'moment';
+
+Vue.filter('formatDate', function(value) {
+	if (value) {
+		return moment(String(value)).format('MM/DD/YYYY hh:mm');
+	}
+});
+
+Vue.filter('formatBaht', function(value) {
+	if (value) {
+		return (value / 100).toFixed(2);
+	}
+});
 
 new Vue({
 	el: '#app',

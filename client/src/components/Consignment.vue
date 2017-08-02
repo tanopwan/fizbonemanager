@@ -152,8 +152,7 @@ export default {
 							return { quantity: a.quantity + b.quantity };
 						}, { quantity: 0 }).quantity;
 					}
-
-				})
+				});
 
 				return this.consignments.sort(function(s1, s2){
 					let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);

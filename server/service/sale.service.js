@@ -89,6 +89,10 @@ const getSales = (params) => {
 		}
 	}
 
+	if (params.batchId) {
+		criteria['batch.batchId'] = params.batchId;
+	}
+
 	let count = 0;
 	return Sale.count(criteria).then(response => {
 		count = response;
