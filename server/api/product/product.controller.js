@@ -80,6 +80,8 @@ const batch = function(req, res) {
 			$group: {
 				_id: '$product.name',
 				name: { $first: '$product.name' },
+				productCode: { $first: '$product.productCode' },
+				barCode: { $first: '$product.barcode' },
 				link: { $first: '$product.link' },
 				batches: { $sum: 1 },
 				finishedBatches: {
