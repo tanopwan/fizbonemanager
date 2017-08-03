@@ -27,11 +27,12 @@
                         <tr>
                             <th style="width: 180px;" class="text-center">Date</th>
                             <th>Order</th>
-                            <th>Product</th>
                             <th>Promotion</th>
                             <th>Q</th>
                             <th>Price</th>
                             <th>Total</th>
+                            <th>Customer</th>
+                            <th>Description</th>
                             <th style="width: 120px;" class="text-center">
                                 <i class="fa fa-flash"></i>
                             </th>
@@ -41,11 +42,12 @@
                         <tr v-for="sale in sales" v-bind:key="sale._id">
                             <td class="text-center">{{ sale.saleDate | formatDate }}</td>
                             <td>{{ sale.orderId }}</td>
-                            <td>{{ sale.product.name }}</td>
                             <td>{{ sale.promotion.name }}</td>
                             <td class="text-right">{{ sale.quantity }}</td>
                             <td class="text-right">{{ sale.promotion.price | formatBaht }}</td>
                             <td class="text-right">{{ sale.promotion.price * sale.quantity | formatBaht }}</td>
+                            <td>{{ sale.customer ? sale.customer.name : "" }}</td>
+                            <td>{{ sale.description }}</td>
                             <td class="text-center">
                                 <a href="#show-sale-modal" @click="showSaleModal(sale._id)" data-toggle="modal" class="btn btn-effect-ripple btn-sm btn-success" style="overflow: hidden; position: relative;">
                                     <i class="fa fa-pencil"></i>
@@ -96,7 +98,7 @@ export default {
             totalSales: 0,
             // Paging
             currentPage: 0,
-            pageSize: 10,
+            pageSize: 20,
         }
     },
     methods: {

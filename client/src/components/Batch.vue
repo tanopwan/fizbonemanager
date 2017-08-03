@@ -115,7 +115,9 @@ export default {
 				batchRef: `${this.batchRefPrefix}_${this.batchRef}`,
 				product: {
 					name: product.name,
-					link: product.link
+					link: product.link,
+					barcode: product.barcode,
+					productCode: product.productCode,
 				},
 				quantity: this.quantity
 			}
@@ -153,9 +155,10 @@ export default {
 		},
 	},
 	created() {
-		EventBus.query("{ products { _id, name, link } }")
+		EventBus.getProducts()
 			.then(response => {
-				this.products = response.body.data.products
+				this.products = response.body;
+				console.log(this.products);
 			})
 			.catch(response => console.log(response));
 		EventBus.getBatches()

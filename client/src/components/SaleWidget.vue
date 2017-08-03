@@ -126,6 +126,8 @@ export default {
 			priceBaht: 0,
 			description: '',
 			productLink: '',
+			productBarcode: '',
+			productCode: '',
 			customerName: '',
 			customerType: '',
 			tagString: '',
@@ -199,7 +201,10 @@ export default {
 				description: this.description,
 				saleDate: this.now ? moment() : moment(this.datetime, "YYYY-MM-DD HH:mm"),
 				product: {
-					name: this.selectedProduct
+					name: this.selectedProduct,
+					link: this.productLink,
+					barcode: this.productBarcode,
+					productCode: this.productCode,
 				},
 				batch: {
 					batchId: this.selectedBatch.split('/')[0],
@@ -253,6 +258,8 @@ export default {
 		},
 		onSelectProduct(value) {
 			this.productLink = '';
+			this.productBarcode = '';
+			this.productCode = '';
 			this.selectedBatch = '';
 			this.selectedPromotion = '';
 			this.selectedGroup = '';
@@ -262,6 +269,8 @@ export default {
 			let productWithBatches = this.productsWithBatches.find(product => product.name === value);
 			if (productWithBatches) {
 				this.productLink = productWithBatches.link;
+				this.productBarcode = productWithBatches.barcode;
+				this.productCode = productWithBatches.productCode;
 			}
 		},
 		onSelectPromotion(value) {

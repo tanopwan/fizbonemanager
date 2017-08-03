@@ -19,7 +19,9 @@ const SaleSchema = new Schema({
 	}),
 	product: new Schema({
 		name: String,
-		link: String
+		link: String,
+		barcode: String,
+		productCode: String,
 	}, {
 		_id : false
 	}),

@@ -1,10 +1,19 @@
 <template>
     <div>
         <div class="row">
-            <div class="col-xs-12 col-md-6 form-group">
-                <select2 :options="batchOptions" v-model="selectedFilterBatch" placeholder="Filter Batch...">
-                    <option></option>
-                </select2>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <select2 :options="productOptions" v-model="selectedProduct" allowClear="false" placeholder="Select Product..." v-on:input="onSelectProduct">
+                        <option></option>
+                    </select2>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="form-group">
+                    <select2 :options="batchOptions" v-model="selectedBatch" allowClear="false" placeholder="Select Batch...">
+                        <option></option>
+                    </select2>
+                </div>
             </div>
         </div>
         <batch-report-table-block :batchId="selectedBatchId"></batch-report-table-block>
@@ -19,27 +28,39 @@ import BatchReportTableBlock from './BatchReportTableBlock.vue';
 export default {
     data() {
         return {
-            batches: [],
-            selectedFilterBatch: '',
+            productsWithBatches: [],
+            selectedProduct: '',
+            selectedBatch: '',
         }
     },
     computed: {
         selectedBatchId() {
-            return this.selectedFilterBatch.split('/')[0];
+            return this.selectedBatch.split('/')[0];
         },
+        productOptions() {
+			let options = [];
+			this.productsWithBatches.forEach(product => {
+				options.push({ id: product.name, text: product.name });
+			});
+			return options;
+		},
 		batchOptions() {
 			let options = [];
-			this.batches.forEach(batch => {
-				options.push({ id: batch._id + '/' + batch.batchRef, text: batch.batchRef });
-			});
+			let productWithBatches = this.productsWithBatches.find(product => product.name === this.selectedProduct);
+			if (productWithBatches) {
+				productWithBatches.batches.forEach(batch => {
+					let batchIdAndRef = batch._id + '/' + batch.batchRef;
+					options.push({ id: batchIdAndRef, text: batch.batchRef });
+				});
+			}
 			return options;
 		},
     },
     created() {
-        EventBus.getBatches()
+        EventBus.getProductsWithBatches()
 		.then(response => {
-            this.batches = response.body
-        })
+			this.productsWithBatches = response.body;
+		})
 		.catch(response => console.log(response));
     },
     components: {

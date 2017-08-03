@@ -78,10 +78,10 @@ const batch = function(req, res) {
 		{ $sort : { createdAt : -1 } },
 		{
 			$group: {
-				_id: '$product.name',
+				_id: '$product.productCode',
 				name: { $first: '$product.name' },
 				productCode: { $first: '$product.productCode' },
-				barCode: { $first: '$product.barcode' },
+				barcode: { $first: '$product.barcode' },
 				link: { $first: '$product.link' },
 				batches: { $sum: 1 },
 				finishedBatches: {

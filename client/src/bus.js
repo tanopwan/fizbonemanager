@@ -15,6 +15,9 @@ export const EventBus = new Vue({
 		query(query) {
 			return this.$http.post('/graphql', {"query": `${query}`});
 		},
+		getProducts() {
+			return this.$http.get(`${this.productURL}`);
+		},
 		getProductsWithBatches() {
 			return this.$http.get(`${this.productURL}/batches`);
 		},
