@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
-                    <select2 :options="productOptions" v-model="selectedProduct" allowClear="false" placeholder="Select Product..." v-on:input="onSelectProduct">
+                    <select2 :options="productOptions" v-model="selectedProduct" allowClear="false" placeholder="Select Product...">
                         <option></option>
                     </select2>
                 </div>
@@ -57,7 +57,7 @@ export default {
 		},
     },
     created() {
-        EventBus.getProductsWithBatches()
+        EventBus.getAllProductsWithBatches()
 		.then(response => {
 			this.productsWithBatches = response.body;
 		})

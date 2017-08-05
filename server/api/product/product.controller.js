@@ -86,8 +86,13 @@ const destroy = function(req, res) {
 }
 
 const batch = function(req, res) {
+	let isFinish = { $eq: false };
+	if (req.params.all) {
+		let isFinish = { $in: [null, false, true] };
+	}
+
 	Batch.aggregate([
-		{ $match: { isFinish: { $eq: false } } },
+		{ $match: { isFinish: isFinish } },
 		{ $sort : { createdAt : -1 } },
 		{
 			$group: {

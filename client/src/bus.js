@@ -21,6 +21,9 @@ export const EventBus = new Vue({
 		getProductsWithBatches() {
 			return this.$http.get(`${this.productURL}/batches`);
 		},
+		getAllProductsWithBatches() {
+			return this.$http.get(`${this.productURL}/batches?all=true`);
+		},
 		getBatches() {
 			return this.$http.get(this.batchURL);
 		},
