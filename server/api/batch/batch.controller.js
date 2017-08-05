@@ -22,10 +22,27 @@ const view = function(req, res) {
 
 const create = function(req, res) {
 	let userId = new ObjectId(req.user._id);
-	let productId = req.body.productId;
 
 	let batchData = Object.assign({ createdBy: userId }, req.body);
 	return Batch.create(batchData)
+	.then(batch => {
+		if(!batch) {
+			return res.status(404).end();
+		}
+		res.status = 201;
+		res.json(batch);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
+const update = function(req, res) {
+	let userId = new ObjectId(req.user._id);
+	let batchId = new ObjectId(req.params.id);
+	let batchData = Object.assign({ createdBy: userId }, req.body);
+	return Batch.replaceOne({ _id: batchId }, batchData)
+	.then(result => {
+		return Batch.findOne({ _id: batchId });
+	})
 	.then(batch => {
 		if(!batch) {
 			return res.status(404).end();
@@ -173,6 +190,7 @@ const setIsFinish = function(req, res) {
 module.exports = {
 	view,
 	create,
+	update,
 	index,
 	destroy,
 	stock,

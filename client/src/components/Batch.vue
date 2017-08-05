@@ -13,7 +13,7 @@
 						<div class="col-sm-6">
 							<select id="example-select2" class="select-select2" style="width: 100%;" data-placeholder="Choose Product..">
 								<option></option><!-- Required for data-placeholder attribute to work with Select2 plugin -->
-								<option v-for="product in products" :value="product._id">{{ product.name }}</option>
+								<option v-for="product in products" :value="product._id" v-bind:key="product._id">{{ product.name }}</option>
 							</select>
 						</div>
 					</div>
@@ -40,23 +40,58 @@
 							All Batches <small> Total: {{ batches.length }}</small>
 						</h4>
 					</div>
-					<template v-for="batch in sortedBatches">
-						<div>
-							<div class="pull-right">
-								{{ batch._id }}
-								<button class="btn btn-danger" @click="deleteBatch(batch._id)"><i class="fa fa-minus"></i></button>
-							</div>
-							<h4 class="sub-header">
-								{{ batch.batchRef }} <small>{{ batch.product.name }}</small>
-							</h4>
-						</div>
-						<div>
-							จำนวน {{ batch.quantity }}
-						</div>
-						<p>
-							<a href="javascript:void(0)" @click="setIsFinish(batch._id, !batch.isFinish)" class="label" :class="{ 'label-success': !batch.isFinish, 'label-default': batch.isFinish}">{{ batch.isFinish ? 'ขายหมด' : 'มีสินค้าขาย' }}</a>
-						</p>
-					</template>
+					<table id="general-table" class="table table-vcenter table-borderless table-condensed table-hover">
+						<thead>
+							<tr>
+								<th>Id</th>
+								<th>Product</th>
+								<th>BatchRef</th>
+								<th>Quantity</th>
+								<th style="width: 120px;" class="text-center">
+									<i class="fa fa-flash"></i>
+								</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr v-for="batch in batches" v-bind:key="batch._id">
+								<td>{{ batch._id }}</td>
+								<td>{{ batch.product.name }}</td>
+								<td>{{ batch.batchRef }}</td>
+								<td>{{ batch.quantity }}</td>
+								<td class="text-center">
+									<a href="#show-batch-modal" @click="showBatchModal(batch._id)" data-toggle="modal" class="btn btn-effect-ripple btn-sm btn-success" style="overflow: hidden; position: relative;">
+										<i class="fa fa-pencil"></i>
+									</a>
+									<a href="javascript:void(0)" @click="deleteBatch(batch._id)" class="btn btn-effect-ripple btn-sm btn-danger" style="overflow: hidden; position: relative;">
+										<i class="fa fa-times"></i>
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div id="show-batch-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 class="modal-title">
+							<strong>Batch </strong>
+							<small></small>
+						</h3>
+					</div>
+					<div class="modal-body">
+						<pre ref="batchStringEditor" style="background-color: #f5f5f5;" contenteditable="true"></pre>
+					</div>
+					<div class="modal-footer">
+						<i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
+						<span v-else>
+							<button type="button" @click="save" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
+							<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+						</span>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -75,20 +110,9 @@ export default {
 			products: [],
 			quantityError: false,
 			batchNameError: false,
-			batchRefPrefix: ''
+			batchRefPrefix: '',
+			saving: false,
 		};
-	},
-	computed: {
-		sortedBatches: function() {
-			let sorted = this.batches.sort(function(s1, s2){
-				let isAfter = moment(s1.updatedAt).isAfter(s2.updatedAt);
-				if (isAfter) {
-					return -1;
-				}
-				return 1;
-			});
-			return sorted;
-		}
 	},
 	methods: {
 		addBatch() {
@@ -127,6 +151,35 @@ export default {
 				console.log(response);
 			});
 		},
+		save() {
+			this.saving = true;
+			this.batchString = $(this.$refs.batchStringEditor).text();
+			try {
+				let batch = JSON.parse(this.batchString);
+
+				let vm = this;
+				let id = batch._id;
+				this.$http.post('/api/batches/' + id, batch).then(response => {
+					let index = -1;
+					vm.batches.forEach((batch, idx) => {
+						if (batch._id === id) {
+							index = idx;
+						}
+					});
+					if (index !== -1) {
+						vm.batches[index] = response.data;
+					}
+					vm.saving = false;
+				}).catch(response => {
+					console.log(response)
+					vm.saving = false;
+				});
+			}
+			catch (error) {
+				console.log("Parse Error", error);
+				this.saving = false;
+			}
+		},
 		deleteBatch(id) {
 			this.$http.delete('/api/batches/' + id).then(response => {
 				let index = -1;
@@ -152,6 +205,16 @@ export default {
 			}, response => {
 				console.log(response);
 			});
+		},
+		showBatchModal(id) {
+			let batch = this.batches.find(batch => batch._id === id);
+			if (batch) {
+				this.batchString = JSON.stringify(batch, null, 4);
+				$(this.$refs.batchStringEditor).text(this.batchString);
+			}
+			else {
+				this.batchString = `{ \"error\": \"batch._id ${id} is not found.\" }`;
+			}
 		},
 	},
 	created() {

@@ -15,6 +15,7 @@ router.use(auth.verifyMiddleware);
 
 router.put('/:id/finish/:isFinish', ctrl.setIsFinish);
 router.post('/', ctrl.create);
+router.post('/:id', ctrl.update);
 router.delete('/:id', ctrl.destroy);
 
 module.exports = router;

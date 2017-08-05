@@ -206,7 +206,6 @@ export default {
 			if (product) {
 				this.productString = JSON.stringify(product, null, 4);
 				$(this.$refs.productStringEditor).text(this.productString);
-				console.log(this.productString);
 			}
 			else {
 				this.productString = `{ \"error\": \"product._id ${id} is not found.\" }`;
