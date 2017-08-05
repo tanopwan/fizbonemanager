@@ -1,12 +1,14 @@
 <template>
 	<div>
-		<order-widget></order-widget>
+		<order-widget :onAddOrder="onAddOrder"></order-widget>
 		<div id="modal-small" class="modal" tabindex="-1" role="dialog" aria-hidden="true" style="display: none;">
 			<div class="modal-dialog modal-sm">
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h3 class="modal-title"><strong>Are you sure?</strong></h3>
+						<h3 class="modal-title">
+							<strong>Are you sure?</strong>
+						</h3>
 					</div>
 					<div class="modal-body">
 						หลังจากยืนยันแล้ว จะไม่สามารถแก้ไขได้ และจะส่งคำยืนยันให้ลูกค้าทันที
@@ -22,36 +24,48 @@
 			<div class="block full">
 				<div class="block-title">
 					<ul class="nav nav-tabs">
-						<li class="active"><a @click="viewOrder={}">Back</a></li>
+						<li class="active">
+							<a @click="showOrder=false">Back</a>
+						</li>
 					</ul>
 				</div>
 				<div class="block-section">
+					<button @click="printShippingSlip()" class="btn btn-info">
+						<i class="fa fa-print"></i> Shipping Slip</button>
 					<div class="row">
 						<div class="col-md-3">
 							<ul class="nav nav-pills nav-stacked" data-toggle="tabs">
 								<li class="active">
-									<a href="#tabs-detail"><i class="fa fa-fw fa-tasks icon-push"></i> Detail</a>
+									<a href="#tabs-detail">
+										<i class="fa fa-fw fa-tasks icon-push"></i> Detail</a>
 								</li>
 								<li>
-									<a href="#tabs-payment"><span class="badge pull-right">!</span><i class="fa fa-fw fa-credit-card icon-push"></i> Payment</a>
+									<a href="#tabs-payment">
+										<span class="badge pull-right">!</span>
+										<i class="fa fa-fw fa-credit-card icon-push"></i> Payment</a>
 								</li>
 								<li>
-									<a href="#tabs-shipping"><i class="fa fa-fw fa-paper-plane-o icon-push"></i> Shipping</a>
+									<a href="#tabs-shipping">
+										<i class="fa fa-fw fa-paper-plane-o icon-push"></i> Shipping</a>
 								</li>
 							</ul>
 						</div>
 						<div class="col-md-9 tab-content">
 							<div id="tabs-detail" class="tab-pane active">
 								<h4 class="sub-header">
-									Order <small> {{ viewOrder._id }}</small>
+									Order
+									<small> {{ viewOrder._id }}</small>
 								</h4>
 								<table class="table table-striped table-borderless table-vcenter">
 									<tbody>
 										<tr class="info">
 											<td colspan="3">
 												<h4>
-													<button v-if="viewOrder.customer ? viewOrder.customer.type==='FacebookOnline' : false" class="btn btn-info"><i class="fa fa-facebook"></i></button>
-													 {{ viewOrder.customer ? viewOrder.customer.name : '' }} <small>(refUserId: {{ viewOrder.customer ? viewOrder.customer.refUserId : '' }})</small>
+													<button v-if="viewOrder.customer ? viewOrder.customer.type==='FacebookOnline' : false" class="btn btn-info">
+														<i class="fa fa-facebook"></i>
+													</button>
+													{{ viewOrder.customer ? viewOrder.customer.name : '' }}
+													<small>(refUserId: {{ viewOrder.customer ? viewOrder.customer.refUserId : '' }})</small>
 												</h4>
 											</td>
 											<td colspan="2">Date: {{ viewOrder.saleDate }}</td>
@@ -60,14 +74,15 @@
 											<td colspan="3">
 												<h4>จัดส่ง {{ viewOrder.address.name }}</h4>
 												<p>
-													{{ viewOrder.address.street }}<br>
-													{{ viewOrder.address.subDistrict }}<span v-if="viewOrder.address.district">, {{ viewOrder.address.district }}</span><br>
-													{{ viewOrder.address.province }} {{ viewOrder.address.postalCode }}
+													{{ viewOrder.address.street }}
+													<br> {{ viewOrder.address.subDistrict }}
+													<span v-if="viewOrder.address.district">, {{ viewOrder.address.district }}</span>
+													<br> {{ viewOrder.address.province }} {{ viewOrder.address.postalCode }}
 												</p>
 											</td>
 											<td colspan="2"></td>
 										</tr>
-										<tr v-for="item in viewOrder.items">
+										<tr v-for="item in viewOrder.items" v-bind:key="item._id">
 											<td>
 												<img :src="item.product.link" class="img-responsive center-block" style="max-width: 100px;">
 											</td>
@@ -81,7 +96,8 @@
 												{{ item.quantity }}
 											</td>
 											<td class="text-right">
-												&#x0E3F; <strong>{{ (item.total / 100).toFixed(2) }}</strong>
+												&#x0E3F;
+												<strong>{{ (item.total / 100).toFixed(2) }}</strong>
 											</td>
 										</tr>
 										<tr>
@@ -112,8 +128,9 @@
 										<a href="#modal-small" class="btn btn-effect-ripple btn-danger" data-toggle="modal" style="overflow: hidden; position: relative;">
 											<i class="fa fa-check"></i> Verified
 										</a>
-									</div><br>
-									<img v-for="attachment in (viewOrder.payment ? viewOrder.payment.attachments : [])" :src="attachment" class="img-responsive center-block" style="max-width: 500px;">
+									</div>
+									<br>
+									<img v-for="(attachment, index) in (viewOrder.payment ? viewOrder.payment.attachments : [])" :src="attachment" v-bind:key="index" class="img-responsive center-block" style="max-width: 500px;">
 								</div>
 							</div>
 							<div id="tabs-shipping" class="tab-pane">
@@ -134,32 +151,65 @@
 													<table>
 														<tbody>
 															<tr>
-																<td><a href="#" data-action="incrementHour"><i class="fa fa-chevron-up"></i></a></td>
+																<td>
+																	<a href="#" data-action="incrementHour">
+																		<i class="fa fa-chevron-up"></i>
+																	</a>
+																</td>
 																<td class="separator">&nbsp;</td>
-																<td><a href="#" data-action="incrementMinute"><i class="fa fa-chevron-up"></i></a></td>
+																<td>
+																	<a href="#" data-action="incrementMinute">
+																		<i class="fa fa-chevron-up"></i>
+																	</a>
+																</td>
 																<td class="separator">&nbsp;</td>
-																<td><a href="#" data-action="incrementSecond"><i class="fa fa-chevron-up"></i></a></td>
+																<td>
+																	<a href="#" data-action="incrementSecond">
+																		<i class="fa fa-chevron-up"></i>
+																	</a>
+																</td>
 															</tr>
 															<tr>
-																<td><input type="text" class="form-control bootstrap-timepicker-hour" maxlength="2"></td>
+																<td>
+																	<input type="text" class="form-control bootstrap-timepicker-hour" maxlength="2">
+																</td>
 																<td class="separator">:</td>
-																<td><input type="text" class="form-control bootstrap-timepicker-minute" maxlength="2"></td>
+																<td>
+																	<input type="text" class="form-control bootstrap-timepicker-minute" maxlength="2">
+																</td>
 																<td class="separator">:</td>
-																<td><input type="text" class="form-control bootstrap-timepicker-second" maxlength="2"></td>
+																<td>
+																	<input type="text" class="form-control bootstrap-timepicker-second" maxlength="2">
+																</td>
 															</tr>
 															<tr>
-																<td><a href="#" data-action="decrementHour"><i class="fa fa-chevron-down"></i></a></td>
+																<td>
+																	<a href="#" data-action="decrementHour">
+																		<i class="fa fa-chevron-down"></i>
+																	</a>
+																</td>
 																<td class="separator"></td>
-																<td><a href="#" data-action="decrementMinute"><i class="fa fa-chevron-down"></i></a></td>
+																<td>
+																	<a href="#" data-action="decrementMinute">
+																		<i class="fa fa-chevron-down"></i>
+																	</a>
+																</td>
 																<td class="separator">&nbsp;</td>
-																<td><a href="#" data-action="decrementSecond"><i class="fa fa-chevron-down"></i></a></td>
+																<td>
+																	<a href="#" data-action="decrementSecond">
+																		<i class="fa fa-chevron-down"></i>
+																	</a>
+																</td>
 															</tr>
 														</tbody>
 													</table>
 												</div>
 												<input type="text" class="form-control input-timepicker24" v-model="dropoffTime">
 												<span class="input-group-btn">
-													<a href="javascript:void(0)" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;"><span class="btn-ripple animate" style="height: 38px; width: 38px; top: -1px; left: 4.75px;"></span><i class="fa fa-clock-o"></i></a>
+													<a href="javascript:void(0)" class="btn btn-effect-ripple btn-primary" style="overflow: hidden; position: relative;">
+														<span class="btn-ripple animate" style="height: 38px; width: 38px; top: -1px; left: 4.75px;"></span>
+														<i class="fa fa-clock-o"></i>
+													</a>
 												</span>
 											</div>
 										</div>
@@ -190,7 +240,9 @@
 								<div class="row">
 									<div class="col-xs-6">
 										<div class="alert alert-info alert-dismissable">
-											<h4><strong>Shipping Information</strong></h4>
+											<h4>
+												<strong>Shipping Information</strong>
+											</h4>
 											<p>{{ viewOrder.shipping ? viewOrder.shipping.trackingNo : '' }}</p>
 											@ {{ viewDropoffDateTime }}
 										</div>
@@ -205,34 +257,35 @@
 		<div v-show="!showOrder" class="block full">
 			<div class="block-title">
 				<h4>
-					All Orders <small> Total: {{ orders.length }}</small>
+					All Orders
+					<small> Total: {{ orders.length }}</small>
 				</h4>
 			</div>
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
-						<th class="text-center">Date</th>
+						<th class="text-center">Sale Date</th>
 						<th class="text-center hidden-sm hidden-xs">OrderId</th>
-						<th class="text-center">Customer<br>Name</th>
+						<th class="text-center">Customer
+							<br>Name</th>
 						<th class="text-center">Items</th>
-						<th class="text-center">Total &#x0E3F;</th>
-						<th class="text-center">Payment<br>Status</th>
-						<th class="text-center">Shipping<br>Status</th>
+						<th class="text-center">Payment
+							<br>Status</th>
+						<th class="text-center">Shipping
+							<br>Status</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="(order, index) in computedOrders" :key="'row' + index">
-						<td class="text-center">{{ order.stringDate }}</td>
+						<td class="text-center">{{ order.saleDate | formatDate }}</td>
 						<td class="text-center hidden-sm hidden-xs">
 							<a @click="setOrder(order._id)">{{ order._id }}</a>
 						</td>
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
-						<td class="text-center">{{ order.noItems }}</td>
-						<td class="text-center">{{ (order.total / 100).toFixed(2) }}</td>
-						<td class="text-center">{{ order.payment ? order.payment.status : 0 }}</td>
+						<td class="text-center">-</td>
+						<td class="text-center">{{ order.payment ? order.payment.status : 'NA' }}</td>
 						<td class="text-center">
 							{{ order.shipping ? order.shipping.status: 0 }}
-							<button v-if="order.shipping && order.shipping.status==='WAIT_VERIFIED'" class="btn btn-danger"><i class="fa fa-exclamation-circle"></i></button>
 						</td>
 					</tr>
 				</tbody>
@@ -245,6 +298,7 @@
 import moment from 'moment';
 import Select2 from './basic/Select2.vue';
 import OrderWidget from './OrderWidget.vue'
+import { EventBus } from '../bus';
 
 export default {
 	data() {
@@ -287,7 +341,6 @@ export default {
 				}, order.body);
 				this.showOrder = true;
 				this.viewOrder.items.forEach(item => {
-
 					item.total = item.promotion.price * item.quantity;
 				});
 				this.viewOrder.subTotal = this.viewOrder.items.reduce((a, b) => {
@@ -315,20 +368,81 @@ export default {
 			else {
 				this.trackingNoError = true;
 			}
-		}
+		},
+		onAddOrder(order) {
+			this.orders.push(order);
+			EventBus.expireCache('/api/sales');
+			EventBus.expireCache('/api/sales/orders');
+		},
+		printShippingSlip() {
+			var docDefinition = '';
+			this.$http.get('/template/shipping_slip.json').then(response => {
+				docDefinition = response.data;
+				
+				docDefinition.content[0].columns[1][0].text[1] = this.viewOrder._id;
+				docDefinition.content[2].columns[1][0].text = moment(this.viewOrder.saleDate).format('L');
+				if (this.viewOrder.customer) {
+					let customer = this.viewOrder.customer;
+					docDefinition.content[7].columns[0][2] = "Tel. " + (!customer.mobile ? "N/A" : customer.mobile);
+				}
+				
+				if (this.viewOrder.customer.company) {
+					docDefinition.content[7].columns[0][4].text[0].text = this.viewOrder.customer.company;
+				}
+				else {
+					docDefinition.content[7].columns[0][4].text[0].text = "";
+					docDefinition.content[7].columns[0][4].text[1] = "";
+				}
+
+				if (this.viewOrder.address) {
+					docDefinition.content[7].columns[0][1] = "K. " + this.viewOrder.address.name;
+
+					let address1 = [this.viewOrder.address.street, this.viewOrder.address.subDistrict].join(', ');
+					let address2 = [this.viewOrder.address.district, this.viewOrder.address.province, this.viewOrder.address.postalCode].join(', ');
+					docDefinition.content[7].columns[0][5] = address1;
+					docDefinition.content[7].columns[0][6] = address2;
+
+					docDefinition.content[7].columns[1][1] = "K. N/A";
+					docDefinition.content[7].columns[1][2] = "Tel. N/A";
+
+					docDefinition.content[7].columns[1][4].text[0].text = "Company. N/A";
+					docDefinition.content[7].columns[1][4].text[1] = "";
+
+					docDefinition.content[7].columns[1][5] = address1;
+					docDefinition.content[7].columns[1][6] = address2;
+					docDefinition.content[7].columns[1][7] = "Tax: ";
+				}
+				
+				docDefinition.content[9].table.body.splice(1);
+				this.viewOrder.items.forEach(item => {
+					let itemBody = [
+						item.product.productCode ? item.product.productCode : "",
+						item.product.barode ? item.product.barode : "",
+						item.product.name ? item.product.name : "",
+						item.quantity ? item.quantity : -1,
+						item.promotion.price ? item.promotion.price : -1,
+						""
+					];
+					console.log(itemBody);
+					docDefinition.content[9].table.body.push(itemBody);
+				});
+
+				// open the PDF in a new window
+				pdfMake.createPdf(docDefinition).open();
+			})
+
+			// download the PDF
+			// pdfMake.createPdf(docDefinition).download('optionalName.pdf');
+		},
 	},
 	watch: {
-		'viewOrder.shipping.dropoffDateTime': function(val) {
+		'viewOrder.shipping.dropoffDateTime': function (val) {
 			this.viewDropoffDateTime = moment(new Date(val)).format('YYYY-MM-DD HH:mm');
 		}
 	},
 	computed: {
-		computedOrders: function() {
-			this.orders.forEach(order => {
-				order.stringDate = moment(new Date(order.createdAt)).format('LLL');
-			})
-
-			return this.orders.sort(function(s1, s2){
+		computedOrders: function () {
+			return this.orders.sort(function (s1, s2) {
 				let isAfter = moment(s1.createdAt).isAfter(s2.createdAt);
 				if (isAfter) {
 					return -1;
@@ -338,60 +452,17 @@ export default {
 		}
 	},
 	created() {
-		this.$http.post('/graphql', { "query": "{\
-			orders {\
-				_id\
-				createdAt\
-				noItems\
-				total\
-				subTotal\
-				shippingFee\
-				payment {\
-					status\
-					attachments\
-				}\
-				shipping {\
-					status\
-					trackingNo\
-					dropoffDateTime\
-				}\
-				customer {\
-					name\
-					type\
-					refUserId\
-				}\
-				items {\
-					product {\
-						name\
-						link\
-					}\
-					quantity\
-					price\
-					total\
-					batch {\
-						batchRef\
-					}\
-				}\
-				address {\
-					name\
-					street\
-					subDistrict\
-					district\
-					province\
-					postalCode\
-				}\
-			}\
-		}"}).then(response => {
-			this.orders = response.body.data.orders;
+		this.$http.get('/api/sales/orders').then(response => {
+			this.orders = response.body;
 		}).catch(response => console.log(response));
 	},
 	mounted() {
 		let vm = this;
-		$('[data-toggle="tabs"] a, .enable-tabs a').click( function(e){
+		$('[data-toggle="tabs"] a, .enable-tabs a').click(function (e) {
 			e.preventDefault();
 			$(this).tab('show');
 		});
-		$('.input-datepicker').datepicker().on('changeDate', function(e){
+		$('.input-datepicker').datepicker().on('changeDate', function (e) {
 			$(this).datepicker('hide');
 			vm.dropoffDate = $(this).val();
 		});
@@ -399,7 +470,7 @@ export default {
 			minuteStep: 1,
 			//showSeconds: true,
 			showMeridian: false
-		}).on('changeTime.timepicker', function(e) {
+		}).on('changeTime.timepicker', function (e) {
 			vm.dropoffTime = e.time.value;
 		})
 	},

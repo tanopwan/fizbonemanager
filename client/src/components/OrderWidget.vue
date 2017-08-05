@@ -1,12 +1,13 @@
 <template>
-	<div class="block full">
+    <div class="block full">
         <div class="row">
             <div class="col-xs-9">
                 <date-time-picker update="false" v-on:input="onDatetime"></date-time-picker>
             </div>
             <div class="col-xs-3">
                 <label class="csscheckbox csscheckbox-info">
-                    <input type="checkbox" v-model="now"><span></span> Now
+                    <input type="checkbox" v-model="now">
+                    <span></span> Now
                 </label>
             </div>
         </div>
@@ -28,7 +29,7 @@
                 <input type="text" class="form-control" v-model="description"></input>
             </div>
         </div>
-    	<sale-item-part v-for="saleItem in saleItems" ref="saleItems"></sale-item-part>
+        <sale-item-part v-for="saleItem in saleItems" ref="saleItems" v-bind:key="saleItem._id"></sale-item-part>
         <br>
         <div class="form-group">
             <i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
@@ -37,7 +38,7 @@
                 <button type="submit" class="btn btn-effect-ripple btn-info" style="overflow: hidden; position: relative;" @click="addOrder">Add Order</button>
             </div>
         </div>
-	</div>
+    </div>
 </template>
 
 <script>
@@ -47,6 +48,7 @@ import SaleItemPart from './parts/SaleItemPart.vue';
 import DateTimePicker from './basic/DateTimePicker.vue';
 
 export default {
+    props: ['onAddOrder'],
     data() {
         return {
             saleItems: [],
@@ -60,24 +62,26 @@ export default {
         }
     },
     computed: {
-        customerOptions: function() {
-			let options = [];
-			this.customers.forEach(customer => {
-				options.push({ text: customer.name, id: customer._id });
-			})
-			return options;
-		},
+        customerOptions: function () {
+            let options = [];
+            this.customers.forEach(customer => {
+                options.push({ text: customer.name, id: customer._id });
+            })
+            return options;
+        },
     },
     methods: {
-		addItem() {
+        addItem() {
             this.saleItems.push({});
-		},
+        },
         addOrder() {
             let order = {
                 saleItems: [],
                 saleDate: this.now ? moment() : moment(this.datetime, "YYYY-MM-DD HH:mm"),
                 tags: this.tagString.split(' '),
                 description: this.description,
+                payment: {},
+                shipping: {},
             };
 
             this.$refs.saleItems.forEach(saleItem => {
@@ -87,18 +91,34 @@ export default {
                 }
             });
 
+            if (order.saleItems.every(item => item.promotion.group === 'Online')) {
+                order.payment.status = 'SLIP_PENDING';
+                order.shipping.status = 'WAIT_VERIFIED';
+            }
+            else if (order.saleItems.every(item => item.promotion.group === 'Booth')) {
+                order.payment.status = 'PAID';
+                order.shipping.status = 'DELIVERED';
+            }
+            else if (order.saleItems.every(item => item.promotion.group === 'Wholesale')) {
+                order.payment.status = 'SLIP_PENDING';
+                order.shipping.status = 'READY';
+            }
+
             if (this.selectedCustomer) {
                 let customer = this.customers.find(customer => customer._id === this.selectedCustomer);
-				order.customer = {
-					name: customer.name,
-					type: customer.type,
-					refUserId: customer.refUserId,
-				}
+                order.customer = {
+                    name: customer.name,
+                    type: customer.type,
+                    refUserId: customer.refUserId,
+                }
             }
+
             console.log(order);
             this.saving = true;
             this.$http.post('/api/sales/orders', order).then(response => {
                 this.saving = false;
+                this.onAddOrder(response.data);
+                
             }).catch(response => {
                 console.log(response);
                 this.saving = false;
@@ -109,20 +129,20 @@ export default {
                 // No need to update first time
                 this.now = false;
             }
-			this.datetime = value;
-		},
+            this.datetime = value;
+        },
     },
     components: {
         select2: Select2,
-		saleItemPart: SaleItemPart,
+        saleItemPart: SaleItemPart,
         dateTimePicker: DateTimePicker,
-	},
+    },
     created() {
         this.saleItems.push({});
 
         EventBus.getCustomers()
-		.then(response => this.customers = response.body)
-		.catch(response => console.log(response));
+            .then(response => this.customers = response.body)
+            .catch(response => console.log(response));
     },
 }
 </script>

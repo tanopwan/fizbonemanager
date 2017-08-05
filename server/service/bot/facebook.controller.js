@@ -4,6 +4,7 @@ const crypto = require('crypto');
 const messenger = require('./fbmessenger.service');
 const sessionService = require('./session');
 const saleService = require('../sale.service');
+const orderService = require('../order.service');
 const superCustomerService = require('./supercustomer.service');
 const attachmentService = require('../attachment.service');
 

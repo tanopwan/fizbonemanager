@@ -5,7 +5,9 @@ const Sale = require('../model/sale.model');
 
 const createOrder = (data) => {
 	let sales = [];
+	let orderId = '';
 	return Order.create(data).then(order => {
+		orderId = order._id;
 		data.saleItems.forEach(saleItem => {
 			saleItem.saleDate = order.saleDate;
 			saleItem.orderId = order._id;
@@ -13,7 +15,11 @@ const createOrder = (data) => {
 			sales.push(sale);
 		});
 		return Sale.insertMany(sales);
-	});
+	}).then(sales => {
+		return Order.findOne(orderId).exec().then(order => {
+			return Promise.resolve(order);
+		})
+	})
 }
 
 const createOrderFromSession = (session, shippingFee) => {

@@ -11,7 +11,9 @@ const BatchSchema = new Schema({
 	isFinish: { type: Boolean, default: false },
 	product: new Schema({
 		name: String,
-		link: String
+		link: String,
+		productCode: String,
+		barcode: String,
 	}, {
 		_id : false
 	}),

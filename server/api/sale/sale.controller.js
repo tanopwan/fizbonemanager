@@ -57,8 +57,8 @@ const createOrder = function(req, res) {
 	let userId = new ObjectId(req.user._id);
 
 	return orderService.createOrder(req.body)
-	.then(sale => {
-		res.json(sale);
+	.then(order => {
+		res.json(order);
 	})
 	.catch(err => {
 		console.log(err);
