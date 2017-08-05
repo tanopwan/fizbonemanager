@@ -49,7 +49,9 @@ const createProduct = (data, userId) => {
 }
 
 const updateProduct = (data, productId) => {
-	return Product.findOneAndUpdate({ _id: productId }, data, {new: true});
+	return Product.replaceOne({ _id: productId }, data).then(result => {
+		return Product.findOne({ _id: productId });
+	});
 };
 
 module.exports = {

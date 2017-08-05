@@ -43,7 +43,6 @@
 					<table id="general-table" class="table table-vcenter table-borderless table-condensed table-hover">
 						<thead>
 							<tr>
-								<th style="width: 180px;" class="text-center">Date</th>
 								<th>Id</th>
 								<th></th>
 								<th>Product Code</th>
@@ -57,7 +56,6 @@
 						</thead>
 						<tbody>
 							<tr v-for="product in products" v-bind:key="product._id">
-								<td class="text-center">{{ product.created | formatDate }}</td>
 								<td>{{ product._id }}</td>
 								<td>
 									<img :src="product.link" width="300px">
@@ -91,7 +89,7 @@
 						</h3>
 					</div>
 					<div class="modal-body">
-						<pre ref="productStringEditor" style="background-color: #f5f5f5;" contenteditable="true">{{ productString }}</pre>
+						<pre ref="productStringEditor" style="background-color: #f5f5f5;" contenteditable="true"></pre>
 					</div>
 					<div class="modal-footer">
 						<i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
@@ -161,6 +159,7 @@ export default {
 		save() {
 			this.saving = true;
 			this.productString = $(this.$refs.productStringEditor).text();
+			console.log(this.productString);
 			try {
 				let product = JSON.parse(this.productString);
 
@@ -206,6 +205,8 @@ export default {
 			let product = this.products.find(product => product._id === id);
 			if (product) {
 				this.productString = JSON.stringify(product, null, 4);
+				$(this.$refs.productStringEditor).text(this.productString);
+				console.log(this.productString);
 			}
 			else {
 				this.productString = `{ \"error\": \"product._id ${id} is not found.\" }`;

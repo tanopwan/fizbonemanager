@@ -72,7 +72,7 @@
                         </h3>
                     </div>
                     <div class="modal-body">
-                        <pre ref="saleStringEditor" style="background-color: #f5f5f5;" contenteditable="true">{{ saleString }}</pre>
+                        <pre ref="saleStringEditor" style="background-color: #f5f5f5;" contenteditable="true"></pre>
                     </div>
                     <div class="modal-footer">
                         <i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
@@ -130,6 +130,7 @@ export default {
             let sale = this.sales.find(sale => sale._id === id);
             if (sale) {
                 this.saleString = JSON.stringify(sale, null, 4);
+                $(this.$refs.saleStringEditor).text(this.saleString);
             }
             else {
                 this.saleString = `{ \"error\": \"sale._id ${id} is not found.\" }`;

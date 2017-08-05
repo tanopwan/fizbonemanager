@@ -9,7 +9,9 @@ const createSale = (saleData, userId) => {
 };
 
 const updateSale = (saleData, saleId) => {
-	return Sale.findOneAndUpdate({ _id: saleId }, saleData, {new: true});
+	return Sale.replaceOne({ _id: saleId }, saleData).then(result => {
+		return Sale.findOne({ _id: saleId });
+	});
 };
 
 const createSaleIntention = (saleIntention) => {

@@ -24,7 +24,9 @@ let promotionsPromise = promotionService.getPromotions().then(promotions => {
     console.log("Get Promotion Promise........");
     promotions.forEach(promotion => {
         let promotionKeyword = promotionKeywords.find(promotionKeyword => promotionKeyword.promotion === promotion.group);
-        promotion.keywords = promotionKeyword.keywords;
+        if (promotionKeyword) {
+            promotion.keywords = promotionKeyword.keywords;
+        }
     });
     return Promise.resolve(promotions);
 });
