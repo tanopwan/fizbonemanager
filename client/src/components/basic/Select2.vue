@@ -21,7 +21,11 @@ export default {
 		}).on('select2:select', function(e) {
 			// console.log("[Select2] select2:select:", $(vm.$el).val());
 			vm.$emit('input', $(vm.$el).val());
-		}).val(this.value).trigger("change");
+		}).on('select2:unselecting', function(e) {
+			// console.log("[Select2] select2:unselecting:", $(vm.$el).val());
+			vm.$emit('input', "");
+		})
+		.val(this.value).trigger("change");
 	},
 	watch: {
 		value: function (value, oldValue) {

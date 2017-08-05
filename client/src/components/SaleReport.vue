@@ -78,7 +78,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr v-for="sale in computedSales">
+					<tr v-for="sale in computedSales" v-bind:key="sale._id">
 						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.stringDate }}</td>
 						<th class="text-center">{{ sale.quantity }}</th>
