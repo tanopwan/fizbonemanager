@@ -3,15 +3,22 @@
 		<div class="block full">
 			<div class="block-title">
 				<h4>
-					Search <small> ค้นหา...</small>
+					Search
+					<small> ค้นหา...</small>
 				</h4>
 			</div>
 			<div class="row">
 				<div class="col-xs-12 col-md-4">
 					<ul class="pagination pagination-sm" style="margin-top: 3px;">
-						<li :class="{ active : todayFilter }"><a href="javascript:void(0)" @click="todayClick">Today</a></li>
-						<li :class="{ active : thisWeekFilter }"><a href="javascript:void(0)" @click="thisWeekClick">7 days</a></li>
-						<li :class="{ active : customFilter }"><a href="javascript:void(0)" @click="thisCustomClick">Custom</a></li>
+						<li :class="{ active : todayFilter }">
+							<a href="javascript:void(0)" @click="todayClick">Today</a>
+						</li>
+						<li :class="{ active : thisWeekFilter }">
+							<a href="javascript:void(0)" @click="thisWeekClick">7 days</a>
+						</li>
+						<li :class="{ active : customFilter }">
+							<a href="javascript:void(0)" @click="thisCustomClick">Custom</a>
+						</li>
 					</ul>
 				</div>
 				<div class="col-xs-12 col-md-8">
@@ -61,7 +68,8 @@
 		<div class="block full">
 			<div class="block-title">
 				<h4>
-					All Sales <small> Total: {{ sales.length }}</small>
+					All Sales
+					<small> Total: {{ sales.length }}</small>
 				</h4>
 			</div>
 			<table class="table table-striped table-borderless table-vcenter">
@@ -69,10 +77,16 @@
 					<tr>
 						<th class="text-center">Product / Promotion</th>
 						<th class="text-center">Date</th>
-						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
+						<th class="text-center">Quantity
+							<br>
+							<span class="label label-info">Sum: {{ sumQuantity }}</span>
+						</th>
 						<th class="text-center">Price (&#x0E3F;)</th>
-						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal.toFixed(2) }}</span></th>
-						<th class="text-center">Customer</th>
+						<th class="text-center">Total (&#x0E3F;)
+							<br>
+							<span class="label label-info">Sum: {{ sumTotal.toFixed(2) }}</span>
+						</th>
+						<th class="text-center">Customer/Order</th>
 						<th class="text-center hidden-sm hidden-xs">Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
 					</tr>
@@ -81,20 +95,46 @@
 					<tr v-for="sale in computedSales" v-bind:key="sale._id">
 						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
 						<td class="text-center">{{ sale.stringDate }}</td>
-						<th class="text-center">{{ sale.quantity }}</th>
-						<th class="text-center">{{ sale.price }}</th>
-						<th class="text-center">{{ sale.total }}</th>
-						<td class="text-center">
-							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''"><i class="fa fa-facebook"></i></button>
+						<td class="text-center">{{ sale.quantity }}</td>
+						<td class="text-center">{{ sale.price }}</td>
+						<td class="text-center">{{ sale.total }}</td>
+						<td class="text-center" v-if="sale.orderId">
+							<a href="#show-order-modal" @click="viewOrder(sale.orderId)" data-toggle="modal">{{ sale.orderId }}</a>
+						</td>
+						<td class="text-center" v-else>
+							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''">
+								<i class="fa fa-facebook"></i>
+							</button>
 							{{ sale.customer ? sale.customer.name : '' }}
 						</td>
 						<td class="hidden-sm hidden-xs">{{ sale.description }}</td>
 						<th class="text-center hidden-sm hidden-xs">
-							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
+							<button class="btn btn-danger" @click="deleteSale(sale._id)">
+								<i class="fa fa-minus"></i>
+							</button>
 						</th>
 					</tr>
 				</tbody>
 			</table>
+		</div>
+		<div id="show-order-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 class="modal-title">
+							<strong>Order </strong>
+							<small></small>
+						</h3>
+					</div>
+					<div class="modal-body">
+						<pre ref="orderStringEditor" style="background-color: #f5f5f5;"></pre>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
 </template>
@@ -121,6 +161,7 @@ export default {
 			selectedFilterBatch: '',
 			sumQuantity: 0,
 			sumTotal: 0,
+			orderString: '',
 			from: moment().startOf('day').format("YYYY-MM-DD"),
 			to: moment().endOf('day').format("YYYY-MM-DD"),
 			groupOptions: [
@@ -134,12 +175,12 @@ export default {
 		};
 	},
 	computed: {
-		computedSales: function() {
+		computedSales: function () {
 			if (!this.sales || this.sales.length == 0) {
 				return [];
 			}
 
-			let computed = this.sales.sort(function(s1, s2){
+			let computed = this.sales.sort(function (s1, s2) {
 				let isAfter = moment(s1.saleDate).isAfter(s2.saleDate);
 				if (isAfter) {
 					return -1;
@@ -180,11 +221,11 @@ export default {
 							this.sumQuantity += parseInt(sale.bill.quantity);
 						}
 						else if (sale.bill.bills) {
-							this.sumQuantity += sale.bill.bills.reduce(function(a, b) {
+							this.sumQuantity += sale.bill.bills.reduce(function (a, b) {
 								return a.quantity + b.quantity;
 							}, {
-								quantity: 0
-							});
+									quantity: 0
+								});
 						}
 
 						this.sumTotal += parseInt(sale.bill.total) / 100;
@@ -198,7 +239,7 @@ export default {
 
 			return computed;
 		},
-		promotionOptions: function() {
+		promotionOptions: function () {
 			let options = [];
 			this.promotions.forEach(promotion => {
 				if (!options.find(option => option.id === promotion.name)) {
@@ -207,7 +248,7 @@ export default {
 			});
 			return options;
 		},
-		productOptions: function() {
+		productOptions: function () {
 			let options = [];
 			this.promotions.forEach(promotion => {
 				if (!options.find(option => option.id === promotion.product.name)) {
@@ -216,7 +257,7 @@ export default {
 			});
 			return options;
 		},
-		batchOptions: function() {
+		batchOptions: function () {
 			let options = [];
 			this.promotions.forEach(promotion => {
 				if (!options.find(option => option.id === promotion.product.name + '/' + promotion.batch.batchRef)) {
@@ -231,8 +272,8 @@ export default {
 			let from = moment(this.from).startOf('day').format("YYYY-MM-DD HH:mm");
 			let to = moment(this.to).endOf('day').format("YYYY-MM-DD HH:mm");
 			this.$http.get(`/api/sales?from=${from}&to=${to}`)
-			.then(response => this.sales = response.body.sales)
-			.catch(response => console.log(response));
+				.then(response => this.sales = response.body.sales)
+				.catch(response => console.log(response));
 		},
 		deleteSale(id) {
 			this.$http.delete('/api/sales/' + id).then(response => {
@@ -246,6 +287,15 @@ export default {
 					this.sales.splice(index, 1);
 				}
 			}, response => {
+				console.log(response);
+			});
+		},
+		viewOrder(orderId) {
+			console.log("viewOrder:", orderId);
+			this.$http.get('/api/sales/orders/' + orderId).then(response => {
+				this.orderString = JSON.stringify(response.body, null, 4);
+				$(this.$refs.orderStringEditor).text(this.orderString);
+			}).catch(response => {
 				console.log(response);
 			});
 		},
@@ -271,8 +321,8 @@ export default {
 	},
 	created() {
 		EventBus.getPromotions()
-		.then(response => this.promotions = response.body)
-		.catch(response => console.log(response));
+			.then(response => this.promotions = response.body)
+			.catch(response => console.log(response));
 	},
 	components: {
 		salePromotion,
@@ -281,7 +331,7 @@ export default {
 	mounted() {
 		$('.select-select2').select2();
 		let vm = this;
-		$('#from-datepicker').datepicker().on('changeDate', function(e){
+		$('#from-datepicker').datepicker().on('changeDate', function (e) {
 			$(this).datepicker('hide');
 			vm.from = moment($(this).val()).format("YYYY-MM-DD");
 			vm.todayFilter = false;
@@ -289,7 +339,7 @@ export default {
 			vm.customFilter = true;
 		});
 
-		$('#to-datepicker').datepicker().on('changeDate', function(e){
+		$('#to-datepicker').datepicker().on('changeDate', function (e) {
 			$(this).datepicker('hide');
 			vm.to = moment($(this).val()).format("YYYY-MM-DD");
 			vm.todayFilter = false;
