@@ -87,8 +87,8 @@ const destroy = function(req, res) {
 
 const batch = function(req, res) {
 	let isFinish = { $eq: false };
-	if (req.params.all) {
-		let isFinish = { $in: [null, false, true] };
+	if (req.params.all === 'true') {
+		isFinish = { $in: [null, false, true] };
 	}
 
 	Batch.aggregate([
