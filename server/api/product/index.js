@@ -14,6 +14,7 @@ router.get('/', ctrl.index);
 router.use(auth.verifyMiddleware);
 
 router.post('/', ctrl.create);
+router.post('/:id', ctrl.update);
 //router.delete('/:id', auth.hasRoleAdmin, ctrl.destroy);
 router.delete('/:id', ctrl.destroy);
 

@@ -14,6 +14,7 @@ const createOrder = (data) => {
 			let sale = new Sale(saleItem);
 			sales.push(sale);
 		});
+		
 		return Sale.insertMany(sales);
 	}).then(sales => {
 		return Order.findOne(orderId).exec().then(order => {

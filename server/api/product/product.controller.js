@@ -22,9 +22,22 @@ const view = function(req, res) {
 }
 
 const create = function(req, res) {
-	let userId = req.decoded._doc._id;
+	let userId = new ObjectId(req.user._id);
 
 	return productService.createProduct(req.body, userId)
+	.then(product => {
+		if(!product) {
+			return res.status(404).end();
+		}
+		res.json(product);
+	})
+	.catch(err => res.status(500).json(err));
+}
+
+const update = function(req, res) {
+	let productId = new ObjectId(req.params.id);
+
+	return productService.updateProduct(req.body, productId)
 	.then(product => {
 		if(!product) {
 			return res.status(404).end();
@@ -115,8 +128,9 @@ const batch = function(req, res) {
 module.exports = {
 	view,
 	create,
+	update,
 	index,
 	destroy,
 	batch,
-	online
+	online,
 };

@@ -48,9 +48,14 @@ const createProduct = (data, userId) => {
 	return Product.create(productData);
 }
 
+const updateProduct = (data, productId) => {
+	return Product.findOneAndUpdate({ _id: productId }, data, {new: true});
+};
+
 module.exports = {
 	getOnlineProducts,
 	getProduct,
 	getProducts,
-	createProduct
+	createProduct,
+	updateProduct,
 }

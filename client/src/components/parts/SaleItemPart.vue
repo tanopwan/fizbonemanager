@@ -40,6 +40,8 @@ export default {
         return {
             selectedProduct: '',
             selectedProductLink: '',
+            selectedProductBarcode: '',
+            selectedProductCode: '',
             selectedPromotion: '',
             selectedBatch: '',
             selectedGroup: '',
@@ -69,6 +71,8 @@ export default {
 				product: {
 					name: this.selectedProduct,
                     link: this.selectedProductLink,
+                    barcode: this.selectedProductBarcode,
+                    productCode: this.selectedProductCode,
 				},
 				batch: {
 					batchId: this.selectedBatch.split('/')[0],
@@ -121,7 +125,9 @@ export default {
 
 			let productWithBatches = this.productsWithBatches.find(product => product.name === value);
 			if (productWithBatches) {
-				this.selectedProductLink = productWithBatches.link;
+                this.selectedProductLink = productWithBatches.link;
+                this.selectedProductBarcode = productWithBatches.barcode;
+                this.selectedProductCode = productWithBatches.productCode;
 			}
 		},
         onSelectPromotion(value) {

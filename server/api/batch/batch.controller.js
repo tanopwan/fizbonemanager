@@ -21,7 +21,7 @@ const view = function(req, res) {
 }
 
 const create = function(req, res) {
-	let userId = new ObjectId(req.decoded._doc._id);
+	let userId = new ObjectId(req.user._id);
 	let productId = req.body.productId;
 
 	let batchData = Object.assign({ createdBy: userId }, req.body);

@@ -137,7 +137,7 @@ export default {
         },
         save() {
             this.saving = true;
-            this.saleString = $(this.$refs.saleStringEditor).html();
+            this.saleString = $(this.$refs.saleStringEditor).text();
             let sale = JSON.parse(this.saleString);
             let vm = this;
             let id = sale._id;

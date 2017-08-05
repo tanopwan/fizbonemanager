@@ -143,7 +143,6 @@ const index = function(req, res) {
 }
 
 const indexOrders = function(req, res) {
-	console.log("indexOrders");
 	return orderService.getOrders()
 	.then(sale => {
 		if(!sale) {

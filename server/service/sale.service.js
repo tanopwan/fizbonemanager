@@ -9,7 +9,6 @@ const createSale = (saleData, userId) => {
 };
 
 const updateSale = (saleData, saleId) => {
-	console.log(saleData);
 	return Sale.findOneAndUpdate({ _id: saleId }, saleData, {new: true});
 };
 
