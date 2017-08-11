@@ -15,5 +15,6 @@ module.exports = {
                 safe: true
             }
         }
-	}
+	},
+	page_id: '',
 }

@@ -291,7 +291,6 @@ export default {
 			});
 		},
 		viewOrder(orderId) {
-			console.log("viewOrder:", orderId);
 			this.$http.get('/api/sales/orders/' + orderId).then(response => {
 				this.orderString = JSON.stringify(response.body, null, 4);
 				$(this.$refs.orderStringEditor).text(this.orderString);
