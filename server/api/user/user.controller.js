@@ -2,53 +2,58 @@
 
 const User = require('./user.model');
 const config = require('../../config/environment');
+const PageService = require('../../service/page.service');
 
-const me = function(req, res) {
-	let me = req.user._id;
+const me = function (req, res) {
+	let userId = req.user._id;
 
-	return User.findOne({ _id: me }).exec()
-	.then(user => {
-		if(!user) {
-			return res.status(500).end();
-		}
-		res.json(user);
-	})
-	.catch(err => res.status(500).json(err));
+	return User.findOne({ _id: userId }).exec()
+		.then(user => {
+			if (!user) {
+				return res.status(500).end();
+			}
+			res.json(user);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
-const index = function(req, res) {
+const page = function (req, res) {
+	return PageService.getPage(req, res);
+}
+
+const index = function (req, res) {
 	return User.find().exec()
-	.then(user => {
-		if(!user) {
-			return res.status(500).end();
-		}
-		res.json(user);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(user => {
+			if (!user) {
+				return res.status(500).end();
+			}
+			res.json(user);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
-const destroy = function(req, res) {
+const destroy = function (req, res) {
 	return User.findOne({ _id: userId }).remove().exec()
-	.then(result => {
-		res.json(result);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(result => {
+			res.json(result);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
-const show = function(req, res) {
+const show = function (req, res) {
 	let userId = req.params.id;
 
 	return User.findOne({ _id: userId }, { kycInfo: 0 }).exec()
-	.then(user => {
-		if(!user) {
-			return res.status(404).end();
-		}
-		res.json(user);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(user => {
+			if (!user) {
+				return res.status(404).end();
+			}
+			res.json(user);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
-const profile = function(req, res) {
+const profile = function (req, res) {
 	let me = req.user._id;
 	let body = req.body;
 
@@ -58,8 +63,8 @@ const profile = function(req, res) {
 	res.json({});
 }
 
-const logout = function(req, res) {
-	res.clearCookie('jwt-app', { path:'/' });
+const logout = function (req, res) {
+	res.clearCookie('jwt-app', { path: '/' });
 	res.redirect('/');
 }
 
@@ -69,5 +74,6 @@ module.exports = {
 	destroy,
 	show,
 	logout,
-	profile
+	profile,
+	page,
 };

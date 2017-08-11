@@ -66,6 +66,12 @@
 						<i class="fa fa-ellipsis-h"></i>
 					</li>
 					<li>
+						<router-link to="/page_settings">
+							<i class="fa fa-user-secret sidebar-nav-icon"></i>
+							<span class="sidebar-nav-mini-hide">Page Settings</span>
+						</router-link>
+					</li>
+					<li>
 						<router-link to="/customer">
 							<i class="fa fa-user-secret sidebar-nav-icon"></i>
 							<span class="sidebar-nav-mini-hide">Customer</span>

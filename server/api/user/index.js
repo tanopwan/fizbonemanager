@@ -11,6 +11,7 @@ router.get('/show/:id', user.show);
 router.use(auth.verifyMiddleware);
 
 router.get('/me', user.me);
+router.get('/page', user.page);
 router.get('/', auth.hasRoleAdmin, user.index);
 router.put('/profile', user.profile);
 router.delete('/:id', auth.hasRoleAdmin, user.destroy);

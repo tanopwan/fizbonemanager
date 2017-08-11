@@ -64,6 +64,12 @@ Vue.filter('formatDate', function (value) {
 	}
 });
 
+Vue.filter('fromNow', function (value) {
+	if (value) {
+		return moment(String(value)).fromNow();
+	}
+});
+
 Vue.filter('formatBaht', function (value) {
 	if (value) {
 		return (value / 100).toFixed(2);

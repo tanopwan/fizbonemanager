@@ -9,7 +9,13 @@ const config = require('../../config/environment');
 const router = express.Router();
 
 router.get('/', passport.authenticate('facebook', {
-	scope: ['email', 'user_about_me'],
+	scope: [
+		'email',
+		'user_about_me',
+		'manage_pages',
+		'read_page_mailboxes',
+		'pages_messaging',
+	],
 	failureRedirect: '/signup',
 	session: false
 })).get('/callback', passport.authenticate('facebook', {

@@ -35,6 +35,7 @@ const OrderSchema = new Schema({
 	total: Number,
 	status: String, //OPEN, CLOSE, FINISH
 	saleDate: Date,
+	description: String,
 },
 {
 	timestamps: true

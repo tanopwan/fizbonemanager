@@ -15,6 +15,7 @@ module.exports = function(app) {
 	app.use('/api/promotions', require('./api/promotion'));
 	app.use('/api/customers', require('./api/customer'));
 	app.use('/api/sales', require('./api/sale'));
+	app.use('/api/pages', require('./api/page'));
 	app.use('/login', function(req, res) {
 		res.sendFile(path.resolve(`${__dirname}/views/login.html`));
 	});

@@ -16,7 +16,8 @@ const UserSchema = new Schema({
 	},
 	email: String,
 	facebook: {},
-	profile: {}
+	providerRef: {},
+	providerProfile: {},
 },
 {
 	timestamps: true

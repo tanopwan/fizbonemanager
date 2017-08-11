@@ -31,6 +31,7 @@ const createFacebookCustomer = (psid) => {
 };
 
 const getFacebookCustomer = (psid) => {
+	console.log("getFBCustomer", psid);
 	return Customer.findOne({ refUserId: psid }).exec();
 };
 
