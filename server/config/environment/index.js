@@ -15,7 +15,7 @@ module.exports = {
 	},
 	jwt: config.jwt || 'superSecret',
 	authorizedEmails: ['tanopwan@hotmail.com', 't_thanapon@hotmail.com', 'noolizaa@hotmail.com'],
-	PAGE_ACCESS_TOKEN: 'EAAKKsI1xNOkBABlwYGeeZAd7tq3bkrxflcreWktHZCJg9LlDE66Ayl08FwSej8DmUZC3eEiLkb17ndl8YyFB4rtOyiuILFwCRZBKKNYbPCsEgkg3Bw6PhIQqEK1YDOl6z1fjZByLGn9pvkOszejwd2E29ZCziwvzZAS7NxLas0YlQZDZ',
-	PAGE_SECRET: process.env.PAGE_SECRET || '0aba4db811b17c20703c39429ff61e11',
+	PAGE_ACCESS_TOKEN: 'EAAFpdtpcZANwBAOrzZB6pAZCCFyQaGZA5uABX3T0Xr0EdVcjmOCElG5sxjiO3hZAAD3aTrmlJ2nhuW8cQafkkCZC7ZBjApEpp4mkkXuCpX53glOliCwFqMu8QWvOt4zaFW4hAVQA5Pva6p7ebIoXwQt69aOazBk3zjw3PrKupVX8gZDZD',
+	PAGE_SECRET: process.env.PAGE_SECRET || '678889f126b6e75e1b1ee1c011e53e4d',
 	page_id: config.page_id || '410003622672111',
 }

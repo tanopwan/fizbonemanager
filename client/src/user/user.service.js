@@ -21,11 +21,14 @@ export default {
 				userAsync = new Promise(function(resolve, reject) {
 					Vue.http.get('/api/users/me').then(function(response) {
 						let me = Object.assign({}, response.body);
-						resolve(me);
-					}).catch(function(response) {
-						reject(response);
+						return Vue.http.get('/api/users/page').then(response => {
+							me.pages = response.data;
+							resolve(me);
+						})
+					}).catch(function(error) {
+						reject(error);
 					});
-				});
+				})
 			}
 			return userAsync;
 		}

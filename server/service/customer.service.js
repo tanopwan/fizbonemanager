@@ -13,6 +13,7 @@ const createFacebookCustomer = (psid) => {
 		qs: { access_token: config.PAGE_ACCESS_TOKEN, fields: "first_name,last_name,profile_pic,locale,timezone,gender" },
 		method: 'GET'
 	}, function (error, response, body) {
+		console.log(response);
 		if (!error && response.statusCode == 200) {
 			let obj = JSON.parse(body);
 
@@ -23,9 +24,11 @@ const createFacebookCustomer = (psid) => {
 				ref: obj
 			};
 
+			console.log(customer);
+
 			return Customer.create(customer);
 		} else {
-			console.error(error);
+			console.error("[Customer Service]", error);
 		}
 	});
 };
@@ -63,6 +66,10 @@ const setShippingAddress = (psid, address) => {
 		}
 	});
 };
+
+const getPsidFromPageConversationUserId = (id) => {
+	
+}
 
 module.exports = {
 	createFacebookCustomer,

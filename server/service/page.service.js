@@ -39,16 +39,14 @@ const getPages = function (accessToken, onPages) {
 
         fbReq.end();
     });
-
-
 }
 
 const getPage = function (req, res) {
     let accessToken = req.user.providerRef.accessToken;
     let pageId = config.page_id;
 
-    return getPages(accessToken).then(page => {
-        res.json(page);
+    return getPages(accessToken).then(pages => {
+        res.json(pages.filter(page => page.id = confi));
     }).catch(error => {
         res.status(500).json(error);
     });
@@ -112,11 +110,10 @@ const getConversations = function (req, res) {
                 conversation.updated_time = fbConversation.updated_time;
                 conversation.participants = fbConversation.participants.data.filter(participant => {
                     return participant.id !== pageId;
-                })
+                });
                 conversation.participant = conversation.participants[0];
                 conversations.push(conversation);
                 customerPromises.push(CustomerService.getFacebookCustomer(conversation.participant.id).then(customer => {
-                    console.log(customer);
                     conversation.participant.customer = customer;
                     return Promise.resolve();
                 }));
@@ -124,7 +121,7 @@ const getConversations = function (req, res) {
             return Promise.all(customerPromises);
         })
         .then(result => {
-            console.log("All");
+            conversations.participant.customer.customer
             res.json(conversations);
         })
         .catch(error => {

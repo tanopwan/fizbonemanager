@@ -268,6 +268,7 @@
 						<th class="text-center hidden-sm hidden-xs">OrderId</th>
 						<th class="text-center">Customer
 							<br>Name</th>
+						<th class="text-center">Description</th>
 						<th class="text-center">Items</th>
 						<th class="text-center">Payment
 							<br>Status</th>
@@ -282,6 +283,7 @@
 							<a @click="setOrder(order._id)">{{ order._id }}</a>
 						</td>
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
+						<td class="text-center">{{ order.description }}</td>
 						<td class="text-center">-</td>
 						<td class="text-center">{{ order.payment ? order.payment.status : 'NA' }}</td>
 						<td class="text-center">

@@ -95,7 +95,7 @@ module.exports = {
 			session.customer = customer;
 			console.log(JSON.stringify(session));
 			return session;
-		});
+		}).catch(error => console.log("error", error));
 	},
 	getSession(senderID, recipientID) {
 		let key = `${recipientID}_${senderID}`;
