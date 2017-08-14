@@ -46,7 +46,7 @@ const getPage = function (req, res) {
     let pageId = config.page_id;
 
     return getPages(accessToken).then(pages => {
-        res.json(pages.filter(page => page.id = confi));
+        res.json(pages.filter(page => page.id = pageId));
     }).catch(error => {
         res.status(500).json(error);
     });
