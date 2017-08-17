@@ -360,7 +360,18 @@ export default {
 					type: this.selectedShipping,
 					dropoffDateTime: dropoffDateTime
 				}).then(response => {
-					this.viewOrder = response.body;
+					console.log(response);
+					this.viewOrder = Object.assign({
+						customer: {},
+						address: {},
+						items: [],
+						payment: {}
+					}, response.body);
+					this.orders.forEach((order, index) => {
+						if (order._id === this.viewOrder._id) {
+							this.orders[index] = this.viewOrder;
+						}
+					})
 					this.trackingNo = '';
 					this.selectedShipping = 'ER';
 					this.dropoffDate = moment(new Date()).format("YYYY-MM-DD");
@@ -380,14 +391,14 @@ export default {
 			var docDefinition = '';
 			this.$http.get('/template/shipping_slip.json').then(response => {
 				docDefinition = response.data;
-				
+
 				docDefinition.content[0].columns[1][0].text[1] = this.viewOrder._id;
 				docDefinition.content[2].columns[1][0].text = moment(this.viewOrder.saleDate).format('L');
 				if (this.viewOrder.customer) {
 					let customer = this.viewOrder.customer;
 					docDefinition.content[7].columns[0][2] = (!customer.mobile ? "" : "Tel. " + customer.mobile);
 				}
-				
+
 				if (this.viewOrder.customer.company) {
 					docDefinition.content[7].columns[0][4].text[0].text = this.viewOrder.customer.company;
 				}
@@ -399,7 +410,7 @@ export default {
 				let address = this.viewOrder.address;
 				let invalidAddress = !address && Object.values(address).length === 0;
 				if (invalidAddress) {
-					
+
 					docDefinition.content[7].columns[0][1] = "K. " + address.name;
 
 					let address1 = [address.street, address.subDistrict].join(', ');
@@ -418,11 +429,11 @@ export default {
 					docDefinition.content[7].columns[1][7] = "Tax: ";
 				}
 				else {
-					docDefinition.content[7].columns[0][1] = this.viewOrder.customer.name;
+					docDefinition.content[7].columns[0][1] = this.viewOrder.customer ? this.viewOrder.customer.name : "";
 					docDefinition.content[7].columns[0][5] = "";;
 					docDefinition.content[7].columns[0][6] = "";;
 
-					docDefinition.content[7].columns[1][1] = this.viewOrder.customer.name;
+					docDefinition.content[7].columns[1][1] = this.viewOrder.customer ? this.viewOrder.customer.name : "";
 					docDefinition.content[7].columns[1][2] = "";
 
 					docDefinition.content[7].columns[1][4].text[0].text = "";
@@ -432,16 +443,16 @@ export default {
 					docDefinition.content[7].columns[1][6] = "";;
 					docDefinition.content[7].columns[1][7] = "";
 				}
-				
+
 				docDefinition.content[9].table.body.splice(1);
 				this.viewOrder.items.forEach(item => {
 					let itemBody = [
 						item.product.productCode ? item.product.productCode : "",
 						item.product.barcode ? item.product.barcode : "",
 						item.product.name ? item.product.name : "",
-						item.quantity ? { alignment:"right", text: item.quantity } : -1,
-						item.promotion.price ? { alignment:"right", text: (item.promotion.price / 100).toFixed(2) } : -1,
-						item.quantity && item.promotion.price ? { alignment:"right", text: (item.quantity * item.promotion.price / 100).toFixed(2) } : -1,
+						item.quantity ? { alignment: "right", text: item.quantity } : -1,
+						item.promotion.price ? { alignment: "right", text: (item.promotion.price / 100).toFixed(2) } : -1,
+						item.quantity && item.promotion.price ? { alignment: "right", text: (item.quantity * item.promotion.price / 100).toFixed(2) } : -1,
 					];
 					docDefinition.content[9].table.body.push(itemBody);
 				});

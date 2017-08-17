@@ -211,7 +211,7 @@ const setTracking = function(req, res) {
 			}
 		}, { new: true }).exec()
 		.then(order => {
-			messenger.sendDropOffUpdate(order);
+			//messenger.sendDropOffUpdate(order);
 			res.json(order);
 		})
 		.catch(err => res.status(500).json(err));

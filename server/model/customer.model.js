@@ -18,7 +18,11 @@ const CustomerSchema = new Schema({
 	type: String,
 	role: String,
 	refUserId: String,
-	ref: new Schema({}, { strict: false })
+	ref: new Schema({}, { strict: false }),
+	fb: {
+		psid: String,
+		participantId: String,	// Conversation Participants User Id {page_id}/conversations
+	}
 },
 {
 	timestamps: true

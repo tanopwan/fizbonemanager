@@ -41,13 +41,13 @@ export default {
 	data () {
 		return {
 			isLoggedIn: false,
-			name: ""
+			name: "",
 		}
 	},
 	created () {
-		UserService.getCurrentUser().then(data => {
+		UserService.getCurrentUser().then(user => {
 			this.isLoggedIn = true;
-			this.name = data.name;
+			this.name = user.name;
 		}).catch(response => {
 			console.log(response);
 			this.isLoggedIn = false;
@@ -59,7 +59,6 @@ export default {
 				localStorage.removeItem(key);
 			}
 		});
-
 	},
 	methods: {
 		logout: function(e) {

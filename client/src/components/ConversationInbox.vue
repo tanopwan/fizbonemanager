@@ -1,5 +1,29 @@
 <template>
     <div class="block overflow-hidden">
+        <div id="link-customer-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 class="modal-title"><strong>Link Customer</strong></h3>
+					</div>
+					<div class="modal-body">
+						<div class="row form-group">
+							<div class="col-sm-6">
+								<div class="input-group">
+                                    <img class="img-thumbnail img-thumbnail-avatar" src="http://www.avinashdangeti.com/wp-content/uploads/2016/08/Avinash-Dangeti-Digital-Marketing-Facebook-Page-Update-1.png">
+									{{ idForPage.id }}
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- <div class="modal-footer">
+						<button type="button" @click="bill" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
+						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+					</div> -->
+				</div>
+			</div>
+		</div>
         <div id="message-list">
             <div class="block-title clearfix">
                 <div class="block-options pull-right">
@@ -43,7 +67,10 @@
                                 <span class="text-muted">{{ conversation.snippet }}</span>
                             </td>
                             <td class="hidden-xs text-center" style="width: 30px;">
-                                <i class="fa fa-paperclip fa-2x text-muted"></i>
+                                <i class="fa fa-address-book fa-2x" :class="{ 'text-muted': !conversation.customer, 'text-primary': conversation.customer }"></i>
+                                <span v-if="!conversation.customer">
+                                    <a href="#link-customer-modal" data-toggle="modal">Create Customer</a>
+                                </span>
                             </td>
                             <td class="hidden-xs text-right text-muted" style="width: 120px;">
                                 <em>{{ conversation.updated_time | fromNow }}</em>
@@ -63,12 +90,23 @@ export default {
     data() {
         return {
             conversations: [],
+            idForPage: {},
+        }
+    },
+    methods: {
+        getPsidForPage(conversationUserId) {
+            console.log("getPsidForPage", conversationUserId);
+            this.$http.get('/api/pages/id_for_page/' + conversationUserId).then(response => {
+                this.idForPage = response.body;
+            });
         }
     },
     created() {
         this.$http.get('/api/pages/conversations').then(response => {
             this.conversations = response.body;
         });
+
+        this.getPsidForPage('10154262244241332');
     }
 }
 </script>

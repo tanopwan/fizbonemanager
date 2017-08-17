@@ -1,19 +1,28 @@
 import Vue from 'vue';
 
+// let pageAccessTokenPromise = new Promise((resolve, reject) => {
+// 	Vue.http.get('/api/users/page').then(response => {
+// 		console.log(response.data.page.access_token);
+// 		resolve(response.data.page.access_token);
+// 	});
+// });
+
 export const EventBus = new Vue({
 	data: {
 		productURL: '/api/products',
 		batchURL: '/api/batches',
 		saleURL: '/api/sales',
 		promotionURL: '/api/promotions',
-		customerURL: '/api/customers'
+		customerURL: '/api/customers',
+		// pageAccessToken: null,
+		// pageAccessTokenPromise: pageAccessTokenPromise,
 	},
 	methods: {
 		expireCache(key) {
 			localStorage.removeItem(`CACHE_${key}`);
 		},
 		query(query) {
-			return this.$http.post('/graphql', {"query": `${query}`});
+			return this.$http.post('/graphql', { "query": `${query}` });
 		},
 		getProducts() {
 			return this.$http.get(`${this.productURL}`);
@@ -65,6 +74,16 @@ export const EventBus = new Vue({
 		},
 		getSaleSummary() {
 			return this.$http.get(`${this.saleURL}/summary`);
-		}
+		},
+		// getPageAccessToken() {
+		// 	if (pageAccessToken) {
+		// 		return Promise.resolve(pageAccessToken);
+		// 	}
+
+		// 	return pageAccessTokenPromise.then(accessToken => {
+		// 		this.pageAccessToken = accessToken;
+		// 		return Promise.resolve(accessToken);
+		// 	});
+		// }
 	}
 });

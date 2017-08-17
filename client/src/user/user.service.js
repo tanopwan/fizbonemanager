@@ -22,11 +22,8 @@ export default {
 					Vue.http.get('/api/users/me').then(function(response) {
 						let me = Object.assign({}, response.body);
 						resolve(me);
-						// return Vue.http.get('/api/users/page').then(response => {
-						// 	me.pages = response.data;
-						// 	resolve(me);
-						// })
 					}).catch(function(error) {
+						console.log(error);
 						reject(error);
 					});
 				})

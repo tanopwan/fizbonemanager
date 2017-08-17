@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { EventBus } from '../bus';
 import ConversationInbox from './ConversationInbox.vue'
 
 export default {
@@ -27,8 +28,9 @@ export default {
     created() {
         this.$http.get('/api/users/page').then(response => {
             this.page = response.data;
+            console.log(this.page);
         });
-
+        
     },
     components: {
         conversationInbox: ConversationInbox,

@@ -3,7 +3,8 @@
 const request = require('request');
 const config = require('../config/environment');
 const Customer = require('../model/customer.model');
-
+const crypto = require('crypto');
+const https = require('https');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -21,7 +22,10 @@ const createFacebookCustomer = (psid) => {
 				name: obj.first_name + ' ' + obj.last_name,
 				type: 'FacebookOnline',
 				refUserId: psid,
-				ref: obj
+				ref: obj,
+				fb: {
+					psid,
+				}
 			};
 
 			console.log(customer);
@@ -43,7 +47,7 @@ const getCustomer = (id) => {
 };
 
 const getCustomers = (limit) => {
-	return Customer.find().sort({'createdAt': -1}).limit(limit).exec();
+	return Customer.find().sort({ 'createdAt': -1 }).limit(limit).exec();
 };
 
 const createCustomer = (customerData) => {
@@ -67,8 +71,8 @@ const setShippingAddress = (psid, address) => {
 	});
 };
 
-const getPsidFromPageConversationUserId = (id) => {
-	
+const getCustomerFromConversationParticipantId = (participantId) => {
+	return Customer.findOne({ 'fb.participantId': participantId }).exec();
 }
 
 module.exports = {
@@ -77,5 +81,6 @@ module.exports = {
 	setShippingAddress,
 	getCustomer,
 	getCustomers,
-	createCustomer
+	createCustomer,
+	getCustomerFromConversationParticipantId,
 }

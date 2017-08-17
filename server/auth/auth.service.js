@@ -18,7 +18,7 @@ module.exports = {
 			let data = base64url.decode(payload);
 			const hmac = crypto.createHmac('sha256', config.PAGE_SECRET);
 			hmac.update(payload);
-			let expectedSig = hmac.digest('utf-8');
+			let expectedSig = hmac.digest('hex');
 
 			if (sig === expectedSig) {
 				req.data = JSON.parse(data);
