@@ -15,5 +15,7 @@ router.get('/', ctrl.index);
 router.use(auth.verifyMiddleware);
 
 router.post('/', ctrl.create);
+router.post('/:id', ctrl.update);
+router.delete('/:id', ctrl.destroy);
 
 module.exports = router;

@@ -40,12 +40,12 @@ Vue.http.interceptors.push((request, next) => {
 				localStorage.removeItem(`CACHE_${request.url}`)
 			}, 600000);
 		}
-		else if (status === 200 && request.method.toLowerCase() === 'post' && !isInNonCacheList) {
+		else if (status === 200 && request.method.toLowerCase() !== 'get' && !isInNonCacheList) {
 			let splitUrls = request.url.substring(1).split('/');
 			if (splitUrls.length > 1 && splitUrls[0] === 'api') {
 				$.each(localStorage, function (key, value) {
 					if (key.startsWith('CACHE_/api/' + splitUrls[1])) {
-						console.log("After Post, remove cache", key);
+						console.log("After", request.method.toLowerCase(), "remove cache", key);
 						localStorage.removeItem(key);
 					}
 				});

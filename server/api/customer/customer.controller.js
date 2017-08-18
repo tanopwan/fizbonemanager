@@ -7,50 +7,77 @@ const sessionManager = require('../../service/bot/session');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;
 
-const view = function(req, res) {
+const view = function (req, res) {
 	let customerId = req.params.id;
 
 	return CustomerService.getCustomer(customerId)
-	.then(customer => {
-		if(!customer) {
-			return res.status(404).end();
-		}
-		res.json(customer);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(customer => {
+			if (!customer) {
+				return res.status(404).end();
+			}
+			res.json(customer);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
-const create = function(req, res) {
+const create = function (req, res) {
 	let userId = new ObjectId(req.user._id);
 
 	let customerData = Object.assign({ createdBy: userId }, req.body);
 	return CustomerService.createCustomer(customerData)
-	.then(customer => {
-		if(!customer) {
-			return res.status(404).end();
-		}
-		res.json(customer);
-	})
-	.catch(err => res.status(500).json(err));
+		.then(customer => {
+			if (!customer) {
+				return res.status(404).end();
+			}
+			res.json(customer);
+		})
+		.catch(err => res.status(500).json(err));
 }
 
-const index = function(req, res) {
+const update = function (req, res) {
+	let customerId = new ObjectId(req.params.id);
+	let customerData = req.body;
+
+	return CustomerService.updateCustomer(customerId, customerData)
+		.then(customer => {
+			if (!customer) {
+				return res.status(404).end();
+			}
+			res.status = 201;
+			res.json(customer);
+		})
+		.catch(err => {
+			res.sendStatus(500);
+		});
+}
+
+const index = function (req, res) {
 	let limit = 0;
-	if(req.query && !isNaN(parseInt(req.query.limit))) {
+	if (req.query && !isNaN(parseInt(req.query.limit))) {
 		limit = parseInt(req.query.limit);
 	}
 
 	return CustomerService.getCustomers(limit)
-	.then(customers => {
-		if(!customers) {
-			return res.status(404).end();
-		}
-		res.json(customers);
+		.then(customers => {
+			if (!customers) {
+				return res.status(404).end();
+			}
+			res.json(customers);
+		})
+		.catch(err => res.status(500).json(err));
+}
+
+const destroy = function(req, res) {
+	let customerId = new ObjectId(req.params.id);
+
+	return CustomerService.deleteCustomer(customerId)
+	.then(result => {
+		res.json(result);
 	})
 	.catch(err => res.status(500).json(err));
 }
 
-const shippingAddress = function(req, res) {
+const shippingAddress = function (req, res) {
 	let psid = req.data.psid;
 	let page_id = req.data.page_id;
 	console.log("Verified Signed Signature for customer: " + psid);
@@ -75,6 +102,8 @@ const shippingAddress = function(req, res) {
 module.exports = {
 	view,
 	create,
+	update,
 	index,
-	shippingAddress
+	destroy,
+	shippingAddress,
 };

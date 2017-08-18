@@ -54,6 +54,16 @@ const createCustomer = (customerData) => {
 	return Customer.create(customerData);
 }
 
+const updateCustomer = (customerId, customerData) => {
+	return Customer.replaceOne({ _id: customerId }, customerData).then(result => {
+		return Customer.findOne({ _id: customerId });
+	})
+}
+
+const deleteCustomer = (customerId) => {
+	return Customer.findOne({ _id: customerId }).remove().exec();
+}
+
 const setShippingAddress = (psid, address) => {
 	return Customer.findOne({ refUserId: psid }).exec().then(customer => {
 		if (customer) {
@@ -82,5 +92,7 @@ module.exports = {
 	getCustomer,
 	getCustomers,
 	createCustomer,
+	updateCustomer,
+	deleteCustomer,
 	getCustomerFromConversationParticipantId,
 }
