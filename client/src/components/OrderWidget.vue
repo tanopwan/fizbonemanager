@@ -29,7 +29,7 @@
                 <input type="text" class="form-control" v-model="description"></input>
             </div>
         </div>
-        <sale-item-part v-for="saleItem in saleItems" ref="saleItems" v-bind:key="saleItem._id"></sale-item-part>
+        <sale-item-part v-for="(saleItem, $index) in saleItems" ref="saleItems" v-bind:key="saleItem._id" @remove="removeItem($index)"></sale-item-part>
         <br>
         <div class="form-group">
             <i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
@@ -73,6 +73,9 @@ export default {
     methods: {
         addItem() {
             this.saleItems.push({});
+        },
+        removeItem(index) {
+            this.saleItems.splice(index, 1);
         },
         addOrder() {
             let order = {

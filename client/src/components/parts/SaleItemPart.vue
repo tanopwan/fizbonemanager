@@ -37,6 +37,9 @@
                         <input type="text" class="form-control" v-model="priceBaht" size="5" maxlength="5" v-on:input="filterPriceBaht">
                         <span class="input-group-addon">฿</span>
                     </div>
+                    <div class="input-group">
+                        <button type="button" @click="remove" class="btn btn-danger" style="overflow: hidden; position: relative;"><i class="fa fa-minus"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -48,6 +51,7 @@ import { EventBus } from '../../bus';
 import Select2 from '../basic/Select2.vue';
 
 export default {
+    props: ['removeItem'],
     data() {
         return {
             selectedProduct: '',
@@ -110,6 +114,9 @@ export default {
             }
 
             return item;
+        },
+        remove() {
+            this.$emit('remove');
         },
         plus() {
             ++this.quantity;
