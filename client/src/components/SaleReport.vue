@@ -76,7 +76,7 @@
 				<thead>
 					<tr>
 						<th class="text-center">Product / Promotion</th>
-						<th class="text-center">Date</th>
+						<th class="text-center">Sale Date</th>
 						<th class="text-center">Quantity
 							<br>
 							<span class="label label-info">Sum: {{ sumQuantity }}</span>
@@ -87,14 +87,14 @@
 							<span class="label label-info">Sum: {{ sumTotal.toFixed(2) }}</span>
 						</th>
 						<th class="text-center">Customer/Order</th>
-						<th class="text-center hidden-sm hidden-xs">Description</th>
+						<th class="text-center hidden-sm hidden-xs">Sale Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr v-for="sale in computedSales" v-bind:key="sale._id">
 						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
-						<td class="text-center">{{ sale.stringDate }}</td>
+						<td class="text-center">{{ sale.saleDate | formatDate }}</td>
 						<td class="text-center">{{ sale.quantity }}</td>
 						<td class="text-center">{{ sale.price }}</td>
 						<td class="text-center">{{ sale.total }}</td>
@@ -234,7 +234,6 @@ export default {
 						sale.total = '0.00';
 					}
 				}
-				sale.stringDate = moment(sale.saleDate).format('LLL');
 			});
 
 			return computed;
