@@ -84,7 +84,7 @@
 						<th class="text-center">Price (&#x0E3F;)</th>
 						<th class="text-center">Total (&#x0E3F;)
 							<br>
-							<span class="label label-info">Sum: {{ sumTotal.toFixed(2) }}</span>
+							<span class="label label-info">Sum: {{ sumTotal | formatBaht }}</span>
 						</th>
 						<th class="text-center">Customer/Order</th>
 						<th class="text-center hidden-sm hidden-xs">Sale Description</th>
@@ -93,11 +93,11 @@
 				</thead>
 				<tbody>
 					<tr v-for="sale in computedSales" v-bind:key="sale._id">
-						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotionName }}</td>
+						<td>{{ sale.product ? sale.product.name : '' }} / {{ sale.promotion.name }}</td>
 						<td class="text-center">{{ sale.saleDate | formatDate }}</td>
 						<td class="text-center">{{ sale.quantity }}</td>
-						<td class="text-center">{{ sale.price }}</td>
-						<td class="text-center">{{ sale.total }}</td>
+						<td class="text-center">{{ sale.promotion.price | formatBaht }}</td>
+						<td class="text-center">{{ sale.bill.total | formatBaht }}</td>
 						<td class="text-center" v-if="sale.orderId">
 							<a href="#show-order-modal" @click="viewOrder(sale.orderId)" data-toggle="modal">{{ sale.orderId }}</a>
 						</td>
@@ -193,13 +193,11 @@ export default {
 				}
 
 				if (this.selectedFilterBatch) {
-					console.log(this.selectedFilterBatch);
-					console.log(sale.batch);
 					result = result & sale.batch.batchRef === this.selectedFilterBatch.split('/')[1];
 				}
 
 				if (this.selectedFilterPromotion) {
-					result = result & sale.promotionName === this.selectedFilterPromotion;
+					result = result & sale.promotion.name === this.selectedFilterPromotion;
 				}
 
 				if (this.selectedFilterGroup) {
@@ -213,10 +211,7 @@ export default {
 			this.sumTotal = 0;
 			computed.forEach(sale => {
 				if (sale.promotion) {
-					sale.promotionName = sale.promotion.name;
-					sale.price = (sale.promotion.price / 100).toFixed(2);
 					if (sale.bill) {
-						sale.total = (sale.bill.total / 100).toFixed(2);
 						if (sale.bill.quantity) {
 							this.sumQuantity += parseInt(sale.bill.quantity);
 						}
@@ -228,10 +223,10 @@ export default {
 								});
 						}
 
-						this.sumTotal += parseInt(sale.bill.total) / 100;
+						this.sumTotal += parseInt(sale.bill.total);
 					}
 					else {
-						sale.total = '0.00';
+						sale.bill.total = '0';
 					}
 				}
 			});
