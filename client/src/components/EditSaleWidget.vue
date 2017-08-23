@@ -96,6 +96,7 @@ export default {
 			selectedProduct: '',
 			selectedPromotion: '',
 			selectedBatch: '',
+			selectedGroup: '',
 			selectedCustomer: '',
 			customerName: '',
 			customerType: '',
@@ -114,6 +115,7 @@ export default {
 			this.datetime = moment(this.sale.saleDate).format("YYYY-MM-DD HH:mm");
 			this.selectedProduct = this.sale.product.name;
 			this.selectedPromotion = this.sale.promotion.name;
+			this.selectedGroup = this.sale.promotion.group;
 			this.selectedBatch = this.sale.batch.batchId + '/' + this.sale.batch.batchRef;
 			this.priceBaht = this.sale.promotion.price / 100;
 			this.quantity = this.sale.quantity;
