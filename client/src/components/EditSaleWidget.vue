@@ -59,8 +59,11 @@
 						</div>
 					</div>
 					<div class="modal-footer">
-						<button type="button" @click="save" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
-						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+						<i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
+						<span v-else>
+							<button type="button" @click="save" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
+							<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+						</span>
 					</div>
 				</div>
 			</div>
@@ -92,7 +95,8 @@ export default {
 			description: '',
 			quantity: 0,
 			priceBaht: 0,
-			datetime: null
+			datetime: null,
+			saving: false,
 		}
 	},
 	watch: {
@@ -109,9 +113,6 @@ export default {
 				this.tagString = this.sale.tags.join(' ');
 			}
 		},
-		selectedPromotion: function(oldVal, val) {
-			console.log("[EditSaleWidget] selectedPromotion model change from", val, "to", oldVal);
-		}
 	},
 	methods: {
 		save() {
@@ -126,10 +127,11 @@ export default {
 				return;
 			}
 
+			this.saving = true;
 			let data = {
 				quantity: this.quantity,
 				description: this.description,
-				saleDate: this.now ? moment() : this.saleDate,
+				saleDate: this.now ? moment() : this.datetime,
 				product: {
 					name: this.selectedProduct
 				},
@@ -166,12 +168,13 @@ export default {
 				}
 			}
 			console.log(data);
-
+			
 			this.$http.post('/api/sales/' + this.sale._id, data).then(response => {
 				this.onUpdateSale(response.body);
 				EventBus.expireCache('/api/sales');
+				this.saving = false;
 			})
-			.catch(response => console.log(response));
+			.catch(response => this.saving = false);
 		},
 		// onDatetime(value) {
 		// 	this.datetime = value;

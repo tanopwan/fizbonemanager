@@ -93,7 +93,6 @@ export default {
 	},
 	watch: {
 		value() {
-			console.log("watch", this.value);
 			if (this.value) {
 				this.date = this.value.split(' ')[0];
 				this.time = this.value.split(' ')[1];

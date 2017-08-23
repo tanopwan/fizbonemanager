@@ -5,7 +5,8 @@
 		<div class="block full">
 			<div class="block-title">
 				<h4>
-					All Sales <small> Total: {{ sales.length }}</small>
+					All Sales
+					<small> Total: {{ sales.length }}</small>
 				</h4>
 			</div>
 			<table class="table table-striped table-borderless table-vcenter">
@@ -13,9 +14,15 @@
 					<tr>
 						<th class="text-center">Date</th>
 						<th class="text-center">Product / Promotion</th>
-						<th class="text-center">Quantity<br><span class="label label-info">Sum: {{ sumQuantity }}</span></th>
+						<th class="text-center">Quantity
+							<br>
+							<span class="label label-info">Sum: {{ sumQuantity }}</span>
+						</th>
 						<th class="text-center hidden-sm hidden-xs">Price (&#x0E3F;)</th>
-						<th class="text-center">Total (&#x0E3F;)<br><span class="label label-info">Sum: {{ sumTotal }}</span></th>
+						<th class="text-center">Total (&#x0E3F;)
+							<br>
+							<span class="label label-info">Sum: {{ sumTotal }}</span>
+						</th>
 						<th class="text-center hidden-sm hidden-xs">Customer</th>
 						<th class="text-center">Description</th>
 						<th class="text-center hidden-sm hidden-xs">Manage</th>
@@ -29,7 +36,9 @@
 						<td class="text-center hidden-sm hidden-xs">{{ (sale.price).toFixed(2) }}</td>
 						<td class="text-center">{{ (sale.total).toFixed(2) }}</td>
 						<td class="text-center hidden-sm hidden-xs">
-							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''"><i class="fa fa-facebook"></i></button>
+							<button v-if="sale.customer ? sale.customer.type==='FacebookOnline' : false" class="btn btn-info" :alt="sale.customer ? sale.customer.userRefId : ''">
+								<i class="fa fa-facebook"></i>
+							</button>
 							{{ sale.customer ? sale.customer.name : '' }}
 						</td>
 						<td>{{ sale.description }}</td>
@@ -37,7 +46,9 @@
 							<a href="#edit-sale-modal" @click="openEditSale(sale._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
 								<i class="fa fa-money"></i>
 							</a>
-							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
+							<button class="btn btn-danger" @click="deleteSale(sale._id)">
+								<i class="fa fa-minus"></i>
+							</button>
 						</td>
 					</tr>
 				</tbody>
@@ -65,7 +76,7 @@ export default {
 		};
 	},
 	computed: {
-		computedSales: function() {
+		computedSales: function () {
 			this.sumQuantity = 0;
 			this.sumTotal = 0;
 			this.sales.forEach(sale => {
@@ -77,7 +88,7 @@ export default {
 				this.sumTotal += sale.total;
 			})
 
-			return this.sales.sort(function(s1, s2){
+			return this.sales.sort(function (s1, s2) {
 				let isAfter = moment(s1.createdAt).isAfter(s2.createdAt);
 				if (isAfter) {
 					return -1;
@@ -111,7 +122,7 @@ export default {
 		onUpdateSale(updatedSale) {
 			this.sales.forEach((sale) => {
 				if (sale._id === updatedSale._id) {
-					for(var propertyName in updatedSale) {
+					for (var propertyName in updatedSale) {
 						if (updatedSale.hasOwnProperty(propertyName)) {
 							sale[propertyName] = updatedSale[propertyName];
 						}
@@ -122,8 +133,8 @@ export default {
 	},
 	created() {
 		this.$http.get('/api/sales?limit=10')
-		.then(response => this.sales = response.body.sales)
-		.catch(response => console.log(response));
+			.then(response => this.sales = response.body.sales)
+			.catch(response => console.log(response));
 	},
 	components: {
 		saleWidget: SaleWidget,
