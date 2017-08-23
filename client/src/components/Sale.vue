@@ -1,6 +1,7 @@
 <template>
 	<div>
 		<sale-widget :onAddSale="onAddSale"></sale-widget>
+		<edit-sale-widget :saleProp="saleStringify" :onUpdateSale="onUpdateSale"></edit-sale-widget>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
@@ -36,7 +37,6 @@
 							<a href="#edit-sale-modal" @click="openEditSale(sale._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
 								<i class="fa fa-money"></i>
 							</a>
-							<edit-sale-widget :saleProp="saleStringify" :onUpdateSale="onUpdateSale"></edit-sale-widget>
 							<button class="btn btn-danger" @click="deleteSale(sale._id)"><i class="fa fa-minus"></i></button>
 						</td>
 					</tr>

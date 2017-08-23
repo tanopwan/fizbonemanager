@@ -8,7 +8,7 @@
 						<h3 class="modal-title"><strong>Sale </strong><small>{{ this.sale._id }}</small></h3>
 					</div>
 					<div class="modal-body">
-						<date-time-picker update="false" v-on:input="onDatetime"></date-time-picker>
+						<date-time-picker v-model="datetime" update="false"></date-time-picker>
 						<div class="row">
 							<div class="col-xs-6">
 								<div class="form-group">
@@ -97,8 +97,8 @@ export default {
 	},
 	watch: {
 		saleProp: function(val) {
-			console.log("saleProp");
 			this.sale = JSON.parse(this.saleProp);
+			this.datetime = moment(this.sale.saleDate).format("YYYY-MM-DD HH:mm");
 			this.selectedProduct = this.sale.product.name;
 			this.selectedPromotion = this.sale.promotion.name;
 			this.selectedBatch = this.sale.batch.batchId + '/' + this.sale.batch.batchRef;
@@ -129,7 +129,7 @@ export default {
 			let data = {
 				quantity: this.quantity,
 				description: this.description,
-				saleDate: this.now ? moment() : moment(this.datetime, "YYYY-MM-DD HH:mm"),
+				saleDate: this.now ? moment() : this.saleDate,
 				product: {
 					name: this.selectedProduct
 				},
@@ -173,9 +173,9 @@ export default {
 			})
 			.catch(response => console.log(response));
 		},
-		onDatetime(value) {
-			this.datetime = value;
-		},
+		// onDatetime(value) {
+		// 	this.datetime = value;
+		// },
 		onSelectPromotion(value) {
 			if (value) {
 				this.selectedGroup = '';

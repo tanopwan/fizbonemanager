@@ -1,5 +1,6 @@
 <template>
 	<div>
+		<edit-sale-widget :saleProp="saleStringify" :onUpdateSale="onUpdateSale"></edit-sale-widget>
 		<div class="block full">
 			<div class="block-title">
 				<h4>
@@ -109,6 +110,9 @@
 						</td>
 						<td class="hidden-sm hidden-xs">{{ sale.description }}</td>
 						<th class="text-center hidden-sm hidden-xs">
+							<a href="#edit-sale-modal" @click="openEditSale(sale._id)" class="btn btn-warning" data-toggle="modal" style="overflow: hidden; position: relative;">
+								<i class="fa fa-money"></i>
+							</a>
 							<button class="btn btn-danger" @click="deleteSale(sale._id)">
 								<i class="fa fa-minus"></i>
 							</button>
@@ -144,6 +148,7 @@ import moment from 'moment';
 import { EventBus } from '../bus';
 import salePromotion from './SalePromotion.vue';
 import Select2 from './basic/Select2.vue';
+import EditSaleWidget from './EditSaleWidget.vue';
 
 export default {
 	data() {
@@ -162,6 +167,7 @@ export default {
 			sumQuantity: 0,
 			sumTotal: 0,
 			orderString: '',
+			saleStringify: '{}',
 			from: moment().startOf('day').format("YYYY-MM-DD"),
 			to: moment().endOf('day').format("YYYY-MM-DD"),
 			groupOptions: [
@@ -262,6 +268,20 @@ export default {
 		}
 	},
 	methods: {
+		openEditSale(id) {
+			this.saleStringify = JSON.stringify(this.sales.find(sale => sale._id === id));
+		},
+		onUpdateSale(updatedSale) {
+			this.sales.forEach((sale) => {
+				if (sale._id === updatedSale._id) {
+					for(var propertyName in updatedSale) {
+						if (updatedSale.hasOwnProperty(propertyName)) {
+							sale[propertyName] = updatedSale[propertyName];
+						}
+					}
+				}
+			});
+		},
 		search() {
 			let from = moment(this.from).startOf('day').format("YYYY-MM-DD HH:mm");
 			let to = moment(this.to).endOf('day').format("YYYY-MM-DD HH:mm");
@@ -319,7 +339,8 @@ export default {
 	},
 	components: {
 		salePromotion,
-		select2: Select2
+		select2: Select2,
+		editSaleWidget: EditSaleWidget,
 	},
 	mounted() {
 		$('.select-select2').select2();

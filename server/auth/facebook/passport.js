@@ -23,7 +23,7 @@ module.exports = function (User, config) {
 				done('not authorized user');
 			}
 
-			User.findOne({ 'facebook.id': profile.id }).exec()
+			return User.findOne({ 'facebook.id': profile.id }).exec()
 				.then(user => {
 					if (user) {
 						user.providerProfile = profile._json;
