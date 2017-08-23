@@ -141,7 +141,7 @@ export default {
 			let data = {
 				quantity: this.quantity,
 				description: this.description,
-				saleDate: this.now ? moment() : this.datetime,
+				saleDate: this.now ? moment() : moment(this.datetime),
 				product: {
 					name: this.selectedProduct
 				},
