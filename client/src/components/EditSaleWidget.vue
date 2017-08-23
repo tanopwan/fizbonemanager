@@ -26,6 +26,14 @@
 							</div>
 						</div>
 						<div class="row form-group">
+							<div class="col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">Order Id</span>
+									<input type="text" v-model="orderId" class="form-control">
+								</div>
+							</div>
+						</div>
+						<div class="row form-group">
 							<div class="col-xs-6">
 								<div class="input-group">
 									<span class="input-group-addon">จำนวน</span>
@@ -95,6 +103,7 @@ export default {
 			description: '',
 			quantity: 0,
 			priceBaht: 0,
+			orderId: '',
 			datetime: null,
 			saving: false,
 		}
@@ -109,6 +118,7 @@ export default {
 			this.priceBaht = this.sale.promotion.price / 100;
 			this.quantity = this.sale.quantity;
 			this.description = this.sale.description;
+			this.orderId = this.sale.orderId;
 			if (this.sale.tags) {
 				this.tagString = this.sale.tags.join(' ');
 			}
@@ -144,7 +154,8 @@ export default {
 					price: this.price,
 					group: this.selectedGroup
 				},
-				tags: this.tagString.split(' ')
+				tags: this.tagString.split(' '),
+				orderId: this.orderId,
 			}
 
 			if (this.selectedGroup !== "Consignment") {
@@ -168,7 +179,7 @@ export default {
 				}
 			}
 			console.log(data);
-			
+
 			this.$http.post('/api/sales/' + this.sale._id, data).then(response => {
 				this.onUpdateSale(response.body);
 				EventBus.expireCache('/api/sales');
@@ -176,9 +187,6 @@ export default {
 			})
 			.catch(response => this.saving = false);
 		},
-		// onDatetime(value) {
-		// 	this.datetime = value;
-		// },
 		onSelectPromotion(value) {
 			if (value) {
 				this.selectedGroup = '';
