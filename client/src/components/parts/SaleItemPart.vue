@@ -15,14 +15,14 @@
                     </select2>
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="form-group">
                     <select2 :options="batchOptions" v-model="selectedBatch" allowClear="false" placeholder="Select Batch...">
                         <option></option>
                     </select2>
                 </div>
             </div>
-            <div class="col-md-3 form-inline">
+            <div class="col-md-4 form-inline">
                 <div class="form-group">
                     <div class="input-group">
                         <span class="input-group-addon" @click="minus">
@@ -40,6 +40,7 @@
                     <div class="input-group">
                         <button type="button" @click="remove" class="btn btn-danger" style="overflow: hidden; position: relative;"><i class="fa fa-minus"></i></button>
                     </div>
+                    <span class="btn text-danger">{{ errorMessage }}</span>
                 </div>
             </div>
         </div>
@@ -66,21 +67,44 @@ export default {
             productsWithBatches: [],
             promotions: [],
             isNeedDelivery: false,
+            errorMessage: '',
         }
     },
     methods: {
         add() {
+            this.errorMessage = '';
             if (!this.selectedProduct) {
                 return null;
             }
 
             if (!this.selectedBatch) {
-                return null;
+                this.errorMessage = 'Please select batch';
+                return false;
             }
 
             if (!this.selectedPromotion) {
+                this.errorMessage = 'Please select promotion';
+                return false;
+            }
+
+            if (this.quantity <= 0) {
                 return null;
             }
+
+            let realtimeStock = null;
+			let realtimeStocks = EventBus.getRealtimeStocks();
+			if (realtimeStocks.length > 0) {
+				realtimeStock = realtimeStocks.find(realtimeStock => realtimeStock._id === this.selectedBatch.split('/')[0]);
+			}
+			else {
+				this.errorMessage = 'Current stock is missing, please reload';
+				return false;
+			}
+
+			if (realtimeStock && (realtimeStock.total - realtimeStock.used - this.quantity) < 0) {
+				this.errorMessage = 'Out of stock!, there are ' + (realtimeStock.total - realtimeStock.used) + ' left in stocks';
+				return false;
+			}
 
             let item = {
                 quantity: this.quantity,

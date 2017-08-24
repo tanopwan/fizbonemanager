@@ -2,14 +2,33 @@
 
 const Sale = require('../model/sale.model');
 const moment = require('moment');
+const batchService = require('./batch.service');
 
 const createSale = (saleData, userId) => {
 	saleData.createdBy = userId;
-	return Sale.create(saleData);
+	return Sale.create(saleData).then(result => {
+		batchService.getRealtimeStock().then(result => {
+			// Write first request
+			global.openConnections.forEach(function (resp) {
+				var d = new Date();
+				resp.write('id: ' + d.getMilliseconds() + '\n');
+				resp.write('data:' + JSON.stringify(result) + '\n\n'); // Note the extra newline
+			});
+		});
+		return Promise.resolve(result);
+	});
 };
 
 const updateSale = (saleData, saleId) => {
 	return Sale.replaceOne({ _id: saleId }, saleData).then(result => {
+		batchService.getRealtimeStock().then(result => {
+			// Write first request
+			global.openConnections.forEach(function (resp) {
+				var d = new Date();
+				resp.write('id: ' + d.getMilliseconds() + '\n');
+				resp.write('data:' + JSON.stringify(result) + '\n\n'); // Note the extra newline
+			});
+		});
 		return Sale.findOne({ _id: saleId });
 	});
 };

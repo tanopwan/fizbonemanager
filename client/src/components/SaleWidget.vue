@@ -196,6 +196,21 @@ export default {
 				return;
 			}
 
+			let realtimeStock = null;
+			let realtimeStocks = EventBus.getRealtimeStocks();
+			if (realtimeStocks.length > 0) {
+				realtimeStock = realtimeStocks.find(realtimeStock => realtimeStock._id === this.selectedBatch.split('/')[0]);
+			}
+			else {
+				this.errorMessage = 'Current stock is missing, please reload';
+				return;
+			}
+
+			if (realtimeStock && (realtimeStock.total - realtimeStock.used - this.quantity) < 0) {
+				this.errorMessage = 'Out of stock!, there are ' + (realtimeStock.total - realtimeStock.used) + ' left in stocks';
+				return;
+			}
+
 			let data = {
 				quantity: this.quantity,
 				description: this.description,

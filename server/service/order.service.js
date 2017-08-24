@@ -2,6 +2,7 @@
 
 const Order = require('../model/order.model');
 const Sale = require('../model/sale.model');
+const batchService = require('./batch.service');
 
 const createOrder = (data) => {
 	let sales = [];
@@ -22,6 +23,15 @@ const createOrder = (data) => {
 		
 		return Sale.insertMany(sales);
 	}).then(sales => {
+		batchService.getRealtimeStock().then(result => {
+			// Write first request
+			global.openConnections.forEach(function (resp) {
+				var d = new Date();
+				resp.write('id: ' + d.getMilliseconds() + '\n');
+				resp.write('data:' + JSON.stringify(result) + '\n\n'); // Note the extra newline
+			});
+		});
+
 		return Order.findOne(orderId).exec().then(order => {
 			return Promise.resolve(order);
 		})

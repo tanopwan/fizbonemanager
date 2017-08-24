@@ -7,6 +7,23 @@ import Vue from 'vue';
 // 	});
 // });
 
+let realtimeStocks = [];
+
+if (!!window.EventSource) {
+	// the last received msg
+
+	// handles the callback from the received event
+	var handleCallback = function (msg) {
+		console.log(msg);
+		realtimeStocks = JSON.parse(msg.data);
+	}
+
+	var source = new EventSource('/api/batches/stock/subscribe');
+	source.addEventListener('message', handleCallback, false);
+} else {
+	console.log("SSE not support");
+}
+
 export const EventBus = new Vue({
 	data: {
 		productURL: '/api/products',
@@ -74,6 +91,9 @@ export const EventBus = new Vue({
 		},
 		getSaleSummary() {
 			return this.$http.get(`${this.saleURL}/summary`);
+		},
+		getRealtimeStocks() {
+			return realtimeStocks;
 		},
 		// getPageAccessToken() {
 		// 	if (pageAccessToken) {

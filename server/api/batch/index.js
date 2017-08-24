@@ -7,8 +7,10 @@ const auth = require('../../auth');
 var router = express.Router();
 
 router.get('/stock', ctrl.stock);
-router.get('/:id', ctrl.view);
+router.get('/stock/subscribe', ctrl.subscribeStock);
+router.get('/stock/realtime', ctrl.realtimeStock);
 router.get('/stock/:id', ctrl.stockById);
+router.get('/:id', ctrl.view);
 router.get('/', ctrl.index);
 
 router.use(auth.verifyMiddleware);

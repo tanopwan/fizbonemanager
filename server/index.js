@@ -5,6 +5,8 @@ const path = require('path');
 const config = require('./config/environment');
 const express = require('express');
 
+global.openConnections = [];
+
 if (process.env.NODE_ENV !== 'production') {
 	console.log(`Running on ${process.env.NODE_ENV} mode`);
 	const webpack = require('webpack');

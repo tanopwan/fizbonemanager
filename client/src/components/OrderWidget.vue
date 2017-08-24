@@ -87,13 +87,22 @@ export default {
                 shipping: {},
             };
 
+            let itemError = false;
             this.$refs.saleItems.forEach(saleItem => {
                 let item = saleItem.add();
-                if (item) {
+                
+                if (item != null && item !== false) {
                     item.description = this.description;
                     order.saleItems.push(item);
                 }
+                else if (item === false) {
+                    itemError = true;
+                }
             });
+
+            if (itemError || order.saleItems.length === 0) {
+                return;
+            }
 
             if (order.saleItems.every(item => item.promotion.group === 'Online')) {
                 order.payment.status = 'SLIP_PENDING';

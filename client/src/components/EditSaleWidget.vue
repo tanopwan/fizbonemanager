@@ -63,6 +63,7 @@
 									<span class="input-group-addon">Desc</span>
 									<input type="text" class="form-control" v-model="description"></input>
 								</div>
+								<span class="text-danger">{{ errorMessage }}</span>
 							</div>
 						</div>
 					</div>
@@ -107,6 +108,7 @@ export default {
 			orderId: '',
 			datetime: null,
 			saving: false,
+			errorMessage: '',
 		}
 	},
 	watch: {
@@ -136,6 +138,21 @@ export default {
 
 			if (this.quantity <= 0) {
 				this.errorMessage = 'Quantity should be positive';
+				return;
+			}
+
+			let realtimeStock = null;
+			let realtimeStocks = EventBus.getRealtimeStocks();
+			if (realtimeStocks.length > 0) {
+				realtimeStock = realtimeStocks.find(realtimeStock => realtimeStock._id === this.selectedBatch.split('/')[0]);
+			}
+			else {
+				this.errorMessage = 'Current stock is missing, please reload';
+				return;
+			}
+
+			if (realtimeStock && (realtimeStock.total - realtimeStock.used - this.quantity) < 0) {
+				this.errorMessage = 'Out of stock!, there are ' + (realtimeStock.total - realtimeStock.used) + ' left in stocks';
 				return;
 			}
 
