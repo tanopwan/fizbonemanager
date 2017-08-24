@@ -244,6 +244,19 @@ const bill = function(req, res) {
 	.catch(err => res.status(500).json(err));
 }
 
+const destroyOrder = function(req, res) {
+	let orderId = new ObjectId(req.params.id);
+
+	return orderService.deleteOrder(orderId)
+	.then(result => {
+		res.json(result);
+	})
+	.catch(err => {
+		console.log(err);
+		res.status(500).json(err);
+	});
+}
+
 module.exports = {
 	view,
 	create,
@@ -258,4 +271,5 @@ module.exports = {
 	createOrder,
 	indexOrders,
 	viewOrder,
+	destroyOrder,
 };

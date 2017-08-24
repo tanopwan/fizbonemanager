@@ -6,6 +6,11 @@ const Sale = require('../model/sale.model');
 const createOrder = (data) => {
 	let sales = [];
 	let orderId = '';
+	let total = 0;
+	data.saleItems.forEach(saleItem => {
+		total += saleItem.quantity;
+	});
+	data.total = total;
 	return Order.create(data).then(order => {
 		orderId = order._id;
 		data.saleItems.forEach(saleItem => {
@@ -78,10 +83,21 @@ const getWaitPaymentOrders = (refUserId) => {
 	return Order.find({ 'customer.refUserId': refUserId, 'payment.status': 'WAIT', 'payment.method': 'BANK_TRANSFER' }).exec();
 }
 
+const deleteOrder = function(orderId) {
+
+	return Sale.find({ orderId }).exec().then(sales => {
+		if (sales && sales.length > 0) {
+			return Promise.reject({ message: "Please delete sales " + sales.map(sale => sale._id).join(",") });
+		}
+		return Order.findOne({ _id: orderId }).remove().exec();
+	});
+}
+
 module.exports = {
 	createOrder,
 	getOrders,
 	getOrder,
 	getWaitPaymentOrders,
 	createOrderFromSession,
+	deleteOrder,
 }

@@ -22,5 +22,6 @@ router.post('/order/:id/tracking', ctrl.setTracking);
 router.post('/bill/:id', ctrl.bill);
 router.post('/:id', ctrl.update);
 router.delete('/:id', ctrl.destroy);
+router.delete('/orders/:id', ctrl.destroyOrder);
 
 module.exports = router;

@@ -26,13 +26,13 @@
                     <thead>
                         <tr>
                             <th style="width: 180px;" class="text-center">Date</th>
-                            <th>Order</th>
-                            <th>Promotion</th>
-                            <th>Q</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                            <th>Customer</th>
-                            <th>Description</th>
+                            <th class="text-center">Order</th>
+                            <th class="text-center">Promotion</th>
+                            <th class="text-center">Q</th>
+                            <th class="text-center">Price</th>
+                            <th class="text-center">Total</th>
+                            <th class="text-center">Customer</th>
+                            <th class="text-center">Description</th>
                             <th style="width: 120px;" class="text-center">
                                 <i class="fa fa-flash"></i>
                             </th>

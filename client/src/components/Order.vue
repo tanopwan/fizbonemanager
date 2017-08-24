@@ -20,6 +20,22 @@
 				</div>
 			</div>
 		</div>
+		<div id="error-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h3 class="modal-title"><strong>Error </strong></h3>
+					</div>
+					<div class="modal-body">
+						{{ errorMessage }}
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<div v-show="showOrder">
 			<div class="block full">
 				<div class="block-title">
@@ -289,6 +305,11 @@
 						<td class="text-center">
 							{{ order.shipping ? order.shipping.status: 0 }}
 						</td>
+						<td class="text-center">
+							<button class="btn btn-danger" @click="deleteOrder(order._id)">
+								<i class="fa fa-minus"></i>
+							</button>
+						</td>
 					</tr>
 				</tbody>
 			</table>
@@ -319,7 +340,8 @@ export default {
 			trackingNoError: false,
 			trackingNo: '',
 			selectedShipping: 'ER',
-			shippingOptions: [{ id: 'ER', text: 'EMS' }, { id: 'RL', text: 'RL' }]
+			shippingOptions: [{ id: 'ER', text: 'EMS' }, { id: 'RL', text: 'RL' }],
+			errorMessage: '',
 		};
 	},
 	methods: {
@@ -386,6 +408,22 @@ export default {
 			this.orders.push(order);
 			EventBus.expireCache('/api/sales');
 			EventBus.expireCache('/api/sales/orders');
+		},
+		deleteOrder(id) {
+			this.$http.delete('/api/sales/orders/' + id).then(response => {
+				let index = -1;
+				this.orders.forEach((order, idx) => {
+					if (order._id === id) {
+						index = idx;
+					}
+				});
+				if (index !== -1) {
+					this.orders.splice(index, 1);
+				}
+			}, response => {
+				this.errorMessage = response.body.message;
+				$("#error-modal").modal('show');
+			});
 		},
 		printShippingSlip() {
 			var docDefinition = '';

@@ -89,8 +89,8 @@ export default {
 
             this.$refs.saleItems.forEach(saleItem => {
                 let item = saleItem.add();
-                item.description = this.description;
                 if (item) {
+                    item.description = this.description;
                     order.saleItems.push(item);
                 }
             });
