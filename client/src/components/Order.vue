@@ -284,7 +284,7 @@
 						</td>
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
 						<td class="text-center">{{ order.description }}</td>
-						<td class="text-center">-</td>
+						<td class="text-center">{{ order.total }}</td>
 						<td class="text-center">{{ order.payment ? order.payment.status : 'NA' }}</td>
 						<td class="text-center">
 							{{ order.shipping ? order.shipping.status: 0 }}

@@ -232,7 +232,9 @@ export default {
 						this.sumTotal += parseInt(sale.bill.total);
 					}
 					else {
-						sale.bill.total = '0';
+						sale.bill = {
+							total: '0'
+						};
 					}
 				}
 			});
