@@ -15,19 +15,19 @@ const attachmentService = require('../attachment.service');
 * https://developers.facebook.com/docs/messenger-platform/product-overview/setup#subscribe_app
 *
 */
-const webhook = function(req, res) {
+const webhook = function (req, res) {
 	var data = req.body;
 
 	// Make sure this is a page subscription
 	if (data.object == 'page') {
 		// Iterate over each entry
 		// There may be multiple if batched
-		data.entry.forEach(function(pageEntry) {
+		data.entry.forEach(function (pageEntry) {
 			var pageID = pageEntry.id;
 			var timeOfEvent = pageEntry.time;
 
 			// Iterate over each messaging event
-			pageEntry.messaging.forEach(function(messagingEvent) {
+			pageEntry.messaging.forEach(function (messagingEvent) {
 				if (messagingEvent.optin) {
 					//receivedAuthentication(messagingEvent);
 				} else if (messagingEvent.message) {
@@ -72,102 +72,102 @@ const receivedPostback = (event) => {
 
 	console.log("----------------------------------------------------------------");
 	console.log("Received postback for user %d and page %d with payload '%s' " +
-	"at %d", senderID, recipientID, payload, timeOfPostback);
+		"at %d", senderID, recipientID, payload, timeOfPostback);
 	sessionService.createSession(senderID, recipientID, timeOfPostback).then(session => {
 		switch (payload) {
 			case 'GET_STARTED_PAYLOAD':
-			session.items = [];
-			messenger.sendGreeting(senderID);
-			messenger.sendMainMenu(senderID, 1500);
-			break;
+				session.items = [];
+				messenger.sendGreeting(senderID);
+				messenger.sendMainMenu(senderID, 1500);
+				break;
 			case 'PRODUCT_LIST_PAYLOAD':
-			messenger.sendProductList(session);
-			break;
+				messenger.sendProductList(session);
+				break;
 			case 'ORDER_LIST_PAYLOAD':
-			if (!session.items || session.items.length === 0) {
-				messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
-				messenger.sendMainMenu(senderID, 500);
-			}
-			else {
-				messenger.sendOrderList(session);
-				messenger.sendShopMore(session, false, 500);
-			}
-			break;
-			case 'CHECK_OUT_ADDRESS':
-			let address = session.customer.address;
-			if (session.addressConfirm) {
-				// CHECK_OUT
-				console.log("[Action] address is confirm, go to next step");
-			}
-			else if (address
-			   && address.name
-			   && address.street
-			   && address.subDistrict
-			   && address.district
-			   && address.province
-			   && address.postalCode
-			) {
-				console.log("[Action] address is not confirm, send address result");
-				session.addressConfirm = false;
-				messenger.sendAddressResult(session);
-				break;
-			}
-			else {
-				console.log("[Action] address is not set, send ask for address");
-				messenger.sendAskForAddress(session);
-				break;
-			}
-			case 'CONFIRM_ADDRESS':
-			session.addressConfirm = true;
-			case 'CHECK_OUT':
-			if (session.addressConfirm) {
-				if (session.items && session.items.length > 0) {
-					return orderService.createOrderFromSession(session).then(order => {
-						messenger.sendReceipt(session, order);
-						messenger.sendPaymentMethod(session, 3000);
-					});
-				}
-				else {
+				if (!session.items || session.items.length === 0) {
 					messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
 					messenger.sendMainMenu(senderID, 500);
 				}
-			}
-			else {
-				messenger.sendAddressResult(session);
-			}
-			break;
-			case 'DELETE_ALL_ORDERS':
-			session.items = [];
-			session.newItem = null;
-			messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
-			messenger.sendMainMenu(senderID, 500);
-			break;
-			case 'CHOICE_PERSON':
-			messenger.sendText(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
-			break;
-			default:
-			if (payload.startsWith('CUSTOM_')) {
-				// User wants to buy
-				let commands = payload.split('_');
-				switch (commands[1]) {
-					case 'BUY':
-					if (commands.length > 3) {
-						let productId = commands[2];
-						let batchId = commands[3];
-						console.log(`User(${senderID}) wants to buy '${productId}' batch '${batchId}' from Page(${recipientID})`);
-						let ref = session.addItem(batchId, timeOfPostback);
-						messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
-					}
-					break;
-					default:
-					console.log("Unknown command: " + commands[1])
+				else {
+					messenger.sendOrderList(session);
+					messenger.sendShopMore(session, false, 500);
 				}
-			}
-			else {
-				// When a postback is called, we'll send a message back to the sender to
-				// let them know it was successful
-				messenger.sendText(senderID, "Postback called");
-			}
+				break;
+			case 'CHECK_OUT_ADDRESS':
+				let address = session.customer.address;
+				if (session.addressConfirm) {
+					// CHECK_OUT
+					console.log("[Action] address is confirm, go to next step");
+				}
+				else if (address
+					&& address.name
+					&& address.street
+					&& address.subDistrict
+					&& address.district
+					&& address.province
+					&& address.postalCode
+				) {
+					console.log("[Action] address is not confirm, send address result");
+					session.addressConfirm = false;
+					messenger.sendAddressResult(session);
+					break;
+				}
+				else {
+					console.log("[Action] address is not set, send ask for address");
+					messenger.sendAskForAddress(session);
+					break;
+				}
+			case 'CONFIRM_ADDRESS':
+				session.addressConfirm = true;
+			case 'CHECK_OUT':
+				if (session.addressConfirm) {
+					if (session.items && session.items.length > 0) {
+						return orderService.createOrderFromSession(session).then(order => {
+							messenger.sendReceipt(session, order);
+							messenger.sendPaymentMethod(session, 3000);
+						});
+					}
+					else {
+						messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+						messenger.sendMainMenu(senderID, 500);
+					}
+				}
+				else {
+					messenger.sendAddressResult(session);
+				}
+				break;
+			case 'DELETE_ALL_ORDERS':
+				session.items = [];
+				session.newItem = null;
+				messenger.sendText(senderID, "ตอนนี้ไม่มีของอยู่ในตะกร้าสินค้าครับ");
+				messenger.sendMainMenu(senderID, 500);
+				break;
+			case 'CHOICE_PERSON':
+				messenger.sendText(senderID, "รอสักครู่ แม่ผมจะมาตอบนะครับ");
+				break;
+			default:
+				if (payload.startsWith('CUSTOM_')) {
+					// User wants to buy
+					let commands = payload.split('_');
+					switch (commands[1]) {
+						case 'BUY':
+							if (commands.length > 3) {
+								let productId = commands[2];
+								let batchId = commands[3];
+								console.log(`User(${senderID}) wants to buy '${productId}' batch '${batchId}' from Page(${recipientID})`);
+								let ref = session.addItem(batchId, timeOfPostback);
+								messenger.sendQuickReplyOrderQuantity(senderID, "รับกี่ถุงดีคร้าบ", ref);
+							}
+							break;
+						default:
+							console.log("Unknown command: " + commands[1])
+					}
+				}
+				else {
+					// When a postback is called, we'll send a message back to the sender to
+					// let them know it was successful
+					messenger.sendText(senderID, "Postback called");
+				}
 		}
 	}).catch(error => {
 		console.log(error);
@@ -248,19 +248,19 @@ const receivedMessage = (event) => {
 			// the text we received.
 			switch (intention) {
 				case 'Sale':
-				superCustomerService.parseSaleIntention(messageText).then(saleIntention => {
-					if (saleIntention) {
-						return saleService.createSaleIntention(saleIntention);
-					}
-				}).then(sale => {
-					messenger.sendText(senderID, '[Super] Sell ' + sale._id + ' Success');
-				}).catch(error => {
-					messenger.sendText(senderID, '[Super] Sell ' + error + ' Failed');
-				});
+					superCustomerService.parseSaleIntention(messageText).then(saleIntention => {
+						if (saleIntention) {
+							return saleService.createSaleIntention(saleIntention);
+						}
+					}).then(sale => {
+						messenger.sendText(senderID, '[Super] Sell ' + sale._id + ' Success');
+					}).catch(error => {
+						messenger.sendText(senderID, '[Super] Sell ' + error + ' Failed');
+					});
 
-				break;
+					break;
 				default:
-				messenger.sendText(senderID, '[Super] ' + messageText);
+					messenger.sendText(senderID, '[Super] ' + messageText);
 			}
 		} else if (messageAttachments) {
 			if (messageAttachments.length > 0) {

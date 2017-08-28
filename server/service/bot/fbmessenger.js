@@ -42,8 +42,8 @@ function verifyRequestSignature(req, res, buf) {
 		var signatureHash = elements[1];
 
 		var expectedHash = crypto.createHmac('sha1', APP_SECRET)
-		.update(buf)
-		.digest('hex');
+			.update(buf)
+			.digest('hex');
 
 		if (signatureHash != expectedHash) {
 			throw new Error("Couldn't validate the request signature.");
@@ -56,9 +56,10 @@ function verifyRequestSignature(req, res, buf) {
 * setup is the same token used here.
 *
 */
-const verifyWebhook = function(req, res) {
+const verifyWebhook = function (req, res) {
+	console.log("Verify Webhook");
 	if (req.query['hub.mode'] === 'subscribe' &&
-	req.query['hub.verify_token'] === VALIDATION_TOKEN) {
+		req.query['hub.verify_token'] === VALIDATION_TOKEN) {
 		console.log("Validating webhook");
 		res.status(200).send(req.query['hub.challenge']);
 	} else {
@@ -155,10 +156,10 @@ const callSendAPI = (messageData) => {
 
 			if (messageId) {
 				console.log("++++++Successfully sent message with id %s to recipient %s",
-				messageId, recipientId);
+					messageId, recipientId);
 			} else {
 				console.log("++++++Successfully called Send API for recipient %s",
-				recipientId);
+					recipientId);
 			}
 		} else {
 			console.error("++++++Failed calling Send API", response.statusCode, response.statusMessage, body.error);

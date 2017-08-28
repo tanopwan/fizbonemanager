@@ -10,43 +10,12 @@ const processIntention = (messageText) => {
     }
 }
 
-const productKeywords = [
-    { productCode: 'FZ01A', keywords: ['fz01a', 'chickenliver', 'ตับ', 'ตับไก่', 'liver']},
-    { productCode: 'FZ02A', keywords: ['fz02a', 'salmon', 'แซลมอน', 'sal']}
-];
-
-const promotionKeywords = [
-    { promotion: 'Online', keywords: ['online', 'facebook', 'fb', 'line', 'เฟส', 'ไลน์', 'เฟสบุ้ค', 'ออนไลน์']},
-    { promotion: 'Wholesale', keywords: ['booth', 'บูธ']},
-]
-
-let promotionsPromise = promotionService.getPromotions().then(promotions => {
-    console.log("Get Promotion Promise........");
-    promotions.forEach(promotion => {
-        let promotionKeyword = promotionKeywords.find(promotionKeyword => promotionKeyword.promotion === promotion.group);
-        if (promotionKeyword) {
-            promotion.keywords = promotionKeyword.keywords;
-        }
-    });
-    return Promise.resolve(promotions);
-});
-
-let productsPromise = productService.getProducts().then(products => {
-    console.log("Get Product Promise........");
-    console.log(products);
-    // products.forEach(product => {
-    //     let productKeyword = productKeywords.find(productKeyword => productKeyword.productCode === product.productCode);
-    //     product.keywords = productKeyword.keywords;
-    // });
-    return Promise.resolve(products);
-});
-
 const getProduct = (words) => {
     if (words.length <= 0) {
         console.log("Product is not specify");
         return Promise.reject();
     }
-    return productsPromise.then(products => {
+    return productService.getProducts().then(products => {
         let productObject = null;
         let index = -1;
         words.forEach((word, idx) => {
@@ -72,7 +41,7 @@ const getPromotion = (words) => {
         console.log("Promotion is not specify");
         return Promise.reject();
     }
-    return promotionsPromise.then(promotions => {
+    return promotionService.getPromotions().then(promotions => {
         let promotionObject = null;
         let index = -1;
         words.forEach((word, idx) => {

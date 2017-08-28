@@ -287,7 +287,7 @@ const sendAskForAddress = (session) => {
 			{
 				"title": "ใส่ที่อยู่จัดส่ง",
 				"type": "web_url",
-				"url": `https://a6ac41e2.ngrok.io/facebook-messenger/shipping-address`,
+				"url": `https://660e57d2.ngrok.io/facebook-messenger/shipping-address`,
 				"messenger_extensions": true,
 				"webview_height_ratio": "tall"
 			},
@@ -317,7 +317,7 @@ const sendAddressResult = (session) => {
 			{
 				"title": "ต้องการแก้ไข",
 				"type": "web_url",
-				"url": `https://a6ac41e2.ngrok.io/facebook-messenger/shipping-address`,
+				"url": `https://660e57d2.ngrok.io/facebook-messenger/shipping-address`,
 				"messenger_extensions": true,
 				"webview_height_ratio": "tall"
 			},

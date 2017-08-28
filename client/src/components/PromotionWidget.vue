@@ -42,6 +42,14 @@
 			</div>
 			<div class="row form-group">
 				<div class="col-xs-12">
+					<div class="input-group">
+						<span class="input-group-addon">Keywords</span>
+						<input type="text" class="form-control" v-model="keywordString" placeholder="Separate by Space">
+					</div>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-xs-12">
 					<i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
 					<div v-else class="input-group">
 						<span v-if="!(success || error)" class="input-group-btn">
@@ -82,6 +90,7 @@ export default {
 			selectedProduct: (this.promotion && this.promotion.product) ? this.promotion.product.name : '',
 			selectedBatch: this.promotion && this.promotion.batch ? this.promotion.batch.batchId + '/' + this.promotion.batch.batchRef : '',
 			selectedGroup: this.promotion ? this.promotion.group : 'Booth',
+			keywordString: this.promotion ? this.promotion.keywords.join(' ') : '',
 
 			groups: [
 				{ id: "Booth", text: "Booth" },
@@ -155,7 +164,8 @@ export default {
 					batchId: this.selectedBatch.split('/')[0],
 					batchRef: this.selectedBatch.split('/')[1]
 				},
-				group: this.selectedGroup
+				group: this.selectedGroup,
+				keywords: this.keywordString.split(' '),
 			};
 
 			if (this.promotion && this.promotion._id) {
