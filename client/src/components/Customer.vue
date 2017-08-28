@@ -3,53 +3,113 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="block">
-					<div class="form-horizontal form-bordered">
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">Name</label>
-							<div class="col-md-6">
+					<div class="row form-group">
+						<div class="col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">Name / Company</span>
 								<input type="text" v-model="customerName" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">Contact</label>
-							<div class="col-md-6">
+					</div>
+					<label class="control-label" for="example-input1-group1">Billing Address:</label>
+					<div class="row form-group">
+						<div class="col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">Contact</span>
 								<input type="text" v-model="contact" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">Address</label>
-							<div class="col-md-6">
+					</div>
+					<div class="row form-group">
+						<div class="col-xs-12">
+							<div class="input-group">
+								<label class="input-group-addon">Address</label>
 								<input type="text" v-model="street" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">Sub District</label>
-							<div class="col-md-6">
+					</div>
+					<div class="row form-group">
+						<div class="col-md-6 col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">Sub District</span>
 								<input type="text" v-model="subDistrict" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">District</label>
-							<div class="col-md-6">
+						<div class="col-md-6 col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">District</span>
 								<input type="text" v-model="district" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">Province</label>
-							<div class="col-md-6">
+					</div>
+					<div class="row form-group">
+						<div class="col-md-6 col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">Province</span>
 								<input type="text" v-model="province" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-md-3 control-label" for="example-text-input">Postal Code</label>
-							<div class="col-md-6">
+						<div class="col-md-6 col-xs-12">
+							<div class="input-group">
+								<span class="input-group-addon">Postal Code</span>
 								<input type="text" v-model="postalCode" class="form-control" placeholder="">
 							</div>
 						</div>
-						<div class="form-group">
-							<div class="col-md-6 col-sm-offset-3">
-								<button type="button" @click="addCustomer" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
+					</div>
+					<label class="control-label" for="example-input1-group1">Shipping Address:</label>
+					<label class="csscheckbox csscheckbox-warning" @click="sameAsBillingAddress = !sameAsBillingAddress">
+						<input type="checkbox" v-model="sameAsBillingAddress">
+						<span></span> Same as Billing Address
+					</label>
+					<div v-show="!sameAsBillingAddress">
+						<div class="row form-group">
+							<div class="col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">Contact</span>
+									<input type="text" v-model="shippingContact" class="form-control" placeholder="">
+								</div>
 							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-xs-12">
+								<div class="input-group">
+									<label class="input-group-addon">Address</label>
+									<input type="text" v-model="shippingStreet" class="form-control" placeholder="">
+								</div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-md-6 col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">Sub District</span>
+									<input type="text" v-model="shippingSubDistrict" class="form-control" placeholder="">
+								</div>
+							</div>
+							<div class="col-md-6 col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">District</span>
+									<input type="text" v-model="shippingDistrict" class="form-control" placeholder="">
+								</div>
+							</div>
+						</div>
+						<div class="row form-group">
+							<div class="col-md-6 col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">Province</span>
+									<input type="text" v-model="shippingProvince" class="form-control" placeholder="">
+								</div>
+							</div>
+							<div class="col-md-6 col-xs-12">
+								<div class="input-group">
+									<span class="input-group-addon">Postal Code</span>
+									<input type="text" v-model="shippingPostalCode" class="form-control" placeholder="">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row form-group">
+						<div class="col-xs-12">
+							<button type="button" @click="addCustomer" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Add</button>
 						</div>
 					</div>
 				</div>
@@ -142,13 +202,21 @@ export default {
 			district: '',
 			province: '',
 			postalCode: '',
+
+			sameAsBillingAddress: true,
+			shippingContact: '',
+			shippingStreet: '',
+			shippingSubDistrict: '',
+			shippingDistrict: '',
+			shippingProvince: '',
+			shippingPostalCode: '',
 		};
 	},
 	methods: {
 		addCustomer() {
-			this.$http.post('/api/customers', {
+			let data = {
 				name: this.customerName,
-				address: {
+				billingAddress: {
 					name: this.contact,
 					street: this.street,
 					subDistrict: this.subDistrict,
@@ -157,7 +225,24 @@ export default {
 					postalCode: this.postalCode,
 				},
 				type: 'Normal'
-			}).then(response => {
+			}
+
+			if (this.sameAsBillingAddress) {
+				data.address = data.billingAddress;
+			}
+			else {
+				data.address = {
+					name: this.shippingName,
+					street: this.shippingStreet,
+					subDistrict: this.shippingSubDistrict,
+					district: this.shippingDistrict,
+					province: this.shippingProvince,
+					postalCode: this.shippingPostalCode,
+				}
+			}
+
+			console.log(data);
+			this.$http.post('/api/customers', data).then(response => {
 				this.customers.splice(0, 0, response.body);
 				this.contact = '';
 				this.street = '';
@@ -166,8 +251,8 @@ export default {
 				this.province = '';
 				this.postalCode = '';
 			}, response => {
-					console.log(response);
-				});
+				console.log(response);
+			});
 		},
 		deleteCustomer(id) {
 			this.$http.delete('/api/customers/' + id).then(response => {

@@ -7,8 +7,19 @@ mongoose.Promise = require('bluebird');
 
 const CustomerSchema = new Schema({
 	name: String,
+	email: String,
+	billingAddress: {
+		name: String,
+		street: String,
+		subDistrict: String,
+		district: String,
+		province: String,
+		postalCode: String
+	},
+	// Shipping Address
 	address: {
 		name: String,
+		number: String,
 		street: String,
 		subDistrict: String,
 		district: String,
