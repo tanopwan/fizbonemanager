@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="row">
-			<div class="col-md-6">
+			<div class="col-md-12">
 				<div class="block">
 					<div class="form-horizontal form-bordered">
 						<div class="form-group">
