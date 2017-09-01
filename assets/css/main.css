@@ -3301,6 +3301,11 @@ code {
     border-color: transparent;
 }
 
+.img-thumbnail-avatar-small {
+    width: 39px !important;
+    height: 39px !important;
+}
+
 .img-thumbnail-avatar {
     width: 69px !important;
     height: 69px !important;

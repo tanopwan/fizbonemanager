@@ -137,6 +137,7 @@ const getConversations = function (req, res) {
         .then(fbConversations => {
             let customerPromises = [];
             fbConversations.data.forEach(fbConversation => {
+                console.log(fbConversation);
                 let conversation = {}
                 conversation.id = fbConversation.id;
                 conversation.snippet = fbConversation.snippet;
@@ -145,6 +146,7 @@ const getConversations = function (req, res) {
                     return participant.id !== pageId;
                 });
                 conversation.participant = conversation.participants[0];
+                conversation.unread_count = fbConversation.unread_count;
                 conversations.push(conversation);
                 customerPromises.push(CustomerService.getCustomerFromConversationParticipantId(conversation.participant.id).then(customer => {
                     conversation.customer = customer;

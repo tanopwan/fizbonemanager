@@ -36,6 +36,7 @@ const OrderSchema = new Schema({
 	status: String, //OPEN, CLOSE, FINISH
 	saleDate: Date,
 	description: String,
+	channel: String,
 },
 {
 	timestamps: true
