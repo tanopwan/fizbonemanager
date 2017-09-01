@@ -51,7 +51,7 @@
             </div>
         </div>
         <sale-item-part v-for="(saleItem, $index) in saleItems" ref="saleItems" v-bind:key="saleItem._id" @remove="removeItem($index)"></sale-item-part>
-        <br> {{fbCustomer}}
+        <br>
         <div class="form-group">
             <i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
             <div v-else class="input-group">
