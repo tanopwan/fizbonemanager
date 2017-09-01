@@ -56,7 +56,7 @@
                                 </label>
                             </td>
                             <td class="text-center" style="width: 7%;">
-                                <img :src="'http://graph.facebook.com/' + conversation.participant.id + '/picture?type=square'" alt="avatar" class="img-circle">
+                                <img :src="'https://graph.facebook.com/' + conversation.participant.id + '/picture?type=square'" alt="avatar" class="img-circle">
                             </td>
                             <td>
                                 <h4>

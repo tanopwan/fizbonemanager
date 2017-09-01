@@ -2,7 +2,7 @@
     <div>
         <a href="#conversation-list-modal" :class="{ 'btn': !selectedConversation.participant, 'btn-info': !selectedConversation.participant}" data-toggle="modal" style="overflow: hidden; position: relative;">
             <span v-if="selectedConversation.participant">
-                <img :src="'http://graph.facebook.com/' + selectedConversation.participant.id + '/picture?type=square'" alt="avatar" class="img-thumbnail-avatar-small">
+                <img :src="'https://graph.facebook.com/' + selectedConversation.participant.id + '/picture?type=square'" alt="avatar" class="img-thumbnail-avatar-small">
                 {{ selectedConversation.participant.name }}
             </span>
             <i v-else class="fa fa-facebook"></i>
