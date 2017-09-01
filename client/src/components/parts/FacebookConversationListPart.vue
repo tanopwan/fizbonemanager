@@ -5,8 +5,6 @@
             <div class="block-section">
                 <h4 class="inner-sidebar-header">
                     Active Customers
-                    <a href="javascript:void(0)" @click="deselect()" data-dismiss="modal" class="btn btn-effect-ripple btn-xs btn-danger pull-right" style="overflow: hidden; position: relative;">
-                        <i class="fa fa-minus"></i> Remove</a>
                     <a href="javascript:void(0)" @click="showInactiveCustomer=!showInactiveCustomer" class="btn btn-effect-ripple btn-xs btn-warning pull-right" style="overflow: hidden; position: relative;">
                         <i class="fa fa-ellipsis-v"></i> More</a>
                 </h4>
@@ -36,6 +34,8 @@
                     </li>
                 </ul>
             </div>
+            <a href="javascript:void(0)" @click="deselect()" data-dismiss="modal" class="btn btn-effect-ripple btn-xs btn-danger" style="overflow: hidden; position: relative;">
+                <i class="fa fa-minus"></i> Remove</a>
         </div>
     </div>
 </template>
