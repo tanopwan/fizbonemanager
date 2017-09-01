@@ -12,13 +12,6 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-xs-6">
-                <div class="form-group">
-                    <select2 :options="customerOptions" v-model="selectedCustomer" allowClear="true" placeholder="Select Customer...">
-                        <option></option>
-                    </select2>
-                </div>
-            </div>
             <div class="col-xs-4">
                 <div class="form-group">
                     <select2 :options="channelOptions" v-model="channel" allowClear="true" placeholder="Select Channel...">
@@ -26,9 +19,16 @@
                     </select2>
                 </div>
             </div>
-            <div class="col-xs-2">
+            <div class="col-xs-8" v-if="channel==='Offline'">
                 <div class="form-group">
-                    <facebook-conversation-list-modal></facebook-conversation-list-modal>
+                    <select2 :options="customerOptions" v-model="selectedCustomer" allowClear="true" placeholder="Select Customer...">
+                        <option></option>
+                    </select2>
+                </div>
+            </div>
+            <div class="col-xs-8" v-if="channel==='Facebook'">
+                <div class="form-group">
+                    <facebook-conversation-list-modal v-model="fbCustomer" v-if="channel==='Facebook'"></facebook-conversation-list-modal>
                 </div>
             </div>
         </div>
@@ -51,7 +51,7 @@
             </div>
         </div>
         <sale-item-part v-for="(saleItem, $index) in saleItems" ref="saleItems" v-bind:key="saleItem._id" @remove="removeItem($index)"></sale-item-part>
-        <br>
+        <br> {{fbCustomer}}
         <div class="form-group">
             <i v-if="saving" class="fa fa-asterisk fa-2x fa-spin text-success"></i>
             <div v-else class="input-group">
@@ -82,6 +82,7 @@ export default {
             description: '',
             channel: '',
             saving: false,
+            fbCustomer: {},
         }
     },
     computed: {
@@ -118,6 +119,24 @@ export default {
                 channel: this.channel,
             };
 
+            if (this.channel === "Facebook") {
+                order.customer = {
+                    name: this.fbCustomer.name,
+                    type: "FacebookMessenger",
+                    refUserId: this.fbCustomer.id,
+                }
+            }
+            else if (this.channel === "Offline") {
+                if (this.selectedCustomer) {
+                    let customer = this.customers.find(customer => customer._id === this.selectedCustomer);
+                    order.customer = {
+                        name: customer.name,
+                        type: customer.type,
+                        refUserId: customer.refUserId,
+                    }
+                }
+            }
+
             let itemError = false;
             this.$refs.saleItems.forEach(saleItem => {
                 let item = saleItem.add();
@@ -146,15 +165,6 @@ export default {
             else if (order.saleItems.every(item => item.promotion.group === 'Wholesale')) {
                 order.payment.status = 'SLIP_PENDING';
                 order.shipping.status = 'READY';
-            }
-
-            if (this.selectedCustomer) {
-                let customer = this.customers.find(customer => customer._id === this.selectedCustomer);
-                order.customer = {
-                    name: customer.name,
-                    type: customer.type,
-                    refUserId: customer.refUserId,
-                }
             }
 
             console.log(order);

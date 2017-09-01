@@ -1,7 +1,10 @@
 <template>
     <div>
-        <a href="#conversation-list-modal" :class="{ 'btn': selectedId.length == 0, 'btn-info': selectedId.length == 0}" data-toggle="modal" style="overflow: hidden; position: relative;">
-            <img v-if="selectedId.length > 0" :src="'http://graph.facebook.com/' + selectedId + '/picture?type=square'" alt="avatar" class="img-thumbnail-avatar-small">
+        <a href="#conversation-list-modal" :class="{ 'btn': !selectedConversation.participant, 'btn-info': !selectedConversation.participant}" data-toggle="modal" style="overflow: hidden; position: relative;">
+            <span v-if="selectedConversation.participant">
+                <img :src="'http://graph.facebook.com/' + selectedConversation.participant.id + '/picture?type=square'" alt="avatar" class="img-thumbnail-avatar-small">
+                {{ selectedConversation.participant.name }}
+            </span>
             <i v-else class="fa fa-facebook"></i>
         </a>
         <div id="conversation-list-modal" class="modal" tabindex="-1" role="dialog" aria-hidden="true">
@@ -14,7 +17,7 @@
                         </h3>
                     </div>
                     <div class="modal-body">
-                        <facebook-conversation-list-part v-model="selectedId"></facebook-conversation-list-part>
+                        <facebook-conversation-list-part v-model="selectedConversation" v-on:input="onSelectedConversation"></facebook-conversation-list-part>
                     </div>
                 </div>
             </div>
@@ -28,7 +31,14 @@ import FacebookConversationListPart from './parts/FacebookConversationListPart.v
 export default {
     data() {
         return {
-            selectedId: ''
+            selectedConversation: {}
+        }
+    },
+    methods: {
+        onSelectedConversation(conversation) {
+            if (conversation.participant) {
+                this.$emit('input', conversation.participant);
+            }
         }
     },
     components: {

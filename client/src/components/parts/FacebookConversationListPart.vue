@@ -29,10 +29,11 @@ export default {
     },
     methods: {
         select(id) {
-            this.$emit('input', id);
+            let conversation = this.conversations.find(conversation => conversation.participant.id === id);
+            this.$emit('input', conversation);
         },
         deselect() {
-            this.$emit('input', '');
+            this.$emit('input', {});
         }
     },
     created() {
