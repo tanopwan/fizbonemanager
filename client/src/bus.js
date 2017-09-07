@@ -1,11 +1,19 @@
 import Vue from 'vue';
 
-// let pageAccessTokenPromise = new Promise((resolve, reject) => {
-// 	Vue.http.get('/api/users/page').then(response => {
-// 		console.log(response.data.page.access_token);
-// 		resolve(response.data.page.access_token);
-// 	});
-// });
+// Initialize Firebase
+var config = {
+	apiKey: "AIzaSyBcsiAIlYRK01iCq4yFWPvvXBk9e-xKZMQ",
+	authDomain: "fizbone-manager.firebaseapp.com",
+	databaseURL: "https://fizbone-manager.firebaseio.com",
+	projectId: "fizbone-manager",
+	storageBucket: "fizbone-manager.appspot.com",
+	messagingSenderId: "220617528081"
+};
+firebase.initializeApp(config);
+
+var storage = firebase.storage();
+var storageRef = storage.ref();
+var uploadSlipsRef = storageRef.child('slips');
 
 let realtimeStocks = [];
 
@@ -31,8 +39,6 @@ export const EventBus = new Vue({
 		saleURL: '/api/sales',
 		promotionURL: '/api/promotions',
 		customerURL: '/api/customers',
-		// pageAccessToken: null,
-		// pageAccessTokenPromise: pageAccessTokenPromise,
 	},
 	methods: {
 		expireCache(key) {
@@ -95,15 +101,15 @@ export const EventBus = new Vue({
 		getRealtimeStocks() {
 			return realtimeStocks;
 		},
-		// getPageAccessToken() {
-		// 	if (pageAccessToken) {
-		// 		return Promise.resolve(pageAccessToken);
-		// 	}
-
-		// 	return pageAccessTokenPromise.then(accessToken => {
-		// 		this.pageAccessToken = accessToken;
-		// 		return Promise.resolve(accessToken);
-		// 	});
-		// }
+		uploadSlip(filename, url) {
+			return fetch(url).then(response => response.blob())
+				.then(blob => {
+					var ref = uploadSlipsRef.child(filename);
+					return ref.put(blob);
+				}).then(function (snapshot) {
+					console.log('Uploaded a blob or file!', snapshot.downloadURL);
+					return Promise.resolve(snapshot.downloadURL);
+				});
+		},
 	}
 });

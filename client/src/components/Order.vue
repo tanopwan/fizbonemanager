@@ -279,7 +279,7 @@
 					<small> Total: {{ orders.length }}</small>
 				</h4>
 			</div>
-			<facebook-attachments-modal :order="viewOrder"></facebook-attachments-modal>
+			<facebook-attachments-modal :order="viewOrder" :onUpdatedOrder="onUpdatedOrder"></facebook-attachments-modal>
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
@@ -392,6 +392,13 @@ export default {
 					items: [],
 					payment: {}
 				}, order.body);
+			});
+		},
+		onUpdatedOrder(updatedOrder) {
+			this.orders.forEach((order) => {
+				if (order._id === updatedOrder._id) {
+					order.payment = updatedOrder.payment;
+				}
 			});
 		},
 		setTrackingNo() {

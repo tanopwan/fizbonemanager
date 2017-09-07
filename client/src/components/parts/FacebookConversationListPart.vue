@@ -11,7 +11,7 @@
                 <ul class="nav-users nav-users-online">
                     <li v-for="conversation in onlineConversations" v-bind:key="conversation.id">
                         <a href="javascript:void(0)" @click="select(conversation.participant.id)" data-dismiss="modal">
-                            <img :src="'https://graph.facebook.com/' + conversation.participant.id + '/picture?type=square'" alt="avatar" class="nav-users-avatar">
+                            <img :src="'https://graph.facebook.com/' + conversation.participant.id + '/picture?type=square'" class="nav-users-avatar">
                             <span class="label label-success nav-users-indicator">{{ conversation.unread_count }}</span>
                             <span class="nav-users-heading">{{ conversation.participant.name }}</span>
                             <span class="text-muted">{{ conversation.participant.email }}</span>
@@ -26,7 +26,7 @@
                 <ul class="nav-users nav-users-away">
                     <li v-for="conversation in awayConversations" v-bind:key="conversation.id">
                         <a href="javascript:void(0)" @click="select(conversation.participant.id)" data-dismiss="modal">
-                            <img :src="'https://graph.facebook.com/' + conversation.participant.id + '/picture?type=square'" alt="avatar" class="nav-users-avatar">
+                            <img :src="'https://graph.facebook.com/' + conversation.participant.id + '/picture?type=square'" class="nav-users-avatar">
                             <span class="label label-success nav-users-indicator">{{ conversation.unread_count }}</span>
                             <span class="nav-users-heading">{{ conversation.participant.name }}</span>
                             <span class="text-muted">{{ conversation.participant.email }}</span>

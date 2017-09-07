@@ -184,15 +184,16 @@ const summary = function(req, res) {
 
 const verifyOrder = function(req, res) {
 	let orderId = new ObjectId(req.params.id);
-
+	let slipUrl = req.body.slipUrl;
+	console.log(slipUrl);
 	return Order.findOneAndUpdate({ _id: orderId },{
-		$set: { 'payment.status': 'VERIFIED' }
+		$set: { 'payment.status': 'VERIFIED', 'extendsInfo.slipUrl': slipUrl }
 	}, { new: true }).exec()
 	.then(order => {
-		messenger.sendReadyToShipMessage(order.customer.refUserId, order._id);
+		// messenger.sendReadyToShipMessage(order.customer.refUserId, order._id);
 		res.json(order);
 	})
-	.catch(err => res.status(500).json(err));
+	.catch(err => {console.log(err); return res.status(500).json(err);});
 }
 
 const setTracking = function(req, res) {
