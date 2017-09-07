@@ -37,7 +37,10 @@ export default {
     methods: {
         onSelectedConversation(conversation) {
             if (conversation.participant) {
-                this.$emit('input', conversation.participant);
+                this.$emit('input', {
+                    id: conversation.id,
+                    participant: conversation.participant
+                });
             }
         }
     },

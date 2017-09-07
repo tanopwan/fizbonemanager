@@ -25,7 +25,9 @@
 				<div class="modal-content">
 					<div class="modal-header">
 						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h3 class="modal-title"><strong>Error </strong></h3>
+						<h3 class="modal-title">
+							<strong>Error </strong>
+						</h3>
 					</div>
 					<div class="modal-body">
 						{{ errorMessage }}
@@ -277,6 +279,7 @@
 					<small> Total: {{ orders.length }}</small>
 				</h4>
 			</div>
+			<facebook-attachments-modal :order="viewOrder"></facebook-attachments-modal>
 			<table class="table table-striped table-borderless table-vcenter">
 				<thead>
 					<tr>
@@ -301,7 +304,12 @@
 						<td class="text-center">{{ order.customer ? order.customer.name : 'NA' }}</td>
 						<td class="text-center">{{ order.description }}</td>
 						<td class="text-center">{{ order.total }}</td>
-						<td class="text-center">{{ order.payment ? order.payment.status : 'NA' }}</td>
+						<td class="text-center">
+							<a v-if="order.payment && order.customer && order.payment.status === 'SLIP_PENDING' && order.customer.type === 'FacebookMessenger' && order.extendsInfo && order.extendsInfo['conversationId']" href="#attachment-list-modal" @click="selectOrder(order._id)" class="btn btn-info" data-toggle="modal" style="overflow: hidden; position: relative;">
+								<i class="fa fa-paperclip"></i>
+							</a>
+							<span v-else>{{ order.payment ? order.payment.status : 'NA' }}</span>
+						</td>
 						<td class="text-center">
 							{{ order.shipping ? order.shipping.status: 0 }}
 						</td>
@@ -323,6 +331,8 @@ import Select2 from './basic/Select2.vue';
 import OrderWidget from './OrderWidget.vue'
 import { EventBus } from '../bus';
 
+import FacebookAttachmentsModal from './modals/FacebookAttachmentsModal.vue';
+
 export default {
 	data() {
 		return {
@@ -334,6 +344,7 @@ export default {
 				items: [],
 				payment: {}
 			},
+			modalOrderId: '',
 			viewDropoffDateTime: '',
 			dropoffDate: moment(new Date()).format("YYYY-MM-DD"),
 			dropoffTime: moment(new Date()).format("HH:mm"),
@@ -371,6 +382,16 @@ export default {
 					return { total: a.total + b.total };
 
 				}, { total: 0 }).total;
+			});
+		},
+		selectOrder(orderId) {
+			this.$http.get('/api/sales/orders/' + orderId).then(order => {
+				this.viewOrder = Object.assign({
+					customer: {},
+					address: {},
+					items: [],
+					payment: {}
+				}, order.body);
 			});
 		},
 		setTrackingNo() {
@@ -546,6 +567,7 @@ export default {
 	components: {
 		select2: Select2,
 		orderWidget: OrderWidget,
+		facebookAttachmentsModal: FacebookAttachmentsModal,
 	}
 }
 </script>

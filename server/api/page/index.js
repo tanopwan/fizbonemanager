@@ -9,6 +9,7 @@ var router = express.Router();
 router.use(auth.verifyMiddleware);
 
 router.get('/conversations', ctrl.conversations);
+router.get('/conversations/:id/attachments', ctrl.attachments);
 router.get('/id_for_page/:id', ctrl.idForPage);
 
 module.exports = router;

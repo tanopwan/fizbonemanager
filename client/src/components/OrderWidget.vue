@@ -28,7 +28,7 @@
             </div>
             <div class="col-xs-8" v-if="channel==='Facebook'">
                 <div class="form-group">
-                    <facebook-conversation-list-modal v-model="fbCustomer" v-if="channel==='Facebook'"></facebook-conversation-list-modal>
+                    <facebook-conversation-list-modal v-model="fbConversation" v-if="channel==='Facebook'"></facebook-conversation-list-modal>
                 </div>
             </div>
         </div>
@@ -82,7 +82,7 @@ export default {
             description: '',
             channel: '',
             saving: false,
-            fbCustomer: {},
+            fbConversation: {},
         }
     },
     computed: {
@@ -117,14 +117,16 @@ export default {
                 payment: {},
                 shipping: {},
                 channel: this.channel,
+                extendsInfo: {},
             };
 
             if (this.channel === "Facebook") {
                 order.customer = {
-                    name: this.fbCustomer.name,
+                    name: this.fbConversation.participant.name,
                     type: "FacebookMessenger",
-                    refUserId: this.fbCustomer.id,
+                    refUserId: this.fbConversation.participant.id,
                 }
+                order.extendsInfo["conversationId"] = this.fbConversation.id;
             }
             else if (this.channel === "Offline") {
                 if (this.selectedCustomer) {
@@ -167,7 +169,7 @@ export default {
                 order.shipping.status = 'READY';
             }
 
-            console.log(order);
+            console.log("order", order);
             this.saving = true;
             this.$http.post('/api/sales/orders', order).then(response => {
                 this.saving = false;

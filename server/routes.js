@@ -7,6 +7,9 @@ const fbMessenger = require('./service/bot/fbmessenger');
 const bodyParser = require('body-parser');
 
 module.exports = function(app) {
+	app.get('/webhook', bodyParser.json({ verify: fbMessenger.verifyRequestSignature }), fbMessenger.verifyWebhook);
+	app.post('/webhook', bodyParser.json({ verify: fbMessenger.verifyRequestSignature }), fbController.webhook);
+
 	app.use(bodyParser.json());
 	app.use('/api/auth', require('./auth').facebookRouter);
 	app.use('/api/users', require('./api/user'));
@@ -23,11 +26,13 @@ module.exports = function(app) {
 		res.sendFile(path.resolve(`${__dirname}/views/shipping-address.html`));
 	});
 
-	app.get('/webhook', bodyParser.json({ verify: fbMessenger.verifyRequestSignature }), fbMessenger.verifyWebhook);
-	app.post('/webhook', bodyParser.json({ verify: fbMessenger.verifyRequestSignature }), fbController.webhook);
-
 	// Below all routes
 	app.use((req, res) => {
-		res.redirect('/');
+		if (!req.path.startsWith('/api')) {
+			res.redirect('/');
+		}
+		else {
+			res.status(404);
+		}
 	});
 }
