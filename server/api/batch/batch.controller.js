@@ -181,7 +181,7 @@ const setIsFinish = function (req, res) {
 	let objectId = new ObjectId(req.params.id);
 	let isFinish = req.params.isFinish;
 
-	return Batch.findOneAndUpdate({ _id: objectId }, { $set: { isFinish: isFinish } }).exec()
+	return batchService.setIsFinish(objectId, isFinish)
 		.then(result => {
 			res.json(result);
 		})

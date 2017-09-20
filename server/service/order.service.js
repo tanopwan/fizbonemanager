@@ -30,6 +30,13 @@ const createOrder = (data) => {
 				resp.write('id: ' + d.getMilliseconds() + '\n');
 				resp.write('data:' + JSON.stringify(result) + '\n\n'); // Note the extra newline
 			});
+
+			result.forEach(batch => {
+				if (batch.used === batch.total) {
+					console.log(batch.batchId + " is Finish!");
+					batchService.setIsFinish(batch.batchId, true);
+				}
+			})
 		});
 
 		return Order.findOne(orderId).exec().then(order => {

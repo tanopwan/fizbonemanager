@@ -32,7 +32,12 @@ const getRealtimeStock = () => {
 	]).exec();
 }
 
+const setIsFinish = (id, isFinish) => {
+	return Batch.findOneAndUpdate({ _id: id }, { $set: { isFinish: isFinish } }).exec();
+}
+
 module.exports = {
 	getBatch,
 	getRealtimeStock,
+	setIsFinish,
 }
