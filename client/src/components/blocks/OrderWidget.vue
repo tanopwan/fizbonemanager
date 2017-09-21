@@ -64,10 +64,10 @@
 
 <script>
 import { EventBus } from 'src/bus';
-import Select2 from './basic/Select2.vue';
-import SaleItemPart from './parts/SaleItemPart.vue';
-import DateTimePicker from './basic/DateTimePicker.vue';
-import FacebookConversationListModal from './FacebookConversationListModal.vue';
+import Select2 from 'basic/Select2.vue';
+import SaleItemPart from 'parts/SaleItemPart.vue';
+import DateTimePicker from 'basic/DateTimePicker.vue';
+import FacebookConversationListModal from 'modals/FacebookConversationListModal.vue';
 
 export default {
     props: ['onAddOrder'],

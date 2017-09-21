@@ -146,9 +146,9 @@
 <script>
 import moment from 'moment';
 import { EventBus } from 'src/bus';
-import salePromotion from './SalePromotion.vue';
-import Select2 from './basic/Select2.vue';
-import EditSaleWidget from './EditSaleWidget.vue';
+import salePromotion from 'blocks/SalePromotion.vue';
+import Select2 from 'basic/Select2.vue';
+import EditSaleWidget from 'blocks/EditSaleWidget.vue';
 
 export default {
 	data() {

@@ -327,11 +327,11 @@
 
 <script>
 import moment from 'moment';
-import Select2 from './basic/Select2.vue';
-import OrderWidget from './OrderWidget.vue'
+import Select2 from 'basic/Select2.vue';
+import OrderWidget from 'blocks/OrderWidget.vue'
 import { EventBus } from 'src/bus';
 
-import FacebookAttachmentsModal from './modals/FacebookAttachmentsModal.vue';
+import FacebookAttachmentsModal from 'modals/FacebookAttachmentsModal.vue';
 
 export default {
 	data() {

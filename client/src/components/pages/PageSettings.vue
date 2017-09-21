@@ -11,7 +11,7 @@
 
 <script>
 import { EventBus } from 'src/bus';
-import ConversationInbox from './ConversationInbox.vue'
+import ConversationInbox from 'blocks/ConversationInbox.vue'
 
 export default {
     data() {

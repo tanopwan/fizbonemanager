@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import FacebookConversationListPart from './parts/FacebookConversationListPart.vue';
+import FacebookConversationListPart from 'parts/FacebookConversationListPart.vue';
 
 export default {
     data() {

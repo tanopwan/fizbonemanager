@@ -60,8 +60,8 @@
 <script>
 import moment from 'moment';
 import { EventBus } from 'src/bus';
-import SaleWidget from './SaleWidget.vue';
-import EditSaleWidget from './EditSaleWidget.vue';
+import SaleWidget from 'blocks/SaleWidget.vue';
+import EditSaleWidget from 'blocks/EditSaleWidget.vue';
 
 export default {
 	data() {

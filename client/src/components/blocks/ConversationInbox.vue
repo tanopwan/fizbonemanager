@@ -17,10 +17,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- <div class="modal-footer">
-						<button type="button" @click="bill" class="btn btn-effect-ripple btn-success" style="overflow: hidden; position: relative;">Save</button>
-						<button type="button" class="btn btn-effect-ripple btn-danger" data-dismiss="modal" style="overflow: hidden; position: relative;">Close</button>
-					</div> -->
 				</div>
 			</div>
 		</div>

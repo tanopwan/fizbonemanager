@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import Select2 from './basic/Select2.vue';
+import Select2 from 'basic/Select2.vue';
 
 export default {
 	props: ['promotion', 'productsWithBatches'],

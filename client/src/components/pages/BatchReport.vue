@@ -22,8 +22,8 @@
 
 <script>
 import { EventBus } from 'src/bus';
-import Select2 from './basic/Select2.vue';
-import BatchReportTableBlock from './BatchReportTableBlock.vue';
+import Select2 from 'basic/Select2.vue';
+import BatchReportTableBlock from 'blocks/BatchReportTableBlock.vue';
 
 export default {
     data() {

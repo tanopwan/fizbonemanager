@@ -44,6 +44,11 @@ module.exports = {
 		alias: {
 			'src': path.resolve(__dirname, './client/src'),
 			'components': path.resolve(__dirname, './client/src/components'),
+			'pages': path.resolve(__dirname, './client/src/components/pages'),
+			'basic': path.resolve(__dirname, './client/src/components/basic'),
+			'blocks': path.resolve(__dirname, './client/src/components/blocks'),
+			'modals': path.resolve(__dirname, './client/src/components/modals'),
+			'parts': path.resolve(__dirname, './client/src/components/parts'),
 		}
 	}
 }

@@ -1,18 +1,18 @@
 'use stricts';
 
-import Product from './components/Product.vue';
-import Batch from './components/pages/Batch.vue';
-import Sale from './components/Sale.vue';
-import Order from './components/Order.vue';
-import SaleReport from './components/SaleReport.vue';
-import BatchReport from './components/BatchReport.vue';
-import Promotion from './components/Promotion.vue';
-import Consignment from './components/Consignment.vue';
-import Customer from './components/Customer.vue';
-import Dashboard from './components/Dashboard.vue';
-import PageContent from './components/PageContent.vue';
-import OnlineShop from './components/OnlineShop.vue';
-import PageSettings from './components/PageSettings.vue';
+import Product from 'pages/Product.vue';
+import Batch from 'pages/Batch.vue';
+import Sale from 'pages/Sale.vue';
+import Order from 'pages/Order.vue';
+import SaleReport from 'pages/SaleReport.vue';
+import BatchReport from 'pages/BatchReport.vue';
+import Promotion from 'pages/Promotion.vue';
+import Consignment from 'pages/Consignment.vue';
+import Customer from 'pages/Customer.vue';
+import Dashboard from 'pages/Dashboard.vue';
+import PageContent from 'pages/PageContent.vue';
+import OnlineShop from 'pages/OnlineShop.vue';
+import PageSettings from 'pages/PageSettings.vue';
 
 const routes = [
 	{

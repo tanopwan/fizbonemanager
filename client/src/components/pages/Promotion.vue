@@ -14,7 +14,7 @@
 <script>
 import { EventBus } from 'src/bus'
 import moment from 'moment';
-import PromotionWidget from './PromotionWidget.vue';
+import PromotionWidget from 'blocks/PromotionWidget.vue';
 
 export default {
 	data() {

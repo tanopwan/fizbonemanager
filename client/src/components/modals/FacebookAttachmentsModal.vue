@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import FacebookAttachmentsPart from '../parts/FacebookAttachmentsPart.vue';
+import FacebookAttachmentsPart from 'parts/FacebookAttachmentsPart.vue';
 import { EventBus } from 'src/bus';
 
 export default {

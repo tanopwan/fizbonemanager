@@ -110,8 +110,8 @@
 import moment from 'moment';
 import { EventBus } from 'src/bus';
 import Vue from 'vue';
-import DateTimePicker from './basic/DateTimePicker.vue';
-import Select2 from './basic/Select2.vue';
+import DateTimePicker from 'basic/DateTimePicker.vue';
+import Select2 from 'basic/Select2.vue';
 
 export default {
 	data() {
