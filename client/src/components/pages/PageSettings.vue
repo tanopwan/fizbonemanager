@@ -30,7 +30,6 @@ export default {
             this.page = response.data;
             console.log(this.page);
         });
-        
     },
     components: {
         conversationInbox: ConversationInbox,

@@ -3,7 +3,6 @@
 const request = require('request');
 const config = require('../config/environment');
 const Customer = require('../model/customer.model');
-const crypto = require('crypto');
 const https = require('https');
 const mongoose = require('mongoose');
 const ObjectId = mongoose.Types.ObjectId;

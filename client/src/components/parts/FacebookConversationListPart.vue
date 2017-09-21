@@ -75,7 +75,6 @@ export default {
     created() {
         this.$http.get('/api/pages/conversations').then(response => {
             this.conversations = response.body;
-            console.log(this.conversations);
             this.loading = false;
         });
     }

@@ -191,7 +191,6 @@ const getAttachments = function (user, conversationId) {
 
 const getIdForPage = (conversationUserId, access_token) => {
     return new Promise((resolve, reject) => {
-        console.log("getPsidFromPageConversationUserId", conversationUserId);
         let hmac = crypto.createHmac('sha256', config.PAGE_SECRET);
         hmac.update(access_token);
         let signature = hmac.digest('hex');
