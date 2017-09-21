@@ -39,5 +39,11 @@ module.exports = {
 				'NODE_ENV': JSON.stringify(process.env.NODE_ENV)
 			}
 		})
-	]
+	],
+	resolve: {
+		alias: {
+			'src': path.resolve(__dirname, './client/src'),
+			'components': path.resolve(__dirname, './client/src/components'),
+		}
+	}
 }

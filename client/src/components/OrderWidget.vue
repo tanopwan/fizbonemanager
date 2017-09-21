@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 import Select2 from './basic/Select2.vue';
 import SaleItemPart from './parts/SaleItemPart.vue';
 import DateTimePicker from './basic/DateTimePicker.vue';

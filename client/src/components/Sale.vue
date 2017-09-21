@@ -59,7 +59,7 @@
 
 <script>
 import moment from 'moment';
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 import SaleWidget from './SaleWidget.vue';
 import EditSaleWidget from './EditSaleWidget.vue';
 

@@ -145,7 +145,7 @@
 
 <script>
 import moment from 'moment';
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 import salePromotion from './SalePromotion.vue';
 import Select2 from './basic/Select2.vue';
 import EditSaleWidget from './EditSaleWidget.vue';

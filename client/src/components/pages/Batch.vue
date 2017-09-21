@@ -99,7 +99,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 
 export default {
 	data() {

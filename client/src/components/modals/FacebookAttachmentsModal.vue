@@ -27,7 +27,7 @@
 
 <script>
 import FacebookAttachmentsPart from '../parts/FacebookAttachmentsPart.vue';
-import { EventBus } from '../../bus';
+import { EventBus } from 'src/bus';
 
 export default {
     props: ['order', 'onUpdatedOrder'],

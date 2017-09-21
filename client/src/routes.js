@@ -1,7 +1,7 @@
 'use stricts';
 
 import Product from './components/Product.vue';
-import Batch from './components/Batch.vue';
+import Batch from './components/pages/Batch.vue';
 import Sale from './components/Sale.vue';
 import Order from './components/Order.vue';
 import SaleReport from './components/SaleReport.vue';

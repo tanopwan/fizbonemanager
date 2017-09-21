@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 import ConversationInbox from './ConversationInbox.vue'
 
 export default {

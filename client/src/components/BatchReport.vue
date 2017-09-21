@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 import Select2 from './basic/Select2.vue';
 import BatchReportTableBlock from './BatchReportTableBlock.vue';
 

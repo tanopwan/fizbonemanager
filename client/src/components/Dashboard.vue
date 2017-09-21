@@ -152,7 +152,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 
 const colors = ['#5cafde', '#deb25c', '#de815c', '#7fb364', '#5ccdde', '#454e59']
 

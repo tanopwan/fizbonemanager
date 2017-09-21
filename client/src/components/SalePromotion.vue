@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus';
+import { EventBus } from 'src/bus';
 import moment from 'moment';
 import Select2 from './basic/Select2.vue';
 

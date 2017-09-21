@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { EventBus } from '../bus'
+import { EventBus } from 'src/bus'
 import moment from 'moment';
 import PromotionWidget from './PromotionWidget.vue';
 
