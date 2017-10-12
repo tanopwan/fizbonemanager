@@ -517,7 +517,7 @@ export default {
 						item.product.name ? item.product.name : "",
 						item.quantity ? { alignment: "right", text: item.quantity } : "",
 						item.promotion.price ? { alignment: "right", text: (item.promotion.price / 100).toFixed(2) } : "",
-						item.quantity && item.promotion.price ? { alignment: "right", text: (item.quantity * item.promotion.price / 100).toFixed(2) } : -1,
+						item.quantity && item.promotion.price ? { alignment: "right", text: (item.quantity * item.promotion.price / 100).toFixed(2) } : "",
 					];
 					docDefinition.content[9].table.body.push(itemBody);
 				});
