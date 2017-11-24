@@ -53,7 +53,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr v-for="batch in batches" v-bind:key="batch._id">
+							<tr v-for="batch in batches" v-bind:key="batch._id"  :class="{success: !batch.isFinish, active: batch.isFinish}">
 								<td>{{ batch._id }}</td>
 								<td>{{ batch.product.name }}</td>
 								<td>{{ batch.batchRef }}</td>
