@@ -10,8 +10,9 @@ const ProductSchema = new Schema({
 	link: String,
 	description: String,
 	productCode: String,
-	barcode: String,
-	keywords: [String],
+  barcode: String,
+  isActive: Boolean,
+  keywords: [String],
 },
 {
 	timestamps: true

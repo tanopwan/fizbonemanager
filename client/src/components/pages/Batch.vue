@@ -220,7 +220,7 @@ export default {
 	created() {
 		EventBus.getProducts()
 			.then(response => {
-				this.products = response.body;
+				this.products = response.body.filter(product => product.isActive);
 				console.log(this.products);
 			})
 			.catch(response => console.log(response));

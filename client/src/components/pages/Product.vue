@@ -40,7 +40,7 @@
 							<small> Total: {{ products.length }}</small>
 						</h4>
 					</div>
-					<table id="general-table" class="table table-vcenter table-borderless table-condensed table-hover">
+					<table id="general-table" class="table table-vcenter table-borderless">
 						<thead>
 							<tr>
 								<th>Id</th>
@@ -55,7 +55,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr v-for="product in products" v-bind:key="product._id">
+							<tr v-for="product in products" v-bind:key="product._id" :class="{success: product.isActive, warning: !product.isActive}">
 								<td>{{ product._id }}</td>
 								<td>
 									<img :src="product.link" width="300px">
