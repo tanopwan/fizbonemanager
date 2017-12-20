@@ -387,7 +387,7 @@ export default {
         from: null,
         to: null
       },
-      customers: [],
+      customers: []
     };
   },
   methods: {
@@ -520,51 +520,60 @@ export default {
         let leftColumnContactAddress = contentContactAddress.columns[0];
         let rightColumnContactAddress = contentContactAddress.columns[1];
 
-        leftColumnContactAddress[0].text += (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
-        rightColumnContactAddress[0].text += (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
+        if (this.viewOrder.customer) {
+          leftColumnContactAddress[0].text +=
+            (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
+          rightColumnContactAddress[0].text +=
+            (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
+          let address = this.viewOrder.address;
+          let validAddress = address && Object.values(address).length > 0;
+          if (validAddress) {
+            if (address.name) {
+              leftColumnContactAddress.push(`คุณ ${address.name}`);
+            }
 
-        let address = this.viewOrder.address;
-        let validAddress = address && Object.values(address).length > 0;
-        if (validAddress) {
-          if (address.name) {
-            leftColumnContactAddress.push(`คุณ ${address.name}`);
+            if (address.mobile) {
+              leftColumnContactAddress.push(`โทร ${address.mobile}`);
+            }
+
+            let address1 = [address.street, address.subDistrict].join(", ");
+            let address2 = [
+              address.district,
+              address.province,
+              address.postalCode
+            ].join(", ");
+            leftColumnContactAddress.push(address1);
+            leftColumnContactAddress.push(address2);
           }
 
-          if (address.mobile) {
-            leftColumnContactAddress.push(`โทร ${address.mobile}`);
-          }
+          let billingAddress = this.viewOrder.billingAddress;
+          let validbillingAddress =
+            billingAddress && Object.values(billingAddress).length > 0;
+          if (validbillingAddress) {
+            if (billingAddress.name) {
+              rightColumnContactAddress.push("แผนกบัญชี");
+            }
 
-          let address1 = [address.street, address.subDistrict].join(", ");
-          let address2 = [
-            address.district,
-            address.province,
-            address.postalCode
-          ].join(", ");
-          leftColumnContactAddress.push(address1);
-          leftColumnContactAddress.push(address2);
-        }
+            if (billingAddress.mobile) {
+              rightColumnContactAddress.push(`โทร ${billingAddress.mobile}`);
+            }
 
-        let billingAddress = this.viewOrder.billingAddress;
-        let validbillingAddress = billingAddress && Object.values(billingAddress).length > 0;
-        if (validbillingAddress) {
-          if (billingAddress.name) {
-            rightColumnContactAddress.push("แผนกบัญชี");
-          }
-
-          if (billingAddress.mobile) {
-            rightColumnContactAddress.push(`โทร ${billingAddress.mobile}`);
-          }
-
-          let address1 = [billingAddress.street, billingAddress.subDistrict].join(", ");
-          let address2 = [
-            billingAddress.district,
-            billingAddress.province,
-            billingAddress.postalCode
-          ].join(", ");
-          rightColumnContactAddress.push(address1);
-          rightColumnContactAddress.push(address2);
-          if (billingAddress.taxId) {
-            rightColumnContactAddress.push(`เลขประจำตัวผู้เสียภาษี: ${billingAddress.taxId}`);
+            let address1 = [
+              billingAddress.street,
+              billingAddress.subDistrict
+            ].join(", ");
+            let address2 = [
+              billingAddress.district,
+              billingAddress.province,
+              billingAddress.postalCode
+            ].join(", ");
+            rightColumnContactAddress.push(address1);
+            rightColumnContactAddress.push(address2);
+            if (billingAddress.taxId) {
+              rightColumnContactAddress.push(
+                `เลขประจำตัวผู้เสียภาษี: ${billingAddress.taxId}`
+              );
+            }
           }
         }
 
@@ -752,12 +761,13 @@ export default {
       });
     },
     printOptionModal() {
-      let customer = this.customers.find(customer => customer.name === this.viewOrder.customer.name);
+      let customer = this.customers.find(
+        customer => customer.name === this.viewOrder.customer.name
+      );
       if (customer) {
         this.viewOrder.address = customer.address;
         this.viewOrder.billingAddress = customer.billingAddress;
-      }
-      else {
+      } else {
         this.viewOrder.address = null;
         this.viewOrder.billingAddress = null;
       }
