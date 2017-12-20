@@ -515,27 +515,27 @@ export default {
         docDefinition = response.data;
 
         docDefinition.content[0].columns[1][0].text[1] = this.viewOrder._id;
-        docDefinition.content[2].columns[1][0].text = moment(
+        docDefinition.content[1].columns[1][0].text = moment(
           this.viewOrder.saleDate
         ).format("DD/MM/YYYY HH:mm");
-        if (this.viewOrder.customer) {
-          let customer = this.viewOrder.customer;
-          docDefinition.content[7].columns[0][2] = !customer.mobile
-            ? ""
-            : "Tel. " + customer.mobile;
-        }
 
-        if (this.viewOrder.customer.company) {
-          docDefinition.content[7].columns[0][4].text[0].text = this.viewOrder.customer.company;
-        } else {
-          docDefinition.content[7].columns[0][4].text[0].text = "";
-          docDefinition.content[7].columns[0][4].text[1] = "";
-        }
+        let contentContactAddress = docDefinition.content[5];
+        let leftColumnContactAddress = contentContactAddress.columns[0];
+        let rightColumnContactAddress = contentContactAddress.columns[1];
+
+        leftColumnContactAddress[0].text += (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
+        rightColumnContactAddress[0].text += (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
 
         let address = this.viewOrder.address;
-        let invalidAddress = !address && Object.values(address).length === 0;
-        if (!invalidAddress) {
-          docDefinition.content[7].columns[0][1] = "K. " + address.name;
+        let validAddress = address && Object.values(address).length > 0;
+        if (validAddress) {
+          if (address.name) {
+            leftColumnContactAddress.push(`คุณ ${address.name}`);
+          }
+
+          if (address.mobile) {
+            leftColumnContactAddress.push(`โทร ${address.mobile}`);
+          }
 
           let address1 = [address.street, address.subDistrict].join(", ");
           let address2 = [
@@ -543,37 +543,36 @@ export default {
             address.province,
             address.postalCode
           ].join(", ");
-          docDefinition.content[7].columns[0][5] = address1;
-          docDefinition.content[7].columns[0][6] = address2;
-
-          docDefinition.content[7].columns[1][1] = "K. N/A";
-          docDefinition.content[7].columns[1][2] = "Tel. N/A";
-
-          docDefinition.content[7].columns[1][4].text[0].text = "Company. N/A";
-          docDefinition.content[7].columns[1][4].text[1] = "";
-
-          docDefinition.content[7].columns[1][5] = address1;
-          docDefinition.content[7].columns[1][6] = address2;
-          docDefinition.content[7].columns[1][7] = "Tax: ";
-        } else {
-          docDefinition.content[7].columns[0][1] =
-            (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
-          docDefinition.content[7].columns[0][5] = "";
-          docDefinition.content[7].columns[0][6] = "";
-
-          docDefinition.content[7].columns[1][1] =
-            (this.viewOrder.customer ? this.viewOrder.customer.name : "") || "";
-          docDefinition.content[7].columns[1][2] = "";
-
-          docDefinition.content[7].columns[1][4].text[0].text = "";
-          docDefinition.content[7].columns[1][4].text[1] = "";
-
-          docDefinition.content[7].columns[1][5] = "";
-          docDefinition.content[7].columns[1][6] = "";
-          docDefinition.content[7].columns[1][7] = "";
+          leftColumnContactAddress.push(address1);
+          leftColumnContactAddress.push(address2);
         }
 
-        docDefinition.content[9].table.body.splice(1);
+        let billingAddress = this.viewOrder.billingAddress;
+        let validbillingAddress = billingAddress && Object.values(billingAddress).length > 0;
+        if (validbillingAddress) {
+          if (billingAddress.name) {
+            rightColumnContactAddress.push("แผนกบัญชี");
+          }
+
+          if (billingAddress.mobile) {
+            rightColumnContactAddress.push(`โทร ${billingAddress.mobile}`);
+          }
+
+          let address1 = [billingAddress.street, billingAddress.subDistrict].join(", ");
+          let address2 = [
+            billingAddress.district,
+            billingAddress.province,
+            billingAddress.postalCode
+          ].join(", ");
+          rightColumnContactAddress.push(address1);
+          rightColumnContactAddress.push(address2);
+          if (billingAddress.taxId) {
+            rightColumnContactAddress.push(`เลขประจำตัวผู้เสียภาษี: ${billingAddress.taxId}`);
+          }
+        }
+
+        let contentItem = docDefinition.content[7];
+        contentItem.table.body.splice(1);
         this.viewOrder.items.forEach(item => {
           let itemBody = [
             item.product.productCode ? item.product.productCode : "",
@@ -593,7 +592,7 @@ export default {
                 }
               : ""
           ];
-          docDefinition.content[9].table.body.push(itemBody);
+          contentItem.table.body.push(itemBody);
         });
 
         let priceFooter1 = [
@@ -744,11 +743,11 @@ export default {
         ];
 
         if (this.showPrice) {
-          docDefinition.content[9].table.body.push(priceFooter1);
-          docDefinition.content[9].table.body.push(priceFooter2);
-          docDefinition.content[9].table.body.push(priceFooter3);
-          docDefinition.content[9].table.body.push(priceFooter4);
-          docDefinition.content[9].table.body.push(priceFooter5);
+          contentItem.table.body.push(priceFooter1);
+          contentItem.table.body.push(priceFooter2);
+          contentItem.table.body.push(priceFooter3);
+          contentItem.table.body.push(priceFooter4);
+          contentItem.table.body.push(priceFooter5);
         }
 
         // open the PDF in a new window
@@ -758,6 +757,7 @@ export default {
     printOptionModal() {
       let customer = this.customers.find(customer => customer.id === this.viewOrder.customer.id);
       this.viewOrder.address = customer.address;
+      this.viewOrder.billingAddress = customer.billingAddress;
     },
     onSearch(from, to) {
       this.$http

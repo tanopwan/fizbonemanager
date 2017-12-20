@@ -93,7 +93,6 @@ const getOrders = (params) => {
 			$lte: params.to
 		}
   }
-  console.log(criteria);
 	return Order.find(criteria).sort({'saleDate': -1}).limit(params.limit).skip(params.offset).exec();
 }
 
