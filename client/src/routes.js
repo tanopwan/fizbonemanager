@@ -29,7 +29,7 @@ const routes = [
 			{ path: '/sale_report', component: SaleReport },
 			{ path: '/batch_report', component: BatchReport },
 			{ path: '/onlineshop', component: OnlineShop },
-			{ path: '/page_settings', component: PageSettings },
+      { path: '/page_settings', component: PageSettings },
 		]
 	},
 	{ path: '/dashboard', component: Dashboard }

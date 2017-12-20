@@ -37,11 +37,6 @@ export default {
             saving: false,
         }
     },
-    watch: {
-        order(val) {
-            console.log(val);
-        }
-    },
     methods: {
         save() {
             if (this.attachment) {

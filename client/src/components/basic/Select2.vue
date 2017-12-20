@@ -8,7 +8,6 @@
 export default {
 	props: ['options', 'value', 'placeholder', 'allowClear'],
 	mounted() {
-		// console.log("mounted value", this.value);
 		let allowClear = this.allowClear === "false" ? false : true;
 
 		// update options
