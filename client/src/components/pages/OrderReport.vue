@@ -756,8 +756,15 @@ export default {
     },
     printOptionModal() {
       let customer = this.customers.find(customer => customer.id === this.viewOrder.customer.id);
-      this.viewOrder.address = customer.address;
-      this.viewOrder.billingAddress = customer.billingAddress;
+      if (customer) {
+        this.viewOrder.address = customer.address;
+        this.viewOrder.billingAddress = customer.billingAddress;
+      }
+      else {
+        this.viewOrder.address = null;
+        this.viewOrder.billingAddress = null;
+      }
+
     },
     onSearch(from, to) {
       this.$http
