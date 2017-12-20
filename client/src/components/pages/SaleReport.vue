@@ -158,7 +158,6 @@ export default {
 			todayFilter: true,
 			thisWeekFilter: false,
 			customFilter: false,
-			datefilter: '',
 			promotions: [],
 			selectedFilterPromotion: '',
 			selectedFilterGroup: '',

@@ -167,7 +167,7 @@ const queryType = {
 	orders: {
 		type: new graphql.GraphQLList(OrderType),
 		resolve: function() {
-			return orderService.getOrders().then(orders => {
+			return orderService.getOrders({}).then(orders => {
 				return orders;
 			});
 		}

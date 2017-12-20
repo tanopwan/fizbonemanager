@@ -143,7 +143,7 @@ const index = function (req, res) {
 }
 
 const indexOrders = function (req, res) {
-	return orderService.getOrders()
+	return orderService.getOrders(req.query)
 		.then(sale => {
 			if (!sale) {
 				return res.status(404).end();

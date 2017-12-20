@@ -20,7 +20,7 @@ const createOrder = (data) => {
 			let sale = new Sale(saleItem);
 			sales.push(sale);
 		});
-		
+
 		return Sale.insertMany(sales);
 	}).then(sales => {
 		batchService.getRealtimeStock().then(result => {
@@ -84,8 +84,17 @@ const createOrderFromSession = (session, shippingFee) => {
 	return Order.create(orderData);
 };
 
-const getOrders = () => {
-	return Order.find().exec();
+const getOrders = (params) => {
+  let criteria = {};
+
+  if (params.from || params.to) {
+		criteria['saleDate'] = {
+			$gte: params.from,
+			$lte: params.to
+		}
+  }
+  console.log(criteria);
+	return Order.find(criteria).sort({'saleDate': -1}).limit(params.limit).skip(params.offset).exec();
 }
 
 const getOrder = (orderId) => {

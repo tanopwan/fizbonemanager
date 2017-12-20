@@ -13,6 +13,7 @@ import Dashboard from 'pages/Dashboard.vue';
 import PageContent from 'pages/PageContent.vue';
 import OnlineShop from 'pages/OnlineShop.vue';
 import PageSettings from 'pages/PageSettings.vue';
+import OrderReport from 'pages/OrderReport.vue';
 
 const routes = [
 	{
@@ -27,7 +28,8 @@ const routes = [
 			{ path: '/order', component: Order },
 			{ path: '/customer', component: Customer },
 			{ path: '/sale_report', component: SaleReport },
-			{ path: '/batch_report', component: BatchReport },
+      { path: '/batch_report', component: BatchReport },
+      { path: '/order_report', component: OrderReport },
 			{ path: '/onlineshop', component: OnlineShop },
       { path: '/page_settings', component: PageSettings },
 		]
