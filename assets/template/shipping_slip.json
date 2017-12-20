@@ -77,7 +77,7 @@
         ],
         [
           {
-            "text": "Bill To / ใบเสร็จ : ",
+            "text": "Bill To / จัดส่งใบเสร็จ : ",
             "bold": true
           }
         ]
@@ -98,7 +98,7 @@
         "body": [
           [
             "Code",
-            "barcode",
+            "Barcode",
             "Products",
             "Quantity",
             "Price",
@@ -418,11 +418,11 @@
         "body": [
           [
             {
-              "text": "Deliver",
+              "text": "Deliver / ผู้ส่ง",
               "alignment": "center"
             },
             {
-              "text": "Receiver",
+              "text": "Receiver / ผู้รับ",
               "alignment": "center"
             }
           ],
