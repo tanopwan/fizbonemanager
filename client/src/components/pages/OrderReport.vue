@@ -48,7 +48,7 @@
           </ul>
         </div>
         <div class="block-section">
-          <a href="#print-option-modal" class="btn  btn-info" data-toggle="modal" style="overflow: hidden; position: relative;">
+          <a href="#print-option-modal" @click="printOptionModal" class="btn  btn-info" data-toggle="modal" style="overflow: hidden; position: relative;">
             <i class="fa fa-print"></i> Shipping Slip
           </a>
           <div class="row">
@@ -386,7 +386,8 @@ export default {
       dateSearch: {
         from: null,
         to: null
-      }
+      },
+      customers: [],
     };
   },
   methods: {
@@ -533,7 +534,7 @@ export default {
 
         let address = this.viewOrder.address;
         let invalidAddress = !address && Object.values(address).length === 0;
-        if (invalidAddress) {
+        if (!invalidAddress) {
           docDefinition.content[7].columns[0][1] = "K. " + address.name;
 
           let address1 = [address.street, address.subDistrict].join(", ");
@@ -754,6 +755,10 @@ export default {
         pdfMake.createPdf(docDefinition).open();
       });
     },
+    printOptionModal() {
+      let customer = this.customers.find(customer => customer.id === this.viewOrder.customer.id);
+      this.viewOrder.address = customer.address;
+    },
     onSearch(from, to) {
       this.$http
         .get(`/api/sales/orders?from=${from}&to=${to}`)
@@ -802,6 +807,9 @@ export default {
       .on("changeTime.timepicker", function(e) {
         vm.dropoffTime = e.time.value;
       });
+    EventBus.getCustomers()
+      .then(response => (this.customers = response.body))
+      .catch(response => console.log(response));
   },
   components: {
     select2: Select2,
