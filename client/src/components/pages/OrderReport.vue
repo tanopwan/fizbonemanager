@@ -761,6 +761,9 @@ export default {
       });
     },
     printOptionModal() {
+      if (!this.viewOrder.customer) {
+        return;
+      }
       let customer = this.customers.find(
         customer => customer.name === this.viewOrder.customer.name
       );
@@ -768,8 +771,8 @@ export default {
         this.viewOrder.address = customer.address;
         this.viewOrder.billingAddress = customer.billingAddress;
       } else {
-        this.viewOrder.address = null;
-        this.viewOrder.billingAddress = null;
+        this.viewOrder.address = {};
+        this.viewOrder.billingAddress = {};
       }
     },
     onSearch(from, to) {
