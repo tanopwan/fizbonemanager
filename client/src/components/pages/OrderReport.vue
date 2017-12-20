@@ -405,8 +405,9 @@ export default {
         .catch(response => console.log(response));
     },
     setOrder(orderId) {
+      let vm = this;
       this.$http.get("/api/sales/orders/" + orderId).then(order => {
-        this.viewOrder = Object.assign(
+        vm.viewOrder = Object.assign(
           {
             customer: {},
             address: {},
@@ -415,11 +416,11 @@ export default {
           },
           order.body
         );
-        this.showOrder = true;
-        this.viewOrder.items.forEach(item => {
+        vm.showOrder = true;
+        vm.viewOrder.items.forEach(item => {
           item.total = item.promotion.price * item.quantity;
         });
-        this.viewOrder.subTotal = this.viewOrder.items.reduce(
+        vm.viewOrder.subTotal = vm.viewOrder.items.reduce(
           (a, b) => {
             return { total: a.total + b.total };
           },
@@ -428,8 +429,9 @@ export default {
       });
     },
     selectOrder(orderId) {
+      let vm = this;
       this.$http.get("/api/sales/orders/" + orderId).then(order => {
-        this.viewOrder = Object.assign(
+        vm.viewOrder = Object.assign(
           {
             customer: {},
             address: {},
@@ -484,11 +486,6 @@ export default {
       } else {
         this.trackingNoError = true;
       }
-    },
-    onAddOrder(order) {
-      this.orders.push(order);
-      EventBus.expireCache("/api/sales");
-      EventBus.expireCache("/api/sales/orders");
     },
     deleteOrder(id) {
       this.$http.delete("/api/sales/orders/" + id).then(
@@ -755,7 +752,7 @@ export default {
       });
     },
     printOptionModal() {
-      let customer = this.customers.find(customer => customer.id === this.viewOrder.customer.id);
+      let customer = this.customers.find(customer => customer.name === this.viewOrder.customer.name);
       if (customer) {
         this.viewOrder.address = customer.address;
         this.viewOrder.billingAddress = customer.billingAddress;
@@ -764,7 +761,6 @@ export default {
         this.viewOrder.address = null;
         this.viewOrder.billingAddress = null;
       }
-
     },
     onSearch(from, to) {
       this.$http

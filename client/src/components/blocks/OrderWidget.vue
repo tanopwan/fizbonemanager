@@ -169,7 +169,6 @@ export default {
                 order.shipping.status = 'READY';
             }
 
-            console.log("order", order);
             this.saving = true;
             this.$http.post('/api/sales/orders', order).then(response => {
                 this.saving = false;
