@@ -11,7 +11,6 @@ const router = express.Router();
 router.get('/', passport.authenticate('facebook', {
 	scope: [
 		'email',
-		'user_about_me',
 		'manage_pages',
 		'read_page_mailboxes',
 		'pages_messaging',
