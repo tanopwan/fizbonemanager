@@ -628,7 +628,6 @@ export default {
           }
         ];
 
-        let beforeVat = Math.round(this.viewOrder.subTotal / 1.07);
         let priceFooter2 = [
           {
             border: [false, false, false, false],
@@ -652,7 +651,7 @@ export default {
           {},
           {
             border: [false, false, false, false],
-            text: (beforeVat / 100).toFixed(2),
+            text: (this.viewOrder.subTotal / 100).toFixed(2),
             alignment: "right"
           }
         ];
