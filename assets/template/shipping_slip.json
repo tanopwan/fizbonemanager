@@ -282,58 +282,6 @@
                 false,
                 false
               ],
-              "text": "Vat",
-              "colSpan": 2,
-              "alignment": "right"
-            },
-            {},
-            {
-              "border": [
-                false,
-                false,
-                false,
-                false
-              ],
-              "text": "0.00",
-              "alignment": "right"
-            }
-          ],
-          [
-            {
-              "border": [
-                false,
-                false,
-                false,
-                false
-              ],
-              "text": ""
-            },
-            {
-              "border": [
-                false,
-                false,
-                false,
-                false
-              ],
-              "text": " "
-            },
-            {
-              "border": [
-                false,
-                false,
-                false,
-                false
-              ],
-              "text": "",
-              "alignment": "right"
-            },
-            {
-              "border": [
-                false,
-                false,
-                false,
-                false
-              ],
               "text": "Shipping Fee",
               "colSpan": 2,
               "alignment": "right"

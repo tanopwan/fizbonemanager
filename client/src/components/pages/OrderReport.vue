@@ -657,34 +657,6 @@ export default {
           }
         ];
 
-        let priceFooter3 = [
-          {
-            border: [false, false, false, false],
-            text: ""
-          },
-          {
-            border: [false, false, false, false],
-            text: " "
-          },
-          {
-            border: [false, false, false, false],
-            text: "",
-            alignment: "right"
-          },
-          {
-            border: [false, false, false, false],
-            text: "Vat",
-            colSpan: 2,
-            alignment: "right"
-          },
-          {},
-          {
-            border: [false, false, false, false],
-            text: ((this.viewOrder.subTotal - beforeVat) / 100).toFixed(2),
-            alignment: "right"
-          }
-        ];
-
         let priceFooter4 = [
           {
             border: [false, false, false, false],
@@ -751,7 +723,6 @@ export default {
         if (this.showPrice) {
           contentItem.table.body.push(priceFooter1);
           contentItem.table.body.push(priceFooter2);
-          contentItem.table.body.push(priceFooter3);
           contentItem.table.body.push(priceFooter4);
           contentItem.table.body.push(priceFooter5);
         }
